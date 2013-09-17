@@ -1,0 +1,57 @@
+package lbd.Utils;
+
+import java.util.ArrayList;
+
+import lbd.Model.ContextToken;
+import lbd.Model.SupportContext;
+
+public class ExtendsAccentVariabilityInTweet {
+
+	public class AccentCharacter {
+		
+		private int index;
+		private int classIndex;
+		private int accentInTokenIndex;
+		char accent;
+		
+		public AccentCharacter(char accent, int accentInTokenIndex, int classIndex, int index) {
+			
+			this.accent = accent;
+			
+			this.accentInTokenIndex = accentInTokenIndex;
+			this.classIndex = classIndex;
+			this.index = index;
+		}
+		
+		public int getAccentInTokenIndex() {
+			return accentInTokenIndex;
+		}
+		public void setAccentInTokenIndex(int accentInTokenIndex) {
+			this.accentInTokenIndex = accentInTokenIndex;
+		}
+		public int getIndex() {
+			return index;
+		}
+		public void setIndex(int index) {
+			this.index = index;
+		}
+		public int getClassIndex() {
+			return classIndex;
+		}
+		public void setClassIndex(int classIndex) {
+			this.classIndex = classIndex;
+		}
+		public char getAccent() {
+			return accent;
+		}
+		public void setAccent(char accent) {
+			this.accent = accent;
+		}
+	}
+	
+	private final char [] correspondentAccentArray = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U', 'c', 'C'};
+	private final char [][] accentArray = {{}};
+			/*{'à', 'è', 'ì', 'ò', 'ù', 'À', 'È', 'Ì', 'Ò', 'Ù'},
+			{'á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'},
+			{'â', 'ê', 'î', 'ô', 'û', 'Â', 'Ê', 'Î', 'Ô', 'Û'},
+			{'ã', '
