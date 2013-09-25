@@ -23,6 +23,8 @@ public interface Symbol {
 	public String DELIMITER_LABEL = "|";
 	public String SINGLE_QUOTE = "'";
 	public String DOUBLE_QUOTE = "\"";
+	public String EXCLAMATION = "!";
+	public String INTERROGATION = "?";
 	public String SPECIAL_DELIMITER = "	§þe¢¡a¬";
 
 	public char SPACE_CHAR = ' ';

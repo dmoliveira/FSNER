@@ -49,9 +49,10 @@ public class CollectionDefinition implements Serializable{
 		Zunnit_Extra_Emprego_LOC, Zunnit_Extra_Emprego_EVT, Zunnit_Extra_Emprego_MISC, Zunnit_Extra_Esportes_PER,
 		Zunnit_Extra_Esportes_ORG, Zunnit_Extra_Esportes_LOC, Zunnit_Extra_Esportes_EVT, Zunnit_Extra_Esportes_MISC,
 		Zunnit_Extra_Famosos_PER, Zunnit_Extra_Famosos_ORG, Zunnit_Extra_Famosos_LOC, Zunnit_Extra_Famosos_EVT,
-		Zunnit_Extra_Famosos_MISC, Zunnit_Extra_Noticia_PER, Zunnit_Extra_Noticia_ORG, Zunnit_Extra_Noticia_LOC,
-		Zunnit_Extra_Noticia_EVT, Zunnit_Extra_Noticia_MISC, Zunnit_Extra_TV_e_Lazer_PER, Zunnit_Extra_TV_e_Lazer_ORG,
-		Zunnit_Extra_TV_e_Lazer_LOC, Zunnit_Extra_TV_e_Lazer_EVT, Zunnit_Extra_TV_e_Lazer_MISC};
+		Zunnit_Extra_Famosos_MISC, Zunnit_Extra_Noticias_PER, Zunnit_Extra_Noticias_ORG, Zunnit_Extra_Noticias_LOC,
+		Zunnit_Extra_Noticias_EVT, Zunnit_Extra_Noticias_MISC, Zunnit_Extra_TV_e_Lazer_PER, Zunnit_Extra_TV_e_Lazer_ORG,
+		Zunnit_Extra_TV_e_Lazer_LOC, Zunnit_Extra_TV_e_Lazer_EVT, Zunnit_Extra_TV_e_Lazer_MISC,
+		Zunnit_Extra_All_PER, Zunnit_Extra_All_ORG, Zunnit_Extra_All_LOC, Zunnit_Extra_All_EVT, Zunnit_Extra_All_MISC};
 
 		public HashMap<String, DataCollection> mDataCollectionMap;
 
@@ -103,47 +104,53 @@ public class CollectionDefinition implements Serializable{
 			createCVCollection(CollectionName.SAMPLE_ORG.name(), "MSM13/ORG", "Sample-ORG", CollectionDefinition.Dictionary.EnglishStopWords);
 			//createCVCollection(CollectionName.MISC_MSM13_ETZCV.name(), "MSM13/MISC", "MSM13Collection(MISC)+ETZCV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_Casa_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Casa-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Casa_ORG.name(), "MSM13/ORG", "Zunnit-GloboExtraCollection-Casa-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Casa_LOC.name(), "MSM13/LOC", "Zunnit-GloboExtraCollection-Casa-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casa_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-Casa-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casa_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-Casa-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casa_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-Casa-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Extra_Casa_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Casa-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Casa_MISC.name(), "MSM13/MISC", "Zunnit-GloboExtraCollection-Casa-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casa_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-Casa-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Casos_de_Policia-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_ORG.name(), "MSM13/ORG", "Zunnit-GloboExtraCollection-Casos_de_Policia-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_LOC.name(), "MSM13/LOC", "Zunnit-GloboExtraCollection-Casos_de_Policia-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-Casos_de_Policia-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-Casos_de_Policia-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-Casos_de_Policia-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Casos_de_Policia-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_MISC.name(), "MSM13/MISC", "Zunnit-GloboExtraCollection-Casos_de_Policia-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Casos_de_Policia_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-Casos_de_Policia-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_Emprego_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Emprego-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Emprego_ORG.name(), "MSM13/ORG", "Zunnit-GloboExtraCollection-Emprego-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Emprego_LOC.name(), "MSM13/LOC", "Zunnit-GloboExtraCollection-Emprego-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Emprego_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-Emprego-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Emprego_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-Emprego-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Emprego_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-Emprego-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Extra_Emprego_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Emprego-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Emprego_MISC.name(), "MSM13/MISC", "Zunnit-GloboExtraCollection-Emprego-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Emprego_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-Emprego-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_Esportes_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Esportes-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Esportes_ORG.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Esportes-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Esportes_LOC.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Esportes-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Esportes_EVT.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Esportes-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Esportes_MISC.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Esportes-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Esportes_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-Esportes-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Esportes_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-Esportes-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Esportes_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-Esportes-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Esportes_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Esportes-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Esportes_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-Esportes-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_Famosos_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Famosos-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Famosos_ORG.name(), "MSM13/ORG", "Zunnit-GloboExtraCollection-Famosos-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Famosos_LOC.name(), "MSM13/LOC", "Zunnit-GloboExtraCollection-Famosos-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Famosos_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-Famosos-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Famosos_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-Famosos-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Famosos_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-Famosos-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Extra_Famosos_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Famosos-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Famosos_MISC.name(), "MSM13/MISC", "Zunnit-GloboExtraCollection-Famosos-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Famosos_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-Famosos-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_Noticia_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-Noticia-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Noticia_ORG.name(), "MSM13/ORG", "Zunnit-GloboExtraCollection-Noticia-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Noticia_LOC.name(), "MSM13/LOC", "Zunnit-GloboExtraCollection-Noticia-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Noticia_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Noticia-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_Noticia_MISC.name(), "MSM13/MISC", "Zunnit-GloboExtraCollection-Noticia-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Noticias_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-Noticias-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Noticias_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-Noticias-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Noticias_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-Noticias-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Noticias_EVT.name(), "none/", "Zunnit-GloboExtraCollection-Noticias-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_Noticias_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-Noticias-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
-			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_PER.name(), "MSM13/PER", "Zunnit-GloboExtraCollection-TV_e_Lazer-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_ORG.name(), "MSM13/ORG", "Zunnit-GloboExtraCollection-TV_e_Lazer-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_LOC.name(), "MSM13/LOC", "Zunnit-GloboExtraCollection-TV_e_Lazer-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-TV_e_Lazer-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-TV_e_Lazer-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-TV_e_Lazer-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_EVT.name(), "none/", "Zunnit-GloboExtraCollection-TV_e_Lazer-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
-			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_MISC.name(), "MSM13/MISC", "Zunnit-GloboExtraCollection-TV_e_Lazer-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_TV_e_Lazer_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-TV_e_Lazer-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+
+			createCVCollection(CollectionName.Zunnit_Extra_All_PER.name(), "Extra/PER", "Zunnit-GloboExtraCollection-All-PER-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_All_ORG.name(), "Extra/ORG", "Zunnit-GloboExtraCollection-All-ORG-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_All_LOC.name(), "Extra/LOC", "Zunnit-GloboExtraCollection-All-LOC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_All_EVT.name(), "none/", "Zunnit-GloboExtraCollection-All-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Extra_All_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-All-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
 			/*createCVCollection(CollectionName.PER_MSM13CV.name(), "MSM13/PER", "MSM13Collection(PER)", CollectionDefinition.Dictionary.EnglishStopWords);
 		createCVCollection(CollectionName.ORG_MSM13CV.name(), "MSM13/ORG", "MSM13Collection(ORG)", CollectionDefinition.Dictionary.EnglishStopWords);

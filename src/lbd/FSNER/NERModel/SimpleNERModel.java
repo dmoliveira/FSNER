@@ -43,8 +43,8 @@ public class SimpleNERModel extends AbstractNERModel {
 
 		// -- Base DP
 		dataPreprocessorList.add(new DPPlainSequence());
-		// dataPreprocessorList.add(new DPLowerCase());
-		// dataPreprocessorList.add(new DPStopWord(initializeFilenameList[0]));
+		//dataPreprocessorList.add(new DPLowerCase());
+		//dataPreprocessorList.add(new DPStopWord(initializeFilenameList[0]));
 		// dataPreprocessorList.add(new
 		// MultiDataPreprocessor(dpLowerCaseStopword));
 
@@ -220,7 +220,7 @@ public class SimpleNERModel extends AbstractNERModel {
 
 	protected void addContextFilters(int i) {
 		for (int flexibilityIndex = Flexibility.values().length - 3; flexibilityIndex >= 0; flexibilityIndex--) {
-			for (int windowSize = 3; windowSize > 2; windowSize--) {// 5 > 1 ;
+			for (int windowSize = 3; windowSize > 2; windowSize--) {//DEFAULT: WindowSize = 3, > 2;
 				// (current)
 				// 3; > 2
 				for (int contextTypeIndex = 1; contextTypeIndex < ContextType
@@ -262,7 +262,7 @@ public class SimpleNERModel extends AbstractNERModel {
 	protected void addOrthographicFilters(int i) {
 		for (int affixTypeIndex = 0; affixTypeIndex < FtrAffix.AffixType
 				.values().length; affixTypeIndex++) {
-			for (int affixSize = 3; affixSize > 1; affixSize--) {// 5,2 //(afxSize=3, > 1)
+			for (int affixSize = 3; affixSize > 1; affixSize--) {//Default: (afxSize=3, > 1)
 				activityControl
 				.addActivity(new FtrAffix(i, new FSCMNoScore(),
 						FtrAffix.AffixType.values()[affixTypeIndex],

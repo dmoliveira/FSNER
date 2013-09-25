@@ -10,7 +10,7 @@ public class Parameters {
 	public static String dataEncoding = Constants.CharsetEncoding.ISO88591;
 
 	public static class FSNERExecution {
-		public static int trainFileIteration = 1;// default #5
+		public static int trainFileIteration = 5;// default #5
 	}
 
 	public static class Save {
@@ -22,7 +22,7 @@ public class Parameters {
 		public static String optionalDirectory = "";
 
 		@DefaultValue(value="true")
-		public static boolean isToSaveNERModel = true;
+		public static boolean isToSaveNERModel = false;
 	}
 
 	public static class SimpleActivityControl {

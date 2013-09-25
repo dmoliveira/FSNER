@@ -17,6 +17,7 @@ import lbd.FSNER.Collection.CollectionDefinition;
 import lbd.FSNER.Collection.CollectionDefinition.CollectionName;
 import lbd.FSNER.Collection.DataCollection;
 import lbd.FSNER.Configuration.Constants;
+import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.FilterParameters;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Evaluation.AmbiguityEvaluator;
@@ -106,7 +107,7 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_Noticia_EVT};*/
 
 			/*CollectionName [] vSubcollection = {CollectionName.PER_MSM13_CONQUEST, CollectionName.ORG_MSM13_CONQUEST, CollectionName.LOC_MSM13_CONQUEST, CollectionName.MISC_MSM13_CONQUEST};*/
-			CollectionName [] vSubcollection = {
+			/*CollectionName [] vSubcollection = {
 					CollectionName.PlayerCV, CollectionName.VenueCV, CollectionName.TeamCV,
 					CollectionName.CompanyCV, CollectionName.GeolocCV, CollectionName.PersonCV,
 					CollectionName.OrganizationCV, CollectionName.PER_MSM13_V15_PREPROCESSED_CV,
@@ -127,14 +128,16 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_Famosos_PER,
 					CollectionName.Zunnit_Extra_Famosos_ORG, CollectionName.Zunnit_Extra_Famosos_LOC,
 					CollectionName.Zunnit_Extra_Famosos_EVT, CollectionName.Zunnit_Extra_Famosos_MISC,
-					CollectionName.Zunnit_Extra_Noticia_PER,
-					CollectionName.Zunnit_Extra_Noticia_ORG, CollectionName.Zunnit_Extra_Noticia_LOC,
-					CollectionName.Zunnit_Extra_Noticia_EVT, CollectionName.Zunnit_Extra_Noticia_MISC,
+					CollectionName.Zunnit_Extra_Noticias_PER,
+					CollectionName.Zunnit_Extra_Noticias_ORG, CollectionName.Zunnit_Extra_Noticias_LOC,
+					CollectionName.Zunnit_Extra_Noticias_EVT, CollectionName.Zunnit_Extra_Noticias_MISC,
 					CollectionName.Zunnit_Extra_TV_e_Lazer_PER,
 					CollectionName.Zunnit_Extra_TV_e_Lazer_ORG, CollectionName.Zunnit_Extra_TV_e_Lazer_LOC,
-					CollectionName.Zunnit_Extra_TV_e_Lazer_EVT, CollectionName.Zunnit_Extra_TV_e_Lazer_MISC};
-			//CollectionName [] vSubcollection = {CollectionName.PER_MSM13CV, CollectionName.ORG_MSM13CV, CollectionName.LOC_MSM13CV, CollectionName.MISC_MSM13CV};
-			//CollectionName [] vSubcollection = {CollectionName.TeamCV};
+					CollectionName.Zunnit_Extra_TV_e_Lazer_EVT, CollectionName.Zunnit_Extra_TV_e_Lazer_MISC,
+					CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG,
+					CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT,
+					CollectionName.Zunnit_Extra_All_MISC};*/
+			CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
 
 			for(CollectionName cCollection : vSubcollection) {
 				FSNER vFSNER = new FSNER();
@@ -150,10 +153,14 @@ public class FSNER implements Serializable {
 		runStandardFSF(mCollectionDefinition.getDataCollection(pCollectionName));
 
 		mNERModel.writeNERModelSpecification(mCollectionDefinition.getDataCollection(pCollectionName).mFilenameList, pFilterParameters);
+
 		//-- To show overview statistics
-		//mEvaluator.writeOverviewStatistics("");
-		//mGeneralizationEvaluator.writeOverviewStatistics("");
-		//mFilterCombinationEvaluator.writeOverviewStatistics("");
+		if(Debug.Evaluator.isToPrintStatistics) {
+			mEvaluator.writeOverviewStatistics("");
+			//mGeneralizationEvaluator.writeOverviewStatistics("");
+			//mFilterCombinationEvaluator.writeOverviewStatistics("");
+		}
+
 		//playStormsSound();
 	}
 
