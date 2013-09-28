@@ -3,6 +3,7 @@ package lbd.FSNER.Model;
 import iitb.CRF.DataSequence;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,6 +15,7 @@ import lbd.FSNER.Component.Statistic.TermLevelStatisticsAnalysis;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Model.AbstractFilter.FilterMode;
 import lbd.FSNER.Utils.SimpleStopWatch;
+import lbd.FSNER.Utils.Symbol;
 
 public abstract class AbstractLabelFile implements Serializable {
 
@@ -154,6 +156,20 @@ public abstract class AbstractLabelFile implements Serializable {
 	public abstract DataSequence labelSequence(DataSequence sequence);
 
 	protected abstract int setLabel(DataSequence sequence, HashMap<String, SequenceLabel> proccessedSequenceMap, int index);
+
+	protected void printNumberedSequence(DataSequence pSequence) {
+		if(pSequence == null) {
+			System.out.println(MessageFormat.format("[!] WARNING: Sequence no. {0} is null.", mSequenceNumber));
+			return;
+		}
+
+		String vSequence = Symbol.EMPTY;
+		for(int i = 0; i < pSequence.length(); i++) {
+			vSequence += pSequence.x(i) + ((i < pSequence.length() - 1)? Symbol.SPACE : Symbol.EMPTY);
+		}
+
+		System.out.println(mSequenceNumber + ". " + vSequence);
+	}
 
 	protected abstract void printFilterStatistics();
 

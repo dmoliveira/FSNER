@@ -138,6 +138,7 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT,
 					CollectionName.Zunnit_Extra_All_MISC};*/
 			CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
+			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER};
 
 			for(CollectionName cCollection : vSubcollection) {
 				FSNER vFSNER = new FSNER();
@@ -292,6 +293,10 @@ public class FSNER implements Serializable {
 
 	public void writeOverviewStatistics(String pOutputFilenameAddress) {
 		mFilterCombinationEvaluator.writeOverviewStatistics(pOutputFilenameAddress, "");
+	}
+
+	public AbstractNERModel getNERModel() {
+		return mNERModel;
 	}
 
 	public static FSNER loadObject(String pInputObjectFilenameAddress) {

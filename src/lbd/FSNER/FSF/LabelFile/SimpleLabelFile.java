@@ -28,6 +28,7 @@ import lbd.FSNER.Utils.WriterOutput;
 
 public class SimpleLabelFile extends AbstractLabelFile {
 
+	private static final long serialVersionUID = 1L;
 	protected final static double SCORE_THRESHOLD = 0;
 
 	public SimpleLabelFile() {
@@ -44,7 +45,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 			SequenceSet vInputSequenceSet =  HandlingSequenceSet.transformFileInSequenceSet(pFilenameAddressToLabel,
 					FileType.TRAINING, false);
 
-			DataSequence vSequence;
+			DataSequence vSequence = null;
 
 			while(vInputSequenceSet.hasNext()) {
 
@@ -54,6 +55,10 @@ public class SimpleLabelFile extends AbstractLabelFile {
 				labelSequence(vSequence);
 
 				WriterOutput.writeSequence(vOutputFile, vSequence);
+
+				if(Debug.LabelFile.printNumberedLabelSequence) {
+					printNumberedSequence(vSequence);
+				}
 			}
 
 			if(Debug.LabelFile.printFilterStatistics) {
@@ -137,32 +142,33 @@ public class SimpleLabelFile extends AbstractLabelFile {
 				sequence, mActivityControl.getDataPreprocessorList());
 
 		int vOriginalLabel;
-		int label;
-		double averageEntityProbability = 0;
-		boolean hasEntity = false;
-		int normalization = 0;
+		int vLabel;
+		double vAverageEntityProbability = 0;
+		boolean vHasEntity = false;
+		int vNormalization = 0;
 
 		for(int i = 0; i < sequence.length(); i++) {
 			vOriginalLabel = sequence.y(i);
 			sequence.set_y(i, LabelEncoding.BILOU.Outside.ordinal());
-			label = setLabel(sequence, proccessedSequenceMap, i);
+			vLabel = setLabel(sequence, proccessedSequenceMap, i);
 
-			if(LabelEncoding.isEntity(label)) {
+			//Used the original term label only for statistics.
+			if(LabelEncoding.isEntity(vLabel)) {
 				if(!LabelEncoding.isEntity(vOriginalLabel)) {
 					mTermLevelStatisticsAnalysis.addWrongTermsLabeledAsEntities(sequence.x(i) + "(" + mSequenceNumber + ")");
 				} else {
 					mTermLevelStatisticsAnalysis.addTermLabeledAsEntity((String) sequence.x(i) + "(" + mSequenceNumber + ")");
 				}
 
-				hasEntity = true;
-				averageEntityProbability += mLabelCalculator.getLabelProbabilities()[label]/mLabelCalculator.getNormalizationFactor()[label];
-				normalization++;
+				vHasEntity |= true;
+				vAverageEntityProbability += mLabelCalculator.getLabelProbabilities()[vLabel]/mLabelCalculator.getNormalizationFactor()[vLabel];
+				vNormalization++;
 			} else if(LabelEncoding.isEntity(vOriginalLabel)) {
 				mTermLevelStatisticsAnalysis.addMissedEntityTerms((String) sequence.x(i) + "(" + mSequenceNumber + ")");
 			}
 		}
 
-		if(hasEntity && averageEntityProbability/normalization > mUpdateControl.getThreshouldConfidenceSequence()) {
+		if(vHasEntity && vAverageEntityProbability/vNormalization > mUpdateControl.getThreshouldConfidenceSequence()) {
 			mUpdateControl.addSequence(sequence);
 		}
 	}

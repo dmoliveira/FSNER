@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class HandlingSequenceSet {
 
 	private static final String ENCODE_USED = "ISO-8859-1";
-	public static enum FileType {TRAINING, TEST, VALIDATION};
+	public static enum FileType {TRAINING, TEST, VALIDATION, LABEL};
 	private static final String DELIMITER_SPLIT = "\\|";
 	private static final String DELIMITER = "|";
 	/** private Writer out; (Disable) **/
@@ -25,17 +25,18 @@ public class HandlingSequenceSet {
 		SegmentSequence sequence = new SegmentSequence();
 
 		for(ArrayList<String> stream : streamList) {
-			
+
 			sequenceSet.addSequence(new SegmentSequence());
 			sequence = sequenceSet.get(sequenceSet.size() - 1);
-			
-			for(String term : stream)
+
+			for(String term : stream) {
 				sequence.addElement(term, defaultLabel);
+			}
 		}
 
 		return (sequenceSet);
 	}
-	
+
 	public static SequenceSet transformFileInSequenceSet(String inputFile, FileType fileType, boolean isSegment) {
 
 		SequenceSet sequenceSet = new SequenceSet();
@@ -43,11 +44,12 @@ public class HandlingSequenceSet {
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), ENCODE_USED));
 
-			if(!isSegment)
+			if(!isSegment) {
 				sequenceSet = getSequenceInFile(in, fileType);
-			else
+			} else {
 				sequenceSet = getSegmentSequenceInFile(in, fileType);
-			
+			}
+
 			in.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("FileNotFoundException: " + e);
@@ -57,22 +59,22 @@ public class HandlingSequenceSet {
 
 		return (sequenceSet);
 	}
-	
+
 	private static SequenceSet getSequenceInFile(BufferedReader in, FileType fileType) {
-		
+
 		SegmentSequence sequence = new SegmentSequence();
 		SequenceSet sequenceSet = new SequenceSet();
-		
+
 		String line = "";
 		String elementList[];
-		
+
 		int lineNumber = 0;
-		
+
 		try {
 			while ((line = in.readLine()) != null) {
-				
+
 				lineNumber++;
-				
+
 				if (!line.equals("")) {
 					//System.err.println("Reading line("+lineNumber+"): \"" + line + "\"");
 					elementList = line.split(DELIMITER_SPLIT);
@@ -90,14 +92,14 @@ public class HandlingSequenceSet {
 			System.err.println("Error when reading line("+lineNumber+"): \"" + line + "\"");
 			e.printStackTrace();
 		}
-		
+
 		return(sequenceSet);
 	}
-	
+
 	private static SequenceSet getSegmentSequenceInFile(BufferedReader in, FileType fileType) {
-		
+
 		Writer out = null;
-		
+
 		try {
 			out = new OutputStreamWriter(new FileOutputStream("./samples/data/bcs2010/log.txt"), ENCODE_USED);
 		} catch (FileNotFoundException e1) {
@@ -105,16 +107,16 @@ public class HandlingSequenceSet {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		SegmentSequence sequence = new SegmentSequence();
 		SequenceSet sequenceSet = new SequenceSet();
 		int segmentPosition = 0;
 		int segmentStart = -1;
 		int segmentEnd = -1;
-		
+
 		String line;
 		String elementList[];
-		
+
 		try {
 			while ((line = in.readLine()) != null) {
 				if (!line.equals("")) {
@@ -122,14 +124,15 @@ public class HandlingSequenceSet {
 
 					String token = elementList[0];
 					int label = -1;
-					
-					if(fileType != FileType.VALIDATION)
+
+					if(fileType != FileType.VALIDATION) {
 						label = LabelMap.getLabelIndexBILOU(elementList[1]);
-					else
+					} else {
 						label = LabelMap.getLabelIndexOI(elementList[1]);
+					}
 
 					sequence.addElement(token, label);
-					
+
 					if(fileType == FileType.TRAINING || fileType == FileType.TEST) {
 						if(label == 0) { // Beginning
 							segmentStart = segmentPosition;
@@ -139,17 +142,17 @@ public class HandlingSequenceSet {
 						} else if(label == 3 || label == 4) { //Outside or UnitToken
 							segmentStart = segmentPosition;
 							segmentEnd = segmentPosition;
-							
+
 							//0 - Outside, 1 - Inside
 							sequence.setSegment(segmentStart, segmentEnd, (label != 3) ? 1 : 0);
 						}
 					}
-					
+
 					segmentPosition++;
 				} else {
 					sequenceSet.addSequence(sequence);
 					sequence = new SegmentSequence();
-					
+
 					segmentPosition = 0;
 					segmentStart = segmentPosition;
 					segmentEnd = segmentPosition;
@@ -158,20 +161,20 @@ public class HandlingSequenceSet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
-		for(int i = 0; i < sequenceSet.size(); i++) {
-			for(int j = 0; j < sequenceSet.get(i).length(); j++) {
-				out.write(sequenceSet.get(i).x(j) + "|" + sequenceSet.get(i).y(j)+ "\n");
+			for(int i = 0; i < sequenceSet.size(); i++) {
+				for(int j = 0; j < sequenceSet.get(i).length(); j++) {
+					out.write(sequenceSet.get(i).x(j) + "|" + sequenceSet.get(i).y(j)+ "\n");
+				}
+				out.write("\n");
 			}
-			out.write("\n");
-		}
-		out.flush();
-		out.close();
+			out.flush();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return(sequenceSet);
 	}
 
@@ -183,9 +186,9 @@ public class HandlingSequenceSet {
 		for (int i = 0; i < sequence.size(); i++) {
 			output += sequence.x(i);
 			output += DELIMITER;
-			
+
 			labelIndex = ((!isSegment)? sequence.y(i) : ((sequence.y(i) == 0)? 3 : 1));
-			
+
 			output += LabelMap.getLabelNameBILOU(labelIndex) + "\n";
 		}
 

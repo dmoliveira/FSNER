@@ -25,6 +25,9 @@ public interface Debug {
 
 	public interface LabelFile {
 		@DefaultValue(value="false")
+		public boolean printNumberedLabelSequence = false;
+
+		@DefaultValue(value="false")
 		public boolean printFilterStatistics = false;
 
 		@DefaultValue(value="false")
@@ -58,7 +61,7 @@ public interface Debug {
 
 	public interface Evaluator {
 		@DefaultValue(value="false")
-		public boolean isToPrintParcialStatistics = false;
+		public boolean isToPrintParcialStatistics = true;
 
 		@DefaultValue(value="false")
 		public boolean isToWriteParcialStatistics = false;

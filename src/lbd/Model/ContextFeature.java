@@ -13,7 +13,7 @@ import lbd.Utils.Utils;
 
 public class ContextFeature extends FeatureTypes {
 
-	private static final long serialVersionUID = -4097231555056110415L;
+	private static final long serialVersionUID = 1L;
 	protected final String ENCODE_USED = "ISO-8859-1";
 
 	protected SupportContext supportContext;

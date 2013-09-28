@@ -30,19 +30,19 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	public static String sDictionaryDirectory;
 
 	protected AbstractDataPreprocessor mDataProcessor;
-	protected static HashMap<String, DictionaryFtr4> sDictionaryList;
+	protected HashMap<String, DictionaryFtr4> sDictionaryList;
 
-	protected static ArrayList<String> sDictionaryNameList;
-	protected static HashMap<String, Boolean> sDictionaryLoadMap;
+	protected ArrayList<String> sDictionaryNameList;
+	protected HashMap<String, Boolean> sDictionaryLoadMap;
 	protected SequenceLabel mSequenceLabelProcessed;
 
 	//To utilize entity terms in training set in dictionary
 	@DefaultValue(value="false")
-	public static final boolean sIsToUseTrainingEntityTermAsDictionary = false;
-	public static String mTrainingFileDictionary = "Internal@TrainingFileDictionary";
+	public final boolean sIsToUseTrainingEntityTermAsDictionary = false;
+	public String mTrainingFileDictionary = "Internal@TrainingFileDictionary";
 
 	//To optimize dictionary search
-	protected static final int MAX_ENTRY_WINDOW = 6;
+	protected final int MAX_ENTRY_WINDOW = 6; //DEFAULT: 6
 	protected int mNextIndexToSearchInDictionary;
 
 	public FtrSingleTermDictionary4(int preprocessingTypeNameIndex,
@@ -60,11 +60,24 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 		}
 
 		//this.commonFilterName = "Dic";
-
 		//this.commonFilterName = "Wrd" + preprocessingTypeNameIndex;
 
 		this.mDataProcessor = dataProcessor;
 		this.mDictionaryNameIndex = dictionaryNameIndex;
+	}
+
+	public FtrSingleTermDictionary4(int preprocessingTypeNameIndex,
+			AbstractFilterScoreCalculatorModel scoreCalculator,
+			AbstractDataPreprocessor dataProcessor, int dictionaryNameIndex, FtrSingleTermDictionary4 pLastDictionaryFilter) {
+
+		this(preprocessingTypeNameIndex, scoreCalculator, dataProcessor, dictionaryNameIndex);
+
+		if(pLastDictionaryFilter != null) {
+			this.sDictionaryList = pLastDictionaryFilter.sDictionaryList;
+			this.sDictionaryNameList = pLastDictionaryFilter.sDictionaryNameList;
+			this.sDictionaryLoadMap = pLastDictionaryFilter.sDictionaryLoadMap;
+			this.mTrainingFileDictionary = pLastDictionaryFilter.mTrainingFileDictionary;
+		}
 	}
 
 	@Override
@@ -301,10 +314,10 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	}
 
 	public static void Clear() {
-		sDictionaryDirectory = null;
+		/*sDictionaryDirectory = null;
 		sDictionaryList = null;
 		sDictionaryNameList = null;
-		sDictionaryLoadMap = null;
+		sDictionaryLoadMap = null;*/
 	}
 
 }

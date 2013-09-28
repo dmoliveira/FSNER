@@ -50,25 +50,25 @@ public class LabelEncoding {
 	}
 	}
 
-	protected static EncodingType encodingType = null;
+	protected static EncodingType sEncodingType = null;
 
 	public static boolean isEntity(int label) {
 
 		boolean isEntity = false;
 
-		if(encodingType == null) {
+		if(sEncodingType == null) {
 			new Throwable("-- Error: Set one of the Encoding Type available before start the NERModel.");
 		}
 
-		if(encodingType == EncodingType.BILOU) {
+		if(sEncodingType == EncodingType.BILOU) {
 			isEntity = isEntityBILOU(label);
-		} else if(encodingType == EncodingType.BIO) {
+		} else if(sEncodingType == EncodingType.BIO) {
 			isEntity = isEntityBIO(label);
-		} else if(encodingType == EncodingType.IO) {
+		} else if(sEncodingType == EncodingType.IO) {
 			isEntity = isEntityIO(label);
-		} else if(encodingType == EncodingType.BILOUUnitContext) {
+		} else if(sEncodingType == EncodingType.BILOUUnitContext) {
 			isEntity = isEntityBILOUUnitContext(label);
-		} else if(encodingType == EncodingType.BILOUContext) {
+		} else if(sEncodingType == EncodingType.BILOUContext) {
 			isEntity = isEntityBILOUContext(label);
 		}
 
@@ -101,26 +101,26 @@ public class LabelEncoding {
 	}
 
 	public static void setEncodingType(EncodingType encodingType) {
-		LabelEncoding.encodingType = encodingType;
+		LabelEncoding.sEncodingType = encodingType;
 	}
 
 	public static EncodingType getEncodingType() {
-		return(encodingType);
+		return(sEncodingType);
 	}
 
 	public static int getAlphabetSize() {
 
 		int alphabetSize = -1;
 
-		if(encodingType == EncodingType.BILOU) {
+		if(sEncodingType == EncodingType.BILOU) {
 			alphabetSize = BILOU.values().length;
-		} else if(encodingType == EncodingType.BIO) {
+		} else if(sEncodingType == EncodingType.BIO) {
 			alphabetSize = BIO.values().length;
-		} else if(encodingType == EncodingType.IO) {
+		} else if(sEncodingType == EncodingType.IO) {
 			alphabetSize = IO.values().length;
-		} else if(encodingType == EncodingType.BILOUUnitContext) {
+		} else if(sEncodingType == EncodingType.BILOUUnitContext) {
 			alphabetSize = BILOUUnitContext.values().length;
-		} else if(encodingType == EncodingType.BILOUContext) {
+		} else if(sEncodingType == EncodingType.BILOUContext) {
 			alphabetSize = BILOUContext.values().length;
 		}
 
@@ -131,15 +131,15 @@ public class LabelEncoding {
 
 		int outsideLabel = -1;
 
-		if(encodingType == EncodingType.BILOU) {
+		if(sEncodingType == EncodingType.BILOU) {
 			outsideLabel = BILOU.Outside.ordinal();
-		} else if(encodingType == EncodingType.BIO) {
+		} else if(sEncodingType == EncodingType.BIO) {
 			outsideLabel = BIO.Outside.ordinal();
-		} else if(encodingType == EncodingType.IO) {
+		} else if(sEncodingType == EncodingType.IO) {
 			outsideLabel = IO.Outside.ordinal();
-		} else if(encodingType == EncodingType.BILOUUnitContext) {
+		} else if(sEncodingType == EncodingType.BILOUUnitContext) {
 			outsideLabel = BILOUUnitContext.Outside.ordinal();
-		} else if(encodingType == EncodingType.BILOUContext) {
+		} else if(sEncodingType == EncodingType.BILOUContext) {
 			outsideLabel = BILOUContext.Outside.ordinal();
 		}
 

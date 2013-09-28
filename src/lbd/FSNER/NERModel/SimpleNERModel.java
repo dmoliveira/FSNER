@@ -201,9 +201,11 @@ public class SimpleNERModel extends AbstractNERModel {
 				.getDictionaryListNumber();
 
 		for (int j = 0; j < dictionaryListNumber; j++) {
+
 			dictionaryFilters.add(new FtrSingleTermDictionary4(i,
 					new FSCMNoScore(), activityControl
-					.getDataPreprocessorList().get(i), j));
+					.getDataPreprocessorList().get(i), j,
+					(j <= 0)? null : (FtrSingleTermDictionary4)dictionaryFilters.get(j-1)));
 		}
 		// Utilizar apenas quando ativado 'adicionar conjunto de treino'
 		// dictionaryFilters.add(new FtrSingleTermDictionary4(i, new

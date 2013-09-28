@@ -17,7 +17,7 @@ import lbd.NewModels.Affix.Affix.AffixType;
 
 public class Utils implements Serializable {
 
-	private static final long serialVersionUID = 5061717102238489019L;
+	private static final long serialVersionUID = 1L;
 
 	public enum TypeTestGenereted {
 		CROSS_VALIDATION, EXAUSTIVE_TEST
@@ -367,5 +367,8 @@ public class Utils implements Serializable {
 		return((new DecimalFormat(format)).format(number));
 	}
 
+	public static boolean isEmptyOrNull(String pValue) {
+		return pValue == null || pValue.isEmpty();
+	}
 
 }

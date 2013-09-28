@@ -182,6 +182,10 @@ public abstract class AbstractNERModel implements Serializable {
 		return(updateControl.sequenceListToUpdate.size() > 0);
 	}
 
+	public AbstractActivityControl getActivityControl() {
+		return activityControl;
+	}
+
 	public String getContextFilenameAddress() {
 		return(contextFilenameAddress);
 	}

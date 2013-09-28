@@ -1,8 +1,9 @@
 package lbd.FSNER.Filter.Component;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class DictionaryFtr4 {
+public class DictionaryFtr4 implements Serializable{
 
 	protected HashMap<String, Object> mEntryMap;
 

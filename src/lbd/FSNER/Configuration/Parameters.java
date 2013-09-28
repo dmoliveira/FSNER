@@ -7,10 +7,10 @@ public class Parameters {
 	public enum SaveOption {Real, Simulation};
 
 	@DefaultValue(value=Constants.CharsetEncoding.ISO88591)
-	public static String dataEncoding = Constants.CharsetEncoding.ISO88591;
+	public static String dataEncoding = Constants.CharsetEncoding.UTF8;
 
 	public static class FSNERExecution {
-		public static int trainFileIteration = 5;// default #5
+		public static int trainFileIteration = 1;// default #5
 	}
 
 	public static class Save {
@@ -53,6 +53,9 @@ public class Parameters {
 
 		@DefaultValue(value=save + "Temp/")
 		public static final String saveTemp = save + "Temp/";
+
+		@DefaultValue(value=save + "Models/")
+		public static final String models = save + "Models/";
 
 		@DefaultValue(value="../FS-NER/Data/Clusters/")
 		public static final String cluster = "../FS-NER/Data/Clusters/";
