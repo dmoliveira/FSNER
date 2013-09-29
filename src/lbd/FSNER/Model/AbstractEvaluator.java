@@ -57,9 +57,11 @@ public abstract class AbstractEvaluator implements Serializable {
 
 	protected void initializeOutputFile(ArrayList<String> pFilenameList) {
 		try {
-			mOutputFile = FileUtils.createOutputStreamWriter(
-					FileUtils.createCommonFilename(pFilenameList),
-					Constants.FileExtention.stats);
+			if(Debug.Evaluator.isToWriteStatistics) {
+				mOutputFile = FileUtils.createOutputStreamWriter(
+						FileUtils.createCommonFilename(pFilenameList),
+						Constants.FileExtention.stats);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -207,6 +209,7 @@ public abstract class AbstractEvaluator implements Serializable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void writeOverviewStatistics(String pObservation) {
 
 		if(mTestFileList.size() > 0) {
@@ -215,7 +218,7 @@ public abstract class AbstractEvaluator implements Serializable {
 			}
 
 			try {
-				if(mOutputFile == null) {
+				if(mOutputFile == null && Debug.Evaluator.isToWriteStatistics) {
 					mOutputFile = FileUtils.createOutputStreamWriter(
 							FileUtils.createCommonFilename(mTestFileList),
 							Constants.FileExtention.stats);
@@ -227,8 +230,10 @@ public abstract class AbstractEvaluator implements Serializable {
 					writeOverviewLatexStatistics(mOutputFile, pObservation);
 				}
 
-				mOutputFile.flush();
-				mOutputFile.close();
+				if(mOutputFile != null && Debug.Evaluator.isToWriteStatistics) {
+					mOutputFile.flush();
+					mOutputFile.close();
+				}
 
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();

@@ -1,7 +1,7 @@
 package lbd.FSNER.LabelFile.LabelCalculatorModel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbability;
@@ -18,34 +18,34 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 	private static final long serialVersionUID = 1L;
 
 	//-- Filter Restriction
-	protected double filterProbability = 0.0;
-	protected double alpha = 0.0; //0.8
+	protected double vFilterProbability = 0.0;
+	protected double vAlpha = 0.0; //0.8
 	protected final double SCORE_THRESHOLD = 0;
 	protected final double COMMON_TERM_PERCENTAGE_THRESHOLD = 1.0;
-	protected boolean showProbabilityForLabel = false;
+	protected boolean vShowProbabilityForLabel = false;
 
-	public LCMSumScore(AbstractTermRestrictionChecker termRestrictionChecker) {
-		super(termRestrictionChecker);
+	public LCMSumScore(AbstractTermRestrictionChecker pTermRestrictionChecker) {
+		super(pTermRestrictionChecker);
 	}
 
 	@Override
-	public int calculateMostProbablyLabel(int index,
-			HashMap<String, SequenceLabel> proccessedSequenceMap,
-			ArrayList<AbstractDataPreprocessor> dataProcessorList,
-			ArrayList<AbstractFilter> filterList) {
+	public int calculateMostProbablyLabel(int pIndex,
+			Map<String, SequenceLabel> pProccessedSequenceMap,
+			List<AbstractDataPreprocessor> pDataProcessorList,
+			List<AbstractFilter> pFilterList) {
 
-		int mostProbablyLabel = LabelEncoding.getOutsideLabel();
-		int lastFilterPreprocessingTypeNameIndex = -1;
-		double score = SCORE_THRESHOLD;
+		int vMostProbablyLabel = LabelEncoding.getOutsideLabel();
+		int vLastFilterPreprocessingTypeNameIndex = -1;
+		double vScore = SCORE_THRESHOLD;
 
-		boolean wasFilterActivated = false;
+		boolean vWasFilterActivated = false;
 
-		String filterInstanceId;
-		String term = Symbol.EMPTY;
+		String vFilterInstanceId;
+		String vTerm = Symbol.EMPTY;
 
-		SequenceLabel sequenceLabelProcessed = null;
-		FilterProbability filterProbability = null;
-		AbstractDataPreprocessor dataPreprocessor = null;
+		SequenceLabel vSequenceLabelProcessed = null;
+		FilterProbability vFilterProbability = null;
+		AbstractDataPreprocessor vDataPreprocessor = null;
 
 		mLabelProbability = new double [LabelEncoding.getAlphabetSize()];
 		mNormalizationFactor  = new int[LabelEncoding.getAlphabetSize()];
@@ -53,59 +53,60 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		double vFilterLabelMaxProbability;
 		int vFilterLabelChoosed;
 
-		for(AbstractFilter filter : filterList) {
+		for(AbstractFilter cFilter : pFilterList) {
 
-			if(lastFilterPreprocessingTypeNameIndex != filter.getFilterPreprocessingTypeNameIndex()) {
+			if(vLastFilterPreprocessingTypeNameIndex != cFilter.getFilterPreprocessingTypeNameIndex()) {
 
-				dataPreprocessor = dataProcessorList.get(filter.getFilterPreprocessingTypeNameIndex());
-				sequenceLabelProcessed = proccessedSequenceMap.get(filter.getPreprocesingTypeName());
-				lastFilterPreprocessingTypeNameIndex = filter.getFilterPreprocessingTypeNameIndex();
+				vDataPreprocessor = pDataProcessorList.get(cFilter.getFilterPreprocessingTypeNameIndex());
+				vSequenceLabelProcessed = pProccessedSequenceMap.get(cFilter.getPreprocesingTypeName());
+				vLastFilterPreprocessingTypeNameIndex = cFilter.getFilterPreprocessingTypeNameIndex();
 
-				term = sequenceLabelProcessed.getTerm(index);
+				vTerm = vSequenceLabelProcessed.getTerm(pIndex);
 			}
 
-			if(filter.getFilterState() == FilterState.Active &&
-					(!isUnrealibleSituation || filter.isToUseFilterInUnreliableSituation()) &&
-					dataPreprocessor.getCommonTermProbability(term) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
+			if(cFilter.getFilterState() == FilterState.Active &&
+					(!mIsUnrealibleSituation || cFilter.isToUseFilterInUnreliableSituation()) &&
+					vDataPreprocessor.getCommonTermProbability(vTerm) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
 
 				//-- Get filter instance id determined by the index
-				filterProbability = filter.getFilterProbability();
-				filterInstanceId = filter.getSequenceInstanceId(sequenceLabelProcessed, index);
+				vFilterProbability = cFilter.getFilterProbability();
+				vFilterInstanceId = cFilter.getSequenceInstanceId(vSequenceLabelProcessed, pIndex);
 
-				if((!filterInstanceId.isEmpty() &&
-						(!filter.considerFilterProbability() ||
-								(filterProbability.getProbability(filterInstanceId) > this.alpha && // >
-										filterProbability.getInstanceFrequency(filterInstanceId) > filter.getInstanceFrequencyThreshould())))) {
+				if((!vFilterInstanceId.isEmpty() &&
+						(!cFilter.considerFilterProbability() ||
+								(vFilterProbability.getProbability(vFilterInstanceId) > this.vAlpha && // >
+										vFilterProbability.getInstanceFrequency(vFilterInstanceId) > cFilter.getInstanceFrequencyThreshould())))) {
 
-					score = filter.calculateScore(sequenceLabelProcessed, index);
+					vScore = cFilter.calculateScore(vSequenceLabelProcessed, pIndex);
 
 					//if(score > SCORE_THRESHOLD) {
 
 					vFilterLabelMaxProbability = 0;
-					vFilterLabelChoosed = LabelEncoding.BILOU.Outside.ordinal();
+					vFilterLabelChoosed = LabelEncoding.getOutsideLabel();
 					for(int i = 0; i < LabelEncoding.getAlphabetSize(); i++) {
-						mLabelProbability[i] += filterProbability.getProbability(filterInstanceId, i);
+						//TODO: Test normalization only when prob. > 0
+						mLabelProbability[i] += vFilterProbability.getProbability(vFilterInstanceId, i);
 						mNormalizationFactor[i]++;
-						if(vFilterLabelMaxProbability < filterProbability.getProbability(filterInstanceId, i)) {
-							vFilterLabelMaxProbability = filterProbability.getProbability(filterInstanceId, i);
+						if(vFilterLabelMaxProbability < vFilterProbability.getProbability(vFilterInstanceId, i)) {
+							vFilterLabelMaxProbability = vFilterProbability.getProbability(vFilterInstanceId, i);
 							vFilterLabelChoosed = i;
 						}
 					}
 
-					wasFilterActivated = true;
+					vWasFilterActivated = true;
 
-					filterProbability.addToFilterStatisticForAssignedLabels(term,
-							LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index)), LabelEncoding.isEntity(vFilterLabelChoosed));
+					vFilterProbability.addToFilterStatisticForAssignedLabels(vTerm,
+							LabelEncoding.isEntity(vSequenceLabelProcessed.getLabel(pIndex)), LabelEncoding.isEntity(vFilterLabelChoosed));
 					//}
 				}
 			}
 		}
 
-		if(wasFilterActivated) {
-			mostProbablyLabel = getMostProbablyLabel(term, mLabelProbability, mNormalizationFactor);
+		if(vWasFilterActivated) {
+			vMostProbablyLabel = getMostProbablyLabel(vTerm, mLabelProbability, mNormalizationFactor);
 		}
 
-		return (mostProbablyLabel);
+		return (vMostProbablyLabel);
 	}
 
 	protected int getMostProbablyLabel(String term, double [] labelProbability, int [] normalizationFactor) {
@@ -114,14 +115,14 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		double maxProbability = -1;
 		double probability = -1;
 
-		if(showProbabilityForLabel && term.length() > 2) {
+		if(vShowProbabilityForLabel && term.length() > 2) {
 			System.out.println("Term: " + term);
 		}
 
 		for(int i = 0; i < LabelEncoding.getAlphabetSize(); i++) {
 
 			probability = labelProbability[i]/normalizationFactor[i];
-			if(showProbabilityForLabel && term.length() > 2) {
+			if(vShowProbabilityForLabel && term.length() > 2) {
 				System.out.println("Prob(" + LabelEncoding.BILOU.values()[i].name() + "): " + probability);
 			}
 
@@ -131,22 +132,22 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 			}
 		}
 
-		if(showProbabilityForLabel && term.length() > 2) {
+		if(vShowProbabilityForLabel && term.length() > 2) {
 			System.out.println(">> Chosen Label: " + LabelEncoding.BILOU.values()[mostProbablyLabel].name());
 		}
-		if(showProbabilityForLabel && term.length() > 2) {
+		if(vShowProbabilityForLabel && term.length() > 2) {
 			System.out.println("-----------------");
 		}
 
-		return((maxProbability >= filterProbability)? mostProbablyLabel : LabelEncoding.getOutsideLabel());
+		return((maxProbability >= vFilterProbability)? mostProbablyLabel : LabelEncoding.getOutsideLabel());
 	}
 
 	public void setFilterProbability(double filterProbability) {
-		this.filterProbability = filterProbability;
+		this.vFilterProbability = filterProbability;
 	}
 
 	public void setAlpha(double alpha) {
-		this.alpha = alpha;
+		this.vAlpha = alpha;
 	}
 
 }

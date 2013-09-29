@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
@@ -17,118 +19,119 @@ import lbd.FSNER.Utils.FileUtils;
 public abstract class AbstractNERModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	//-- Main Objects
-	protected AbstractActivityControl activityControl;
-	protected AbstractUpdateControl updateControl;
-	protected AbstractLabelFile labelFile;
-	protected AbstractEvaluator evaluator;
+	protected AbstractActivityControl mActivityControl;
+	protected AbstractUpdateControl mUpdateControl;
+	protected AbstractLabelFile mLabelFile;
+	protected AbstractEvaluator mEvaluator;
 
 	protected FilterParameters mFilterParameters;
 
 	//-- Files
-	protected String contextFilenameAddress;
+	protected String mContextFilenameAddress;
 
 	//-- used to calculate generalization
-	protected HashMap<String, Object> entityMap;
-	protected int entityGeneralizedNumber;
+	protected Map<String, Object> mEntityMap;
+	protected int mEntityGeneralizedNumber;
 
 	public AbstractNERModel() {
-		entityMap = new HashMap<String, Object>();
+		mEntityMap = new HashMap<String, Object>();
 	}
 
-	public void allocModel(String [] initializeFilenameList) {
+	public void allocModel(String [] pInitializeFilenameList) {
 
 		setSubComponents();
 
-		allocModelSub(initializeFilenameList);
+		allocModelSub(pInitializeFilenameList);
 	}
 
-	protected abstract void allocModelSub(String [] initializeFilenameList);
+	protected abstract void allocModelSub(String [] pInitializeFilenameList);
 
-	public void load(String contextFilenameAddress) {
+	public void load(String pContextFilenameAddress) {
 
-		this.contextFilenameAddress = contextFilenameAddress;
+		this.mContextFilenameAddress = pContextFilenameAddress;
 
-		loadSub(contextFilenameAddress);
+		loadSub(pContextFilenameAddress);
 		addLoadedEntity();
 	}
 
-	protected void loadSub(String contextFilenameAddress) {
-		activityControl.startActivityControl(contextFilenameAddress);
+	protected void loadSub(String pContextFilenameAddress) {
+		mActivityControl.startActivityControl(pContextFilenameAddress);
 	}
 
-	public void label(String filenameAddressToLabel, boolean isUnrealibleSituation) {
-		labelFileSub(filenameAddressToLabel, isUnrealibleSituation);
+	public void label(String pFilenameAddressToLabel, boolean pIsUnrealibleSituation) {
+		labelFileSub(pFilenameAddressToLabel, pIsUnrealibleSituation);
 		addLabeledEntity();
 	}
 
-	public void labelFile(String filenameAddressToLabel) {
-		labelFileSub(filenameAddressToLabel, false);
+	public void labelFile(String pFilenameAddressToLabel) {
+		labelFileSub(pFilenameAddressToLabel, false);
 		addLabeledEntity();
 	}
 
-	protected void labelFileSub(String filenameAddressToLabel, boolean isUnrealibleSituation) {
-		updateControl.restartForNextUpdate();
-		labelFile.labelFile(filenameAddressToLabel, isUnrealibleSituation);
+	protected void labelFileSub(String pFilenameAddressToLabel, boolean pIsUnrealibleSituation) {
+		mUpdateControl.restartForNextUpdate();
+		mLabelFile.labelFile(pFilenameAddressToLabel, pIsUnrealibleSituation);
 	}
 
-	public void labelStream(ArrayList<ArrayList<String>> streamList, boolean isUnrealibleSituation) {
-		labelStreamSub(streamList, isUnrealibleSituation);
+	public void labelStream(List<List<String>> pStreamList, boolean pIsUnrealibleSituation) {
+		labelStreamSub(pStreamList, pIsUnrealibleSituation);
 		addLabeledEntity();
 	}
 
-	protected void labelStreamSub(ArrayList<ArrayList<String>> streamList, boolean isUnrealibleSituation) {
-		updateControl.restartForNextUpdate();
-		labelFile.labelStream(streamList, isUnrealibleSituation);
+	protected void labelStreamSub(List<List<String>> streamList, boolean isUnrealibleSituation) {
+		mUpdateControl.restartForNextUpdate();
+		mLabelFile.labelStream(streamList, isUnrealibleSituation);
 	}
 
 	public void updateWithLabeledFile(String filenameAddressToLabel) {
-		updateControl.restartForNextUpdate();
-		labelFile.updateWithLabeledFile(filenameAddressToLabel);
+		mUpdateControl.restartForNextUpdate();
+		mLabelFile.updateWithLabeledFile(filenameAddressToLabel);
 		update("LabeledFile");
 	}
 
 	public void evaluate(String taggedFilenameAddress, String testFilenameAddress, String observation) {
-		evaluator.evaluate(taggedFilenameAddress, testFilenameAddress, observation);
+		mEvaluator.evaluate(taggedFilenameAddress, testFilenameAddress, observation);
 	}
 
 	public void writeEvaluation(String observation) {
-		evaluator.writeOverviewStatistics(observation);
+		mEvaluator.writeOverviewStatistics(observation);
 	}
 
 	public void update(String updateSource) {
 		updateSub(updateSource);
-		updateControl.restartForNextUpdate();
+		mUpdateControl.restartForNextUpdate();
 	}
 
 	protected abstract void updateSub(String updateSource);
 
 	public void addModelActivityControl(AbstractActivityControl activityControl) {
-		this.activityControl = activityControl;
+		this.mActivityControl = activityControl;
 	}
 
 	public void addModelUpdateControl(AbstractUpdateControl updateControl) {
-		this.updateControl = updateControl;
+		this.mUpdateControl = updateControl;
 	}
 
 	public void addModelLabelFile(AbstractLabelFile labelFile) {
-		this.labelFile = labelFile;
+		this.mLabelFile = labelFile;
 	}
 
 	public void addModelEvaluator(AbstractEvaluator evaluator) {
-		this.evaluator = evaluator;
+		this.mEvaluator = evaluator;
 	}
 
 	protected void setSubComponents() {
-		labelFile.addActivityControl(activityControl);
-		labelFile.addUpdateControl(updateControl);
+		mLabelFile.addActivityControl(mActivityControl);
+		mLabelFile.addUpdateControl(mUpdateControl);
 	}
 
 	protected void addLoadedEntity() {
 		//System.out.println("Entity in Train: ");
-		for(String entityValue : activityControl.getEntityList()) {
-			if(!entityMap.containsKey(entityValue)) {
-				entityMap.put(entityValue, null);
+		for(String entityValue : mActivityControl.getEntityList()) {
+			if(!mEntityMap.containsKey(entityValue)) {
+				mEntityMap.put(entityValue, null);
 				//System.out.println(entityValue);
 			}
 		}
@@ -136,10 +139,10 @@ public abstract class AbstractNERModel implements Serializable {
 
 	protected void addLabeledEntity() {
 		//System.out.println("Entity in Test: ");
-		for(String entityValue : labelFile.getEntityList()) {
-			if(!entityMap.containsKey(entityValue)) {
-				entityMap.put(entityValue, null);
-				entityGeneralizedNumber++;
+		for(String entityValue : mLabelFile.getEntityList()) {
+			if(!mEntityMap.containsKey(entityValue)) {
+				mEntityMap.put(entityValue, null);
+				mEntityGeneralizedNumber++;
 				//System.out.println(entityValue);
 			}
 		}
@@ -163,7 +166,7 @@ public abstract class AbstractNERModel implements Serializable {
 			vOutputFile.write("\tFilters used: " + pFilterParameters + "\n");
 			vOutputFile.write("\tUse filter combination: " + Parameters.SimpleActivityControl.isToCombineFilters + "\n");
 			vOutputFile.write("\n\tDetails of filters\n");
-			for(AbstractFilter cFilter : activityControl.getFilterList()) {
+			for(AbstractFilter cFilter : mActivityControl.getFilterList()) {
 				vOutputFile.write("\t\t" + cFilter.getActivityName() + "\n");
 			}
 
@@ -179,39 +182,39 @@ public abstract class AbstractNERModel implements Serializable {
 	}
 
 	public boolean hasSequenceToUpdate() {
-		return(updateControl.sequenceListToUpdate.size() > 0);
+		return(mUpdateControl.sequenceListToUpdate.size() > 0);
 	}
 
 	public AbstractActivityControl getActivityControl() {
-		return activityControl;
+		return mActivityControl;
 	}
 
 	public String getContextFilenameAddress() {
-		return(contextFilenameAddress);
+		return(mContextFilenameAddress);
 	}
 
 	public AbstractLabelFile getLabelFile() {
-		return labelFile;
+		return mLabelFile;
 	}
 
-	public ArrayList<String> getUnknownTermList() {
-		return(labelFile.getUnknownTermList());
+	public List<String> getUnknownTermList() {
+		return(mLabelFile.getUnknownTermList());
 	}
 
 	public String getTaggedFilenameAddress() {
-		return(labelFile.getTaggedFilenameAddress());
+		return(mLabelFile.getTaggedFilenameAddress());
 	}
 
-	public HashMap<String, Object> getEntityMap() {
-		return(entityMap);
+	public Map<String, Object> getEntityMap() {
+		return(mEntityMap);
 	}
 
-	public ArrayList<String> getEntityList() {
-		return(activityControl.getEntityList());
+	public List<String> getEntityList() {
+		return(mActivityControl.getEntityList());
 	}
 
 	public AbstractUpdateControl getUpdateControl() {
-		return(updateControl);
+		return(mUpdateControl);
 	}
 
 }

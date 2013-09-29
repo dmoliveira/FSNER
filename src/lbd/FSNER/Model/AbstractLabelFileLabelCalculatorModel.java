@@ -3,6 +3,8 @@ package lbd.FSNER.Model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 
@@ -10,72 +12,73 @@ import lbd.FSNER.Component.SequenceLabel;
 public abstract class AbstractLabelFileLabelCalculatorModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	protected boolean isUnrealibleSituation;
-	protected HashMap<String, Object> unknownTermMap;
-	protected ArrayList<String> unknownTermList;
-	protected AbstractTermRestrictionChecker termRestrictionChecker;
+
+	protected boolean mIsUnrealibleSituation;
+	protected Map<String, Object> mUnknownTermMap;
+	protected List<String> mUnknownTermList;
+	protected AbstractTermRestrictionChecker mTermRestrictionChecker;
 
 	protected double[]  mLabelProbability;
 	protected int [] mNormalizationFactor;
 
-	public AbstractLabelFileLabelCalculatorModel(AbstractTermRestrictionChecker termRestrictionChecker) {
-		unknownTermMap = new HashMap<String, Object>();
-		unknownTermList = new ArrayList<String>();
-		this.termRestrictionChecker = termRestrictionChecker;
+	public AbstractLabelFileLabelCalculatorModel(AbstractTermRestrictionChecker pTermRestrictionChecker) {
+		mUnknownTermMap = new HashMap<String, Object>();
+		mUnknownTermList = new ArrayList<String>();
+		mTermRestrictionChecker = pTermRestrictionChecker;
 	}
 
-	public abstract int calculateMostProbablyLabel(int index,
-			HashMap<String, SequenceLabel> proccessedSequenceMap,
-			ArrayList<AbstractDataPreprocessor> dataProcessorList,
-			ArrayList<AbstractFilter> filterList);
+	public abstract int calculateMostProbablyLabel(int pIndex,
+			Map<String, SequenceLabel> pProccessedSequenceMap,
+			List<AbstractDataPreprocessor> pDataProcessorList,
+			List<AbstractFilter> pFilterList);
 
-	public void setIsUnrealibleSituation(boolean isUnrealibleSituation) {
-		this.isUnrealibleSituation = isUnrealibleSituation;
+	public void setIsUnrealibleSituation(boolean pIsUnrealibleSituation) {
+		this.mIsUnrealibleSituation = pIsUnrealibleSituation;
 	}
 
 	public boolean isUnrealibleSituation() {
-		return(isUnrealibleSituation);
+		return(mIsUnrealibleSituation);
 	}
 
-	public void addAsUnknownTerm(String term) {
+	public void addAsUnknownTerm(String pTerm) {
 
-		term = term.toLowerCase();
+		pTerm = pTerm.toLowerCase();
 
-		if(!unknownTermMap.containsKey(term)) {
-			unknownTermMap.put(term, null);
-			unknownTermList.add(term);
+		if(!mUnknownTermMap.containsKey(pTerm)) {
+			mUnknownTermMap.put(pTerm, null);
+			mUnknownTermList.add(pTerm);
 		}
 	}
 
-	public ArrayList<String> getUnknownTermList() {
-		return(unknownTermList);
+	public List<String> getUnknownTermList() {
+		return(mUnknownTermList);
 	}
 
 	public void removeRestrictedTermFromUnknownTermList() {
 
-		ArrayList<String> termListToRemove = new ArrayList<String>();
+		List<String> termListToRemove = new ArrayList<String>();
 
-		for(String term : unknownTermList) {
-			if(termRestrictionChecker.isTermRestricted(term)) {
-				termListToRemove.add(term);
+		for(String cTerm : mUnknownTermList) {
+			if(mTermRestrictionChecker.isTermRestricted(cTerm)) {
+				termListToRemove.add(cTerm);
 			}
 		}
 
-		for(String term : termListToRemove) {
-			unknownTermList.remove(term);
+		for(String cTerm : termListToRemove) {
+			mUnknownTermList.remove(cTerm);
 		}
 	}
 
 	public void cleanUnknownTermLists() {
-		unknownTermMap.clear();
-		unknownTermList.clear();
+		mUnknownTermMap.clear();
+		mUnknownTermList.clear();
 	}
 
 	public void printUnknownTermList() {
 
-		System.out.println("-- Has a total of (" + unknownTermList.size() + ") unknown terms.");
+		System.out.println("-- Has a total of (" + mUnknownTermList.size() + ") unknown terms.");
 
-		for(String term : unknownTermList) {
+		for(String term : mUnknownTermList) {
 			System.out.println(term);
 		}
 	}

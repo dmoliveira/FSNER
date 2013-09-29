@@ -26,6 +26,7 @@ public interface Symbol {
 	public String EXCLAMATION = "!";
 	public String INTERROGATION = "?";
 	public String SPECIAL_DELIMITER = "	§þe¢¡a¬";
+	public String SPECIAL_SPLIT_TOKEN_LABEL = "\\|";
 
 	public char SPACE_CHAR = ' ';
 

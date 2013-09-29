@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.Utils.Connection.Connection;
 import lbd.Utils.Connection.URLEncoding;
@@ -50,9 +52,9 @@ public class TSEngine implements Runnable {
 	protected final String TWEET_START_TEXT = "\"text\":\"";
 	protected final String TWEET_END_TEXT = "\",\"";
 
-	protected ArrayList<String> tweetList;
-	protected HashMap<String, Object> tweetMap;
-	protected ArrayList<ArrayList<String>> streamList;
+	protected List<String> tweetList;
+	protected Map<String, Object> tweetMap;
+	protected List<List<String>> streamList;
 	protected Writer out;
 
 	public static enum State {Executing, Waiting};
@@ -67,7 +69,7 @@ public class TSEngine implements Runnable {
 	}
 
 	public void executeQuery(Writer out, String query, int maxTweetNumber, String language, String resultType,
-			ArrayList<ArrayList<String>> streamList, String message) {
+			List<List<String>> streamList, String message) {
 
 		this.query = query;
 		this.lang = language;
@@ -191,14 +193,14 @@ public class TSEngine implements Runnable {
 		}
 	}
 
-	public ArrayList<String> getTweetList() {
+	public List<String> getTweetList() {
 		return(tweetList);
 	}
 
-	public ArrayList<ArrayList<String>> getTweetArrayList() {
+	public List<List<String>> getTweetArrayList() {
 
-		ArrayList<ArrayList<String>> tweetArrayList = new ArrayList<ArrayList<String>>();
-		ArrayList<String> tweetList;
+		List<List<String>> tweetArrayList = new ArrayList<List<String>>();
+		List<String> tweetList;
 		String [] tweetArray;
 
 		for(String tweet : this.tweetList) {
@@ -226,11 +228,11 @@ public class TSEngine implements Runnable {
 		executeQuery();
 	}
 
-	public static void writeStream(Writer out, ArrayList<ArrayList<String>> streamList) {
+	public static void writeStream(Writer out, List<List<String>> streamList) {
 
 		try {
 
-			for(ArrayList<String> stream : streamList) {
+			for(List<String> stream : streamList) {
 				for(String term : stream) {
 					out.write(term.replace("\\|", "").replace("|", "") + "|Outside\n");
 				}

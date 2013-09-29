@@ -1,6 +1,7 @@
 package lbd.FSNER.Configuration;
 
 import lbd.FSNER.Utils.FileUtils;
+import lbd.FSNER.Utils.Symbol;
 import lbd.FSNER.Utils.Annotations.DefaultValue;
 
 public class Parameters {
@@ -10,7 +11,16 @@ public class Parameters {
 	public static String dataEncoding = Constants.CharsetEncoding.UTF8;
 
 	public static class FSNERExecution {
-		public static int trainFileIteration = 1;// default #5
+		public static int trainFileIteration = 5;// default #5
+	}
+
+	public static class HandleFile {
+
+		@DefaultValue(value="\\|")
+		public static String splitTokenLabelDelimiter = Symbol.SPECIAL_SPLIT_TOKEN_LABEL;
+
+		@DefaultValue(value="|")
+		public static String delimiterTokenLabel = Symbol.DELIMITER_LABEL;
 	}
 
 	public static class Save {
@@ -35,7 +45,7 @@ public class Parameters {
 
 	public static class Evaluator {
 		@DefaultValue(value="false")
-		public static boolean isToEvaluateOnTokenLevel = false;
+		public static boolean isToEvaluateOnTokenLevel = true;
 
 		@DefaultValue(value="false")
 		public static final boolean isToUseInvalidResults = false;

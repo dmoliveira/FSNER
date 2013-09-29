@@ -1,7 +1,7 @@
 package lbd.FSNER.ActivityControl.FilterCombination;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Filter.FtrCapitalizedTerms;
 import lbd.FSNER.Filter.FtrContext;
@@ -15,10 +15,10 @@ AbstractCombineFiltersInActiveControl {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void generateMultiFilters(int[] indexList, int indexDepthPosition, ArrayList<AbstractFilter> filterList,
-			HashMap<String, Integer> nextFilterClassNameMap) {
+	protected void generateMultiFilters(int[] indexList, int indexDepthPosition, List<AbstractFilter> filterList,
+			Map<String, Integer> nextFilterClassNameMap) {
 
-		HashMap<String, Integer> firstFilterClassNameMap = generateStartFilterClassNameMap(filterList, nextFilterClassNameMap);
+		Map<String, Integer> firstFilterClassNameMap = generateStartFilterClassNameMap(filterList, nextFilterClassNameMap);
 		String [] filterClassNameList;
 
 		//-- Generate Combinations of filters

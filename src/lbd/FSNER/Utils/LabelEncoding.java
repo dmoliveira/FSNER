@@ -127,6 +127,25 @@ public class LabelEncoding {
 		return(alphabetSize);
 	}
 
+	public static int getLabel(String pLabelName) {
+
+		int vOrdinalLabel = -1;
+
+		if(sEncodingType == EncodingType.BILOU && BILOU.valueOf(pLabelName) != null) {
+			vOrdinalLabel = BILOU.valueOf(pLabelName).ordinal();
+		} else if(sEncodingType == EncodingType.BIO && BIO.valueOf(pLabelName) != null) {
+			vOrdinalLabel = BIO.valueOf(pLabelName).ordinal();
+		} else if(sEncodingType == EncodingType.IO && IO.valueOf(pLabelName) != null) {
+			vOrdinalLabel = IO.valueOf(pLabelName).ordinal();
+		} else if(sEncodingType == EncodingType.BILOUUnitContext && BILOUUnitContext.valueOf(pLabelName) != null) {
+			vOrdinalLabel = BILOUUnitContext.valueOf(pLabelName).ordinal();
+		} else if(sEncodingType == EncodingType.BILOUContext && BILOUContext.valueOf(pLabelName) != null) {
+			vOrdinalLabel = BILOUContext.valueOf(pLabelName).ordinal();
+		}
+
+		return(vOrdinalLabel);
+	}
+
 	public static int getOutsideLabel() {
 
 		int outsideLabel = -1;
@@ -144,8 +163,5 @@ public class LabelEncoding {
 		}
 
 		return(outsideLabel);
-
 	}
-
-
 }

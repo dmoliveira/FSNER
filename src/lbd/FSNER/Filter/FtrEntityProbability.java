@@ -1,6 +1,7 @@
 package lbd.FSNER.Filter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
@@ -13,15 +14,15 @@ public class FtrEntityProbability extends AbstractFilter{
 
 	private static final long serialVersionUID = 1L;
 
-	protected HashMap<String, Object> entityList;
+	protected Map<String, Object> mEntityList;
 
-	public FtrEntityProbability(int preprocessingTypeNameIndex,
-			AbstractFilterScoreCalculatorModel scoreCalculator) {
+	public FtrEntityProbability(int pPreprocessingTypeNameIndex,
+			AbstractFilterScoreCalculatorModel vScoreCalculator) {
 
 		super(ClassName.getSingleName(FtrEntityProbability.class.getName()),
-				preprocessingTypeNameIndex, scoreCalculator);
+				pPreprocessingTypeNameIndex, vScoreCalculator);
 
-		entityList = new HashMap<String, Object>();
+		mEntityList = new HashMap<String, Object>();
 		//this.commonFilterName = "EP" + preprocessingTypeNameIndex;
 		//this.commonFilterName = "Wrd" + preprocessingTypeNameIndex;
 	}
@@ -38,21 +39,21 @@ public class FtrEntityProbability extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProccessed, int index) {
+	public void loadTermSequence(SequenceLabel pSequenceLabelProccessed, int pIndex) {
 
-		if(LabelEncoding.isEntity(sequenceLabelProccessed.getLabel(index))) {
-			entityList.put(sequenceLabelProccessed.getTerm(index), null);
+		if(LabelEncoding.isEntity(pSequenceLabelProccessed.getLabel(pIndex))) {
+			mEntityList.put(pSequenceLabelProccessed.getTerm(pIndex), null);
 		}
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
 		// TODO Auto-generated method stub
 
 	}
@@ -64,22 +65,22 @@ public class FtrEntityProbability extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceLabel) {
+	public void adjust(SequenceLabel pSequenceLabel) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(SequenceLabel sequenceLabelProcessed,
-			int index) {
+	public String getSequenceInstanceIdSub(SequenceLabel pSequenceLabelProcessed,
+			int pIndex) {
 
-		String id = Symbol.EMPTY;
+		String vId = Symbol.EMPTY;
 
-		if(entityList.containsKey(sequenceLabelProcessed.getTerm(index))) {
-			id = "id:" + this.mId + Symbol.HYPHEN + sequenceLabelProcessed.getTerm(index);
+		if(mEntityList.containsKey(pSequenceLabelProcessed.getTerm(pIndex))) {
+			vId = "id:" + mId + Symbol.HYPHEN + pSequenceLabelProcessed.getTerm(pIndex);
 		}
 
-		return (id);
+		return (vId);
 	}
 
 }

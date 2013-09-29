@@ -11,61 +11,61 @@ public class Sequence implements DataSequence {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<String> tokenList;
-	private List<Integer> labelList;
+	// Token and Label list are Final- Same references
+	private final List<String> mTokenList;
+	private final List<Integer> mLabelList;
 
 	@SuppressWarnings({"unchecked"})
-	public Sequence(ArrayList<String> tokenList, ArrayList<Integer> labelList) {
-		this.tokenList = (List<String>) tokenList.clone();
-		this.labelList = (List<Integer>) labelList.clone();
+	public Sequence(ArrayList<String> pTokenList, ArrayList<Integer> pLabelList) {
+		this.mTokenList = pTokenList;
+		this.mLabelList = (List<Integer>) pLabelList.clone();
 	}
 
 	@SuppressWarnings("unused")
 	public Sequence(String [] tokenList) {
-		this.tokenList =  Arrays.asList(tokenList);
+		this.mTokenList =  Arrays.asList(tokenList);
 
 		List<Integer> labelList = new ArrayList<Integer>();
 		for(String cToken : tokenList) {
 			labelList.add(LabelEncoding.getOutsideLabel());
 		}
-		this.labelList = labelList;
+		this.mLabelList = labelList;
 	}
 
 	public Sequence() {
-		tokenList = new ArrayList<String>();
-		labelList = new ArrayList<Integer>();
+		mTokenList = new ArrayList<String>();
+		mLabelList = new ArrayList<Integer>();
 	}
 
 	public void addElement(String token, int label) {
-		tokenList.add(token);
-		labelList.add(label);
+		mTokenList.add(token);
+		mLabelList.add(label);
 	}
 
-	@Override //Quantidade de r�tulos ou tokens
+	@Override
 	public int length() {
-		return labelList.size();
+		return mLabelList.size();
 	}
 
 	@Override
 	public void set_y(int i, int label) {
-		labelList.set(i, label);
+		mLabelList.set(i, label);
 	}
 
-	//-- Add by Oliveira, D. M.
 	public void set_x(int i, String token) {
-		tokenList.set(i, token);
+		mTokenList.set(i, token);
 	}
 
 	@Override
 	public Object x(int i) {
-		return tokenList.get(i);
+		return mTokenList.get(i);
 	}
 
 	@Override
 	public int y(int i) {
-		return labelList.get(i);
+		return mLabelList.get(i);
 	}
 
-	public int size() {return(tokenList.size());}
+	public int size() {return(mTokenList.size());}
 
 }

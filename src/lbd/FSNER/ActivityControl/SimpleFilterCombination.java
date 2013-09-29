@@ -1,7 +1,7 @@
 package lbd.FSNER.ActivityControl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Model.AbstractCombineFiltersInActiveControl;
 import lbd.FSNER.Model.AbstractFilter;
@@ -12,8 +12,8 @@ public class SimpleFilterCombination extends AbstractCombineFiltersInActiveContr
 
 	@Override
 	protected void generateMultiFilters(int[] indexList,
-			int indexDepthPosition, ArrayList<AbstractFilter> filterList,
-			HashMap<String, Integer> nextFilterClassNameMap) {
+			int indexDepthPosition, List<AbstractFilter> filterList,
+			Map<String, Integer> nextFilterClassNameMap) {
 
 		do {
 			indexList[indexDepthPosition] = getNextAvaibleIndex(filterList, indexList, indexDepthPosition, nextFilterClassNameMap);

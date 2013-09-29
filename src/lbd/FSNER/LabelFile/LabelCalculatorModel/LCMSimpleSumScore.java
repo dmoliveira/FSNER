@@ -1,7 +1,7 @@
 package lbd.FSNER.LabelFile.LabelCalculatorModel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbability;
@@ -26,9 +26,9 @@ public class LCMSimpleSumScore extends AbstractLabelFileLabelCalculatorModel {
 	// preprocessor type
 	@Override
 	public int calculateMostProbablyLabel(int pIndex,
-			HashMap<String, SequenceLabel> pProccessedSequenceMap,
-			ArrayList<AbstractDataPreprocessor> pDataProcessorList,
-			ArrayList<AbstractFilter> pFilterList) {
+			Map<String, SequenceLabel> pProccessedSequenceMap,
+			List<AbstractDataPreprocessor> pDataProcessorList,
+			List<AbstractFilter> pFilterList) {
 
 		if (pProccessedSequenceMap == null
 				|| pProccessedSequenceMap.size() == 0

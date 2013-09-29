@@ -61,7 +61,7 @@ public interface Debug {
 
 	public interface Evaluator {
 		@DefaultValue(value="false")
-		public boolean isToPrintParcialStatistics = true;
+		public boolean isToPrintParcialStatistics = false;
 
 		@DefaultValue(value="false")
 		public boolean isToWriteParcialStatistics = false;

@@ -2,6 +2,7 @@ package lbd.FSNER.ActivityControl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Debug;
@@ -92,7 +93,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 		return(pos);
 	}
 
-	protected void waitUntilThreadsFinish(ArrayList<Thread> threadsList) {
+	protected void waitUntilThreadsFinish(List<Thread> threadsList) {
 		int running = 0;
 
 		do {
@@ -106,10 +107,10 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 	}
 
 	@Override
-	protected void adjust(final ArrayList<DataSequence> sequenceList) {
+	protected void adjust(final List<DataSequence> sequenceList) {
 
 		int interval = 0;
-		ArrayList<Thread> threadList = new ArrayList<Thread>();
+		List<Thread> threadList = new ArrayList<Thread>();
 
 		for(int i = 0; i < MAX_THREADS; i++) {
 
@@ -170,11 +171,11 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 	}
 
 	public void setDataPreprocessorList(
-			ArrayList<AbstractDataPreprocessor> dataPreprocessorList) {
+			List<AbstractDataPreprocessor> dataPreprocessorList) {
 		this.mDataPreprocessorList = dataPreprocessorList;
 	}
 
-	public void setFilterList(ArrayList<AbstractFilter> filterList) {
+	public void setFilterList(List<AbstractFilter> filterList) {
 		this.mFilterList = filterList;
 	}
 }

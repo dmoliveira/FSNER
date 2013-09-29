@@ -1,9 +1,10 @@
 package lbd.FSNER.Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import lbd.FSNER.Filter.MultiFilter;
@@ -17,23 +18,23 @@ public abstract class AbstractCombineFiltersInActiveControl implements Serializa
 	//-- Set the maximum depth of filter combination (e.g., 4 indicates the combination of 2, 3 and 4 filters at same time)
 	protected final int MAX_FILTER_DEPTH = 2;
 
-	protected ArrayList<AbstractFilter> globalFilterList;
-	protected HashMap<String, ArrayList<AbstractFilter>> globalFilterListPerDataPreprocessor;
+	protected List<AbstractFilter> globalFilterList;
+	protected Map<String, List<AbstractFilter>> globalFilterListPerDataPreprocessor;
 
 	protected String currentDataProcessorName;
 	protected int currentFilterListSize;
 
-	public void combineAllFilters(ArrayList<AbstractFilter> globalFilterList,
-			final HashMap<String, ArrayList<AbstractFilter>> globalFilterListPerDataPreprocessor) {
+	public void combineAllFilters(List<AbstractFilter> globalFilterList,
+			final Map<String, List<AbstractFilter>> globalFilterListPerDataPreprocessor) {
 
 		this.globalFilterList = globalFilterList;
 		this.globalFilterListPerDataPreprocessor = globalFilterListPerDataPreprocessor;
 
-		Iterator<Entry<String, ArrayList<AbstractFilter>>> ite = globalFilterListPerDataPreprocessor.entrySet().iterator();
-		Entry<String, ArrayList<AbstractFilter>> entry;
+		Iterator<Entry<String, List<AbstractFilter>>> ite = globalFilterListPerDataPreprocessor.entrySet().iterator();
+		Entry<String, List<AbstractFilter>> entry;
 
-		ArrayList<AbstractFilter> filterList;
-		HashMap<String, Integer> nextFilterClassNameMap;
+		List<AbstractFilter> filterList;
+		Map<String, Integer> nextFilterClassNameMap;
 
 		int [] indexList;
 		int numberFilterPerClass;
@@ -57,9 +58,9 @@ public abstract class AbstractCombineFiltersInActiveControl implements Serializa
 		}
 	}
 
-	protected HashMap<String, Integer> generateStartFilterClassNameMap(ArrayList<AbstractFilter> filterList, HashMap<String, Integer> nextFilterClassNameMap) {
+	protected Map<String, Integer> generateStartFilterClassNameMap(List<AbstractFilter> filterList, Map<String, Integer> nextFilterClassNameMap) {
 
-		HashMap<String, Integer> startFilterClassNameMap = new HashMap<String, Integer>();
+		Map<String, Integer> startFilterClassNameMap = new HashMap<String, Integer>();
 
 		Iterator<Entry<String, Integer>> ite = nextFilterClassNameMap.entrySet().iterator();
 		Entry<String, Integer> entry;
@@ -81,9 +82,9 @@ public abstract class AbstractCombineFiltersInActiveControl implements Serializa
 		return(startFilterClassNameMap);
 	}
 
-	protected HashMap<String, Integer> generateNextFilterClassNameMap(ArrayList<AbstractFilter> filterList) {
+	protected Map<String, Integer> generateNextFilterClassNameMap(List<AbstractFilter> filterList) {
 
-		HashMap<String, Integer> nextFilterClassNameMap = new HashMap<String, Integer>();
+		Map<String, Integer> nextFilterClassNameMap = new HashMap<String, Integer>();
 		nextFilterClassNameMap.put(filterList.get(0).getCommonFilterName(), 0);
 
 		for(int i = 1; i < currentFilterListSize; i++) {
@@ -99,10 +100,10 @@ public abstract class AbstractCombineFiltersInActiveControl implements Serializa
 	}
 
 	protected abstract void generateMultiFilters(int [] indexList, int indexDepthPosition,
-			ArrayList<AbstractFilter> filterList, HashMap<String, Integer> nextFilterClassNameMap);
+			List<AbstractFilter> filterList, Map<String, Integer> nextFilterClassNameMap);
 
-	public int getNextAvaibleIndex(ArrayList<AbstractFilter> filterList,
-			int[] indexList, int indexDepthPosition, HashMap<String, Integer> nextFilterClassNameMap) {
+	public int getNextAvaibleIndex(List<AbstractFilter> filterList,
+			int[] indexList, int indexDepthPosition, Map<String, Integer> nextFilterClassNameMap) {
 
 		String classCommonName;
 		String nextClassCommonName;
@@ -124,7 +125,7 @@ public abstract class AbstractCombineFiltersInActiveControl implements Serializa
 		return(nextAvaibleIndex);
 	}
 
-	public void addMultiFilterToFilterList(ArrayList<AbstractFilter> filterList, int [] indexList, int multiFilterSize) {
+	public void addMultiFilterToFilterList(List<AbstractFilter> filterList, int [] indexList, int multiFilterSize) {
 
 		//-- It is always zero for security
 		globalFilterList.add(new MultiFilter(filterList.get(indexList[0]).getFilterPreprocessingTypeNameIndex(), new FSCMNoScore()));
@@ -140,7 +141,7 @@ public abstract class AbstractCombineFiltersInActiveControl implements Serializa
 	}
 
 	public void generateMultiFiltersBySpecificCombinations(int[] filterIndexList, int indexDepthPosition,
-			ArrayList<AbstractFilter> filterList, HashMap<String, Integer> startFilterClassNameMap, HashMap<String, Integer> nextFilterClassNameMap,
+			List<AbstractFilter> filterList, Map<String, Integer> startFilterClassNameMap, Map<String, Integer> nextFilterClassNameMap,
 			String [] filterClassNameList) {
 
 		int startFilterIndex = startFilterClassNameMap.get(filterClassNameList[indexDepthPosition]);

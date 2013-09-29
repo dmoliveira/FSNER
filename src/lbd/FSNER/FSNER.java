@@ -137,8 +137,8 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG,
 					CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT,
 					CollectionName.Zunnit_Extra_All_MISC};*/
-			CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
-			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER};
+			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
+			CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER};
 
 			for(CollectionName cCollection : vSubcollection) {
 				FSNER vFSNER = new FSNER();
@@ -254,7 +254,7 @@ public class FSNER implements Serializable {
 		((LCMSumScore)sumScoreModel).setFilterProbability(0);
 		((LCMSumScore)sumScoreModel).setAlpha(0);
 
-		//-- Execute FSF
+		//-- Execute FS-NER
 		mNERModel.allocModel(new String [] {pTermListRestrictionFile});
 		mNERModel.load(trainFile);
 		mNERModel.labelFile(testFile);

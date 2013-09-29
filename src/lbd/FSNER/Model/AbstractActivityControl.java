@@ -4,6 +4,8 @@ package lbd.FSNER.Model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Debug;
@@ -13,12 +15,13 @@ import lbd.data.handler.DataSequence;
 public abstract class AbstractActivityControl implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	protected ArrayList<AbstractDataPreprocessor> mDataPreprocessorList;
-	protected ArrayList<AbstractFilter> mFilterList;
-	protected HashMap<String, ArrayList<AbstractFilter>> mFilterListPerDataPreprocessor;
 
-	protected ArrayList<DataSequence> mSequenceList;
-	protected ArrayList<String> mEntityList;
+	protected List<AbstractDataPreprocessor> mDataPreprocessorList;
+	protected List<AbstractFilter> mFilterList;
+	protected Map<String, List<AbstractFilter>> mFilterListPerDataPreprocessor;
+
+	protected List<DataSequence> mSequenceList;
+	protected List<String> mEntityList;
 
 	protected AbstractCombineFiltersInActiveControl mFilterCombination;
 
@@ -30,7 +33,7 @@ public abstract class AbstractActivityControl implements Serializable {
 		mFilterList = new ArrayList<AbstractFilter>();
 		mSequenceList = new ArrayList<DataSequence>();
 		mEntityList = new ArrayList<String>();
-		mFilterListPerDataPreprocessor = new HashMap<String, ArrayList<AbstractFilter>>();
+		mFilterListPerDataPreprocessor = new HashMap<String, List<AbstractFilter>>();
 
 		mFilterCombination = pFilterCombination;
 	}
@@ -79,15 +82,15 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	protected abstract void loadActionBeforeSequenceSetIteration();
 
-	protected abstract void loadActionBeforeSequenceIteration(HashMap<String, SequenceLabel> pProcessedSequenceMap);
+	protected abstract void loadActionBeforeSequenceIteration(Map<String, SequenceLabel> pProcessedSequenceMap);
 
-	protected abstract void loadActionAfterSequenceIteration(HashMap<String, SequenceLabel> pProcessedSequenceMap);
+	protected abstract void loadActionAfterSequenceIteration(Map<String, SequenceLabel> pProcessedSequenceMap);
 
 	protected abstract void loadActionAfterSequenceSetIteration();
 
-	protected abstract void adjust(ArrayList<DataSequence> pSequenceList);
+	protected abstract void adjust(List<DataSequence> pSequenceList);
 
-	public abstract void update(ArrayList<DataSequence> pSequenceList);
+	public abstract void update(List<DataSequence> pSequenceList);
 
 	protected void addFilterStatistic(AbstractFilter pFilter, SequenceLabel pSequenceLabelProcessed) {
 
@@ -114,15 +117,15 @@ public abstract class AbstractActivityControl implements Serializable {
 		}
 	}
 
-	public ArrayList<AbstractDataPreprocessor> getDataPreprocessorList() {
+	public List<AbstractDataPreprocessor> getDataPreprocessorList() {
 		return(mDataPreprocessorList);
 	}
 
-	public ArrayList<AbstractFilter> getFilterList() {
+	public List<AbstractFilter> getFilterList() {
 		return(mFilterList);
 	}
 
-	public ArrayList<String> getEntityList() {
+	public List<String> getEntityList() {
 		return(mEntityList);
 	}
 }

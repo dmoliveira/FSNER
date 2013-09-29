@@ -4,7 +4,8 @@ package lbd.FSNER.Model;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.TermLevelStatisticsAnalysis;
@@ -13,13 +14,14 @@ import lbd.FSNER.Model.AbstractFilter.FilterMode;
 import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.DataSequence;
-import lbd.data.handler.HandlingSequenceSet;
 import lbd.data.handler.SequenceSet;
-import lbd.data.handler.HandlingSequenceSet.FileType;
+import lbd.data.handler.SequenceSetHandler;
+import lbd.data.handler.SequenceSetHandler.FileType;
 
 public abstract class AbstractLabelFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	protected AbstractActivityControl mActivityControl;
 	protected AbstractUpdateControl mUpdateControl;
 	protected AbstractLabelFileLabelCalculatorModel mLabelCalculator;
@@ -28,7 +30,7 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	protected String mTaggedFilenameAddress;
 	protected String mFilenameAddressToLabel;
-	protected ArrayList<String> mEntityList;
+	protected List<String> mEntityList;
 
 	protected int mSequenceNumber;
 
@@ -39,19 +41,19 @@ public abstract class AbstractLabelFile implements Serializable {
 		mTermLevelStatisticsAnalysis = new TermLevelStatisticsAnalysis();
 	}
 
-	public void addActivityControl(AbstractActivityControl activityControl) {
-		this.mActivityControl = activityControl;
+	public void addActivityControl(AbstractActivityControl pActivityControl) {
+		this.mActivityControl = pActivityControl;
 	}
 
-	public void addSequenceScoreCalculatorModel(AbstractLabelFileLabelCalculatorModel labelCalculator) {
-		this.mLabelCalculator = labelCalculator;
+	public void addSequenceScoreCalculatorModel(AbstractLabelFileLabelCalculatorModel pLabelCalculator) {
+		this.mLabelCalculator = pLabelCalculator;
 	}
 
-	public void labelFile(String filenameAddressToLabel, boolean isUnrealibleSituation) {
+	public void labelFile(String pFilenameAddressToLabel, boolean pIsUnrealibleSituation) {
 
 		//-- File to label and set the reliability of the file to label
-		this.mFilenameAddressToLabel = filenameAddressToLabel;
-		mLabelCalculator.setIsUnrealibleSituation(isUnrealibleSituation);
+		mFilenameAddressToLabel = pFilenameAddressToLabel;
+		mLabelCalculator.setIsUnrealibleSituation(pIsUnrealibleSituation);
 
 		//-- Set Filter Mode
 		AbstractFilter.setFilterMode(FilterMode.inLabel);
@@ -65,7 +67,7 @@ public abstract class AbstractLabelFile implements Serializable {
 
 		mStopWatch = new SimpleStopWatch();
 		mStopWatch.start();
-		labelFileSub(filenameAddressToLabel);
+		labelFileSub(pFilenameAddressToLabel);
 		mTermLevelStatisticsAnalysis.printAllStatistics();
 		mLabelCalculator.removeRestrictedTermFromUnknownTermList();
 
@@ -79,10 +81,10 @@ public abstract class AbstractLabelFile implements Serializable {
 		}
 	}
 
-	public void labelStream(ArrayList<ArrayList<String>> streamList, boolean isUnrealibleSituation) {
+	public void labelStream(List<List<String>> pStreamList, boolean pIsUnrealibleSituation) {
 
 		//-- set the reliability of the file to label
-		mLabelCalculator.setIsUnrealibleSituation(isUnrealibleSituation);
+		mLabelCalculator.setIsUnrealibleSituation(pIsUnrealibleSituation);
 
 		//-- Set Filter Mode
 		AbstractFilter.setFilterMode(FilterMode.inLabel);
@@ -94,7 +96,7 @@ public abstract class AbstractLabelFile implements Serializable {
 
 		mStopWatch = new SimpleStopWatch();
 		mStopWatch.start();
-		labelStreamSub(streamList);
+		labelStreamSub(pStreamList);
 		mLabelCalculator.removeRestrictedTermFromUnknownTermList();
 		if(Debug.LabelFile.showUnknownTerms) {
 			mLabelCalculator.printUnknownTermList();
@@ -106,12 +108,12 @@ public abstract class AbstractLabelFile implements Serializable {
 		}
 	}
 
-	public void updateWithLabeledFile(String filenameAddressToLabel) {
+	public void updateWithLabeledFile(String pFilenameAddressToLabel) {
 
-		SequenceSet inputSequenceSet =  HandlingSequenceSet.transformFileInSequenceSet(filenameAddressToLabel,
+		SequenceSet vInputSequenceSet =  SequenceSetHandler.getSequenceSetFromFile(pFilenameAddressToLabel,
 				FileType.TRAINING, false);
 
-		DataSequence sequence;
+		DataSequence vSequence;
 
 		//-- Clear some objects
 		mEntityList.clear();
@@ -124,9 +126,9 @@ public abstract class AbstractLabelFile implements Serializable {
 		mStopWatch = new SimpleStopWatch();
 		mStopWatch.start();
 
-		while(inputSequenceSet.hasNext()) {
+		while(vInputSequenceSet.hasNext()) {
 
-			sequence = inputSequenceSet.next();
+			vSequence = vInputSequenceSet.next();
 
 			/*for(int i = 0; i < sequence.length(); i++) {
 				if(LabelEncoding.isEntity(sequence.y(i))) {
@@ -135,7 +137,7 @@ public abstract class AbstractLabelFile implements Serializable {
 				}
 			}*/
 
-			mUpdateControl.addSequence(sequence);
+			mUpdateControl.addSequence(vSequence);
 		}
 
 		mLabelCalculator.removeRestrictedTermFromUnknownTermList();
@@ -149,13 +151,13 @@ public abstract class AbstractLabelFile implements Serializable {
 		}
 	}
 
-	protected abstract void labelStreamSub(ArrayList<ArrayList<String>> streamList);
+	protected abstract void labelStreamSub(List<List<String>> pStreamList);
 
-	protected abstract void labelFileSub(String filenameAddressToLabel);
+	protected abstract void labelFileSub(String pFilenameAddressToLabel);
 
-	public abstract DataSequence labelSequence(DataSequence sequence);
+	public abstract DataSequence labelSequence(DataSequence pSequence);
 
-	protected abstract int setLabel(DataSequence sequence, HashMap<String, SequenceLabel> proccessedSequenceMap, int index);
+	protected abstract int getLabel(DataSequence pSequence, Map<String, SequenceLabel> pProccessedSequenceMap, int pIndex);
 
 	protected void printNumberedSequence(DataSequence pSequence) {
 		if(pSequence == null) {
@@ -173,8 +175,8 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	protected abstract void printFilterStatistics();
 
-	protected void addUpdateControl(AbstractUpdateControl updateControl) {
-		this.mUpdateControl = updateControl;
+	protected void addUpdateControl(AbstractUpdateControl pUpdateControl) {
+		this.mUpdateControl = pUpdateControl;
 	}
 
 	protected void cleanFilterStatisticsInLabelProcess() {
@@ -183,11 +185,11 @@ public abstract class AbstractLabelFile implements Serializable {
 		}
 	}
 
-	public ArrayList<String> getUnknownTermList() {
+	public List<String> getUnknownTermList() {
 		return(mLabelCalculator.getUnknownTermList());
 	}
 
-	public ArrayList<String> getEntityList() {
+	public List<String> getEntityList() {
 		return(mEntityList);
 	}
 

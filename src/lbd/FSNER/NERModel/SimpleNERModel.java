@@ -77,7 +77,7 @@ public class SimpleNERModel extends AbstractNERModel {
 		 */
 
 		for (AbstractDataPreprocessor dataPreprocessor : dataPreprocessorList) {
-			activityControl.addActivity(dataPreprocessor);
+			mActivityControl.addActivity(dataPreprocessor);
 		}
 
 		/** Filter **/
@@ -182,7 +182,7 @@ public class SimpleNERModel extends AbstractNERModel {
 		}
 
 		// -- Add probability filter element
-		for (AbstractFilter filter : activityControl.getFilterList()) {
+		for (AbstractFilter filter : mActivityControl.getFilterList()) {
 			filter.setProbabilityFilterElement(new FPESimple());
 			// if(filter.getFilterPreprocessingTypeNameIndex() > 0)
 			// filter.setFilterState(FilterState.Auxiliary);
@@ -191,7 +191,7 @@ public class SimpleNERModel extends AbstractNERModel {
 	}
 
 	protected void addEntityProbability(int i) {
-		activityControl.addActivity(new FtrEntityProbability(i,
+		mActivityControl.addActivity(new FtrEntityProbability(i,
 				new FSCMNoScore()));
 		//activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
 		// activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setUseFilterInUnrealiableSituation(false);
@@ -205,7 +205,7 @@ public class SimpleNERModel extends AbstractNERModel {
 		for (int j = 0; j < dictionaryListNumber; j++) {
 
 			dictionaryFilters.add(new FtrSingleTermDictionary4(i,
-					new FSCMNoScore(), activityControl
+					new FSCMNoScore(), mActivityControl
 					.getDataPreprocessorList().get(i), j,
 					(j <= 0)? null : (FtrSingleTermDictionary4)dictionaryFilters.get(j-1)));
 		}
@@ -215,9 +215,9 @@ public class SimpleNERModel extends AbstractNERModel {
 		// dictionaryFilters.size()));
 
 		for (AbstractFilter filter : dictionaryFilters) {
-			activityControl.addActivity(filter);
-			activityControl.getFilterList()
-			.get(activityControl.getFilterList().size() - 1)
+			mActivityControl.addActivity(filter);
+			mActivityControl.getFilterList()
+			.get(mActivityControl.getFilterList().size() - 1)
 			.setFilterState(FilterState.Auxiliary);
 		}
 	}
@@ -230,7 +230,7 @@ public class SimpleNERModel extends AbstractNERModel {
 				for (int contextTypeIndex = 1; contextTypeIndex < ContextType
 						.values().length; contextTypeIndex++) {
 					if (flexibilityIndex > 1 || windowSize > 2) {// > 1 > 2
-						activityControl
+						mActivityControl
 						.addActivity(new FtrContext(
 								i,
 								new FSCMNoScore(),
@@ -244,7 +244,7 @@ public class SimpleNERModel extends AbstractNERModel {
 						.get(activityControl.getFilterList().size() - 1)
 						.setFilterState(FilterState.Auxiliary);*/
 					} else {
-						activityControl
+						mActivityControl
 						.addActivity(new FtrContext(
 								i,
 								new FSCMNoScore(),
@@ -253,9 +253,9 @@ public class SimpleNERModel extends AbstractNERModel {
 								+ ((ContextType.values()[contextTypeIndex] == ContextType.AllContext) ? -1
 										: 0), Flexibility
 										.values()[flexibilityIndex]));
-						activityControl
+						mActivityControl
 						.getFilterList()
-						.get(activityControl.getFilterList().size() - 1)
+						.get(mActivityControl.getFilterList().size() - 1)
 						.setFilterState(FilterState.Auxiliary);
 					}
 				}
@@ -267,12 +267,12 @@ public class SimpleNERModel extends AbstractNERModel {
 		for (int affixTypeIndex = 0; affixTypeIndex < FtrAffix.AffixType
 				.values().length; affixTypeIndex++) {
 			for (int affixSize = 3; affixSize > 1; affixSize--) {//Default: (afxSize=3, > 1)
-				activityControl
+				mActivityControl
 				.addActivity(new FtrAffix(i, new FSCMNoScore(),
 						FtrAffix.AffixType.values()[affixTypeIndex],
 						affixSize));
-				activityControl.getFilterList()
-				.get(activityControl.getFilterList().size() - 1)
+				mActivityControl.getFilterList()
+				.get(mActivityControl.getFilterList().size() - 1)
 				.setFilterState(FilterState.Auxiliary);
 			}
 		}
@@ -292,9 +292,9 @@ public class SimpleNERModel extends AbstractNERModel {
 		// activityControl.addActivity(new FtrTermLength(i, new FSCMNoScore()));
 
 		for (AbstractFilter filter : spellFilters) {
-			activityControl.addActivity(filter);
-			activityControl.getFilterList()
-			.get(activityControl.getFilterList().size() - 1)
+			mActivityControl.addActivity(filter);
+			mActivityControl.getFilterList()
+			.get(mActivityControl.getFilterList().size() - 1)
 			.setFilterState(FilterState.Auxiliary);
 		}
 
@@ -314,9 +314,9 @@ public class SimpleNERModel extends AbstractNERModel {
 	}
 
 	protected void addStateFilter(int i) {
-		activityControl.addActivity(new FtrState(i,
+		mActivityControl.addActivity(new FtrState(i,
 				new FSCMNoScore()));
-		activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
+		mActivityControl.getFilterList().get(mActivityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
 	}
 
 	protected void aggregateFilter(AbstractActivityControl activityControl,
@@ -428,6 +428,6 @@ public class SimpleNERModel extends AbstractNERModel {
 		 * updateSource + "\"");
 		 */
 
-		activityControl.update(updateControl.getSequenceListToUpdate());
+		mActivityControl.update(mUpdateControl.getSequenceListToUpdate());
 	}
 }

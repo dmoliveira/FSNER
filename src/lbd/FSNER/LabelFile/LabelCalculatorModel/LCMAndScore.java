@@ -1,8 +1,9 @@
 package lbd.FSNER.LabelFile.LabelCalculatorModel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import lbd.FSNER.Component.SequenceLabel;
@@ -33,9 +34,9 @@ public class LCMAndScore extends AbstractLabelFileLabelCalculatorModel{
 
 	@Override
 	public int calculateMostProbablyLabel(int index,
-			HashMap<String, SequenceLabel> proccessedSequenceMap,
-			ArrayList<AbstractDataPreprocessor> dataProcessorList,
-			ArrayList<AbstractFilter> filterList) {
+			Map<String, SequenceLabel> proccessedSequenceMap,
+			List<AbstractDataPreprocessor> dataProcessorList,
+			List<AbstractFilter> filterList) {
 
 		int mostProbablyLabel = LabelEncoding.getOutsideLabel();
 		double filterScore = SCORE_THRESHOLD;
@@ -65,7 +66,7 @@ public class LCMAndScore extends AbstractLabelFileLabelCalculatorModel{
 			label = sequenceLabelProcessed.getLabel(index);
 
 			if(filter.getFilterState() == FilterState.Active &&
-					(!isUnrealibleSituation || filter.isToUseFilterInUnreliableSituation()) &&
+					(!mIsUnrealibleSituation || filter.isToUseFilterInUnreliableSituation()) &&
 					dataPreprocessor.getCommonTermProbability(term) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
 
 				//-- Get filter instance id determined by the index

@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractNERModel;
@@ -92,7 +93,7 @@ public class FSNERAutoUpdate extends FSNER {
 		stopWatch.start();
 
 		// -- get Tweet stream
-		ArrayList<ArrayList<String>> streamList = new ArrayList<ArrayList<String>>();
+		List<List<String>> streamList = new ArrayList<List<String>>();
 
 		try {
 
@@ -126,12 +127,12 @@ public class FSNERAutoUpdate extends FSNER {
 		// Call proper evaluator Evaluator.evaluate("Final Results after Stream Update: ", "", nerTagger.getTaggedFilenameAddress(), testFile);
 	}
 
-	protected ArrayList<ArrayList<String>> getTweetStream(Writer out,
-			AbstractNERModel nerTagger, ArrayList<String> termList,
+	protected List<List<String>> getTweetStream(Writer out,
+			AbstractNERModel nerTagger, List<String> termList,
 			int maxThreadNumber, String topicTerm, int maxResults,
 			String language, String resultType) {
 
-		ArrayList<ArrayList<String>> streamList = new ArrayList<ArrayList<String>>();
+		List<List<String>> streamList = new ArrayList<List<String>>();
 		TSEngineControl tSEngineControl = new TSEngineControl(maxThreadNumber);
 
 		int termNumber = 1;
