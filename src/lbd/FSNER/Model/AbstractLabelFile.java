@@ -1,21 +1,21 @@
 package lbd.FSNER.Model;
 
-import iitb.CRF.DataSequence;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.CRF.HandlingSequenceSet;
-import lbd.CRF.HandlingSequenceSet.FileType;
-import lbd.CRF.SequenceSet;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.TermLevelStatisticsAnalysis;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Model.AbstractFilter.FilterMode;
 import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
+import lbd.data.handler.HandlingSequenceSet;
+import lbd.data.handler.SequenceSet;
+import lbd.data.handler.HandlingSequenceSet.FileType;
 
 public abstract class AbstractLabelFile implements Serializable {
 

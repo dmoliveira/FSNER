@@ -1,6 +1,5 @@
 package lbd.FSNER;
 
-import iitb.CRF.DataSequence;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,6 +17,7 @@ import lbd.FSNER.Component.ClusterHandler;
 import lbd.FSNER.Component.Sequence;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
+import lbd.data.handler.DataSequence;
 
 public class LogCreator {
 	

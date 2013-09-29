@@ -1,6 +1,5 @@
 package lbd.Utils;
 
-import iitb.CRF.DataSequence;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +12,7 @@ import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import lbd.NewModels.Affix.Affix.AffixType;
+import lbd.data.handler.DataSequence;
 
 public class Utils implements Serializable {
 
@@ -38,6 +37,8 @@ public class Utils implements Serializable {
 			while (in.readLine() != null) {
 				lineNumber++;
 			}
+
+			in.close();
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -150,34 +151,12 @@ public class Utils implements Serializable {
 		return(seqList);
 	}
 
-	public static String[] convertSequenceToLowerCase(DataSequence data, int size, AffixType affixType) {
-
-		String [] seqList = new String[size];
-
-		for(int i = 0; i < size; i++) {
-			seqList[i] = getTermAffix(((String)data.x(i)).toLowerCase(), affixType);
-		}
-
-		return(seqList);
-	}
-
 	public static String[] convertSequenceToLowerCase(String [] sequence, int size) {
 
 		String [] seqList = new String[size];
 
 		for(int i = 0; i < sequence.length; i++) {
 			seqList[i] = sequence[i].toLowerCase();
-		}
-
-		return(seqList);
-	}
-
-	public static String[] convertSequenceToLowerCase(String [] sequence, int size, AffixType affixType) {
-
-		String [] seqList = new String[size];
-
-		for(int i = 0; i < sequence.length; i++) {
-			seqList[i] = getTermAffix(sequence[i].toLowerCase(), affixType);
 		}
 
 		return(seqList);
@@ -192,41 +171,6 @@ public class Utils implements Serializable {
 		}
 
 		return(seqList);
-	}
-
-	public static String[] transformSequenceToArray(DataSequence data, int size, AffixType affixType) {
-
-		String [] seqList = new String[size];
-
-		for(int i = 0; i < size; i++) {
-			seqList[i] = getTermAffix((String)data.x(i), affixType);
-		}
-
-		return(seqList);
-	}
-
-	public static String getTermAffix (String term, AffixType affixType) {
-
-		String termAffix = "*emptyAffix*";
-		int tokenSize = term.length();
-
-		if(affixType == AffixType.PrefixSize2 && tokenSize > 2) {
-			termAffix = term.substring(0, 2);
-		} else if(affixType == AffixType.PrefixSize3 && tokenSize > 3) {
-			termAffix = term.substring(0, 3);
-		} else if(affixType == AffixType.SuffixSize1 && tokenSize > 1) {
-			termAffix = term.substring(tokenSize-1, tokenSize);
-		} else if(affixType == AffixType.SuffixSize2 && tokenSize > 2) {
-			termAffix = term.substring(tokenSize-2, tokenSize);
-		} else if(affixType == AffixType.SuffixSize3 && tokenSize > 3) {
-			termAffix = term.substring(tokenSize-3, tokenSize);
-		} else if(affixType == AffixType.SuffixSize4 && tokenSize > 4) {
-			termAffix = term.substring(tokenSize-4, tokenSize);
-		} else if(affixType == AffixType.None) {
-			termAffix = term;
-		}
-
-		return(termAffix);
 	}
 
 	public static void printLog(String toPrint, Writer out) {

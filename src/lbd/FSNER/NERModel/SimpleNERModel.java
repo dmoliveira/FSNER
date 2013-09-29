@@ -27,6 +27,8 @@ import lbd.FSNER.Utils.CommonEnum.Flexibility;
 
 public class SimpleNERModel extends AbstractNERModel {
 
+	private static final long serialVersionUID = 1L;
+
 	protected boolean displayGeneralizationStatistics = false;
 
 	@Override

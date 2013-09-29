@@ -14,6 +14,8 @@ import lbd.FSNER.Utils.LabelEncoding.BILOU;
 
 public class AmbiguityEvaluator extends SimpleBILOUEvaluator {
 
+	private static final long serialVersionUID = 1L;
+
 	protected enum AmbiguityType {None, Outside, Entity, Both};
 
 	protected HashMap<String, AmbiguityType> termsInTestFile;

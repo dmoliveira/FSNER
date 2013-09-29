@@ -15,6 +15,8 @@ import lbd.FSNER.Utils.Symbol;
 
 public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
+	private static final long serialVersionUID = 1L;
+
 	//-- Filter Restriction
 	protected double filterProbability = 0.0;
 	protected double alpha = 0.0; //0.8

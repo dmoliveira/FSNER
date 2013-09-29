@@ -12,6 +12,8 @@ import lbd.FSNER.Utils.LabelEncoding;
 
 public class LFSCMSimpleAndScore extends AbstractLabelFileScoreCalculatorModel{
 
+	private static final long serialVersionUID = 1L;
+
 	//-- Filter Restriction
 	protected final double FILTER_PROBABILITY = 0.7;//0.7
 	protected final double SCORE_THRESHOLD = 0;

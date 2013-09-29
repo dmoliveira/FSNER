@@ -2,13 +2,13 @@ package lbd.FSNER.DataPreprocessor;
 
 import java.util.ArrayList;
 
-import iitb.CRF.DataSequence;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.DataProcessor.Component.PreprocessData;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Utils.Symbol;
 import lbd.FSNER.Utils.LabelEncoding;
+import lbd.data.handler.DataSequence;
 
 public class MultiDataPreprocessor extends AbstractDataPreprocessor{
 

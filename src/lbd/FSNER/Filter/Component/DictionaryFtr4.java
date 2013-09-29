@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class DictionaryFtr4 implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	protected HashMap<String, Object> mEntryMap;
 
 	public DictionaryFtr4() {

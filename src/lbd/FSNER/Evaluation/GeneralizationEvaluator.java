@@ -17,6 +17,8 @@ import lbd.FSNER.Utils.FileUtils;
 
 public class GeneralizationEvaluator extends SimpleBILOUEvaluator {
 
+	private static final long serialVersionUID = 1L;
+
 	protected String trainingFilenameAddress;
 
 	protected HashMap<String, Integer> entityTermsOnlyInTestFile;

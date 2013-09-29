@@ -1,6 +1,5 @@
 package lbd.FSNER.Utils;
 
-import iitb.CRF.DataSequence;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.LabelEncoding.BILOU;
+import lbd.data.handler.DataSequence;
 
 public class FileUtils {
 

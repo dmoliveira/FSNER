@@ -13,20 +13,22 @@ import lbd.FSNER.Model.AbstractFilter;
 
 public class CapitalizationFocusFilterCombination extends AbstractCombineFiltersInActiveControl{
 
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected void generateMultiFilters(int[] indexList, int indexDepthPosition, ArrayList<AbstractFilter> filterList,
 			HashMap<String, Integer> nextFilterClassNameMap) {
-		
+
 		HashMap<String, Integer> firstFilterClassNameMap = generateStartFilterClassNameMap(filterList, nextFilterClassNameMap);
 		String [] filterClassNameList;
 
 		//-- Generate Combinations of filters
 		filterClassNameList = new String [] {FtrEntityProbability.class.getName(), FtrCapitalizedTerms.class.getName()};
 		generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
-				
+
 		filterClassNameList = new String [] {FtrSingleTermDictionary3.class.getName(), FtrCapitalizedTerms.class.getName()};
 		generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
-		
+
 		filterClassNameList = new String [] {FtrAffix.class.getName(), FtrCapitalizedTerms.class.getName()};
 		//generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
 

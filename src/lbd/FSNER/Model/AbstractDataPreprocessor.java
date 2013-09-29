@@ -6,7 +6,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Component.Statistic.LabelProbabilityElement;
 import lbd.FSNER.Utils.LabelEncoding;
-import iitb.CRF.DataSequence;
+import lbd.data.handler.DataSequence;
 
 public abstract class AbstractDataPreprocessor extends AbstractActivity{
 

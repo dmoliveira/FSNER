@@ -1,6 +1,5 @@
 package lbd.FSNER.DataProcessor.Component;
 
-import iitb.CRF.DataSequence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +7,7 @@ import java.util.HashMap;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
+import lbd.data.handler.DataSequence;
 
 public class PreprocessData {
 	

@@ -1,9 +1,10 @@
 package lbd.FSNER.Utils;
 
-import iitb.CRF.DataSequence;
 
 import java.io.IOException;
 import java.io.Writer;
+
+import lbd.data.handler.DataSequence;
 
 public class WriterOutput {
 

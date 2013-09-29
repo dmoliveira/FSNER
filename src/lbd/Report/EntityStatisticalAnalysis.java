@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import lbd.CRF.StatisticalEntry;
 
 public class EntityStatisticalAnalysis {
 	

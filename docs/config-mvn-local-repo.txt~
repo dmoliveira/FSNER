@@ -1,0 +1,15 @@
+mvn install:install-file -Dfile=/mnt/windows8/Users/Diego/Documents/Research/MyProgramming/NER-Project/FS-NER/lib/CRF.jar -DgroupId=fsner_dependecies -DartifactId=CRF -Dversion=1.0 -Dpackaging=jar
+
+mvn install:install-file -Dfile=/mnt/windows8/Users/Diego/Documents/Research/MyProgramming/NER-Project/FS-NER/lib/LBFGS.jar -DgroupId=fsner_dependecies -DartifactId=LBFGS -Dversion=1.0 -Dpackaging=jar
+
+	<dependency>
+	  <groupId>fsner_dependencies</groupId>
+	  <artifactId>CRF</artifactId>
+	  <version>1.0</version>
+	</dependency>
+	
+	<dependency>
+	  <groupId>fsner_dependencies</groupId>
+	  <artifactId>LBFGS</artifactId>
+	  <version>1.0</version>
+	</dependency>

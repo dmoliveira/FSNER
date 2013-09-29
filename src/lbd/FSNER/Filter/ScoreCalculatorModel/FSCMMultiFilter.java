@@ -8,27 +8,29 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 
 public class FSCMMultiFilter extends AbstractFilterScoreCalculatorModel{
 
+	private static final long serialVersionUID = 1L;
 	protected ArrayList<AbstractFilter> filterList;
-	
+
 	@Override
 	protected double calculateScore(SequenceLabel sequenceLabel, int index) {
-		
+
 		double score = 0;
 		int numberFilterActivated = 0;
-		
+
 		for(AbstractFilter activity : filterList) {
 
 			score = activity.calculateScore(sequenceLabel, index);
-			
-			if(score > 0)
+
+			if(score > 0) {
 				numberFilterActivated++;
-			else
+			} else {
 				break;
+			}
 		}
-		
+
 		return (numberFilterActivated == filterList.size())? 1 : 0;
 	}
-	
+
 	public void setFilterList(ArrayList<AbstractFilter> filterList) {
 		this.filterList = filterList;
 	}

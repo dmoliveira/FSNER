@@ -14,6 +14,8 @@ import lbd.FSNER.Utils.LabelEncoding.BILOU;
 
 public class LearningEvaluator extends SimpleBILOUEvaluator {
 
+	private static final long serialVersionUID = 1L;
+
 	protected String trainingFilenameAddress;
 
 	protected HashMap<String, Object> entityTermsInTrainingFile;

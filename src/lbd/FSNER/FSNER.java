@@ -1,6 +1,5 @@
 package lbd.FSNER;
 
-import iitb.CRF.DataSequence;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,6 +49,7 @@ import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
 import lbd.Utils.SoundToClass;
 import lbd.Utils.songStorms;
+import lbd.data.handler.DataSequence;
 
 public class FSNER implements Serializable {
 

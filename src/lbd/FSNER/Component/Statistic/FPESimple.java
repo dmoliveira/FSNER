@@ -5,14 +5,17 @@ import lbd.FSNER.Utils.LabelEncoding;
 
 public class FPESimple extends AbstractFilterProbabilityElement{
 
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public void addLabel(int label) {
-		
+
 		totalAssignedLabel++;
 		totalAssignedEntityPerLabel[label]++;
-		
-		if(LabelEncoding.isEntity(label))
+
+		if(LabelEncoding.isEntity(label)) {
 			totalAssignedEntityLabel++;
+		}
 	}
 
 }

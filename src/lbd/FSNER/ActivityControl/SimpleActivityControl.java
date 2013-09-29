@@ -1,15 +1,11 @@
 package lbd.FSNER.ActivityControl;
 
-import iitb.CRF.DataSequence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import lbd.CRF.HandlingSequenceSet;
-import lbd.CRF.HandlingSequenceSet.FileType;
-import lbd.CRF.SequenceSet;
 import lbd.FSNER.ActivityControl.FilterCombination.TermComplementaryFocusFilterCombination;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Debug;
@@ -22,6 +18,10 @@ import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.SupportEntity;
+import lbd.data.handler.DataSequence;
+import lbd.data.handler.HandlingSequenceSet;
+import lbd.data.handler.SequenceSet;
+import lbd.data.handler.HandlingSequenceSet.FileType;
 
 public class SimpleActivityControl extends AbstractActivityControl {
 	private static final long serialVersionUID = 1L;

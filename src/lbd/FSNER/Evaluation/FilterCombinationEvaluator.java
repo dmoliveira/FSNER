@@ -19,6 +19,7 @@ import lbd.Utils.Utils;
 
 public class FilterCombinationEvaluator extends AbstractEvaluator {
 
+	private static final long serialVersionUID = 1L;
 	protected ArrayList<ArrayList<Pair<String, Byte>>> mFileFilterHitList;
 	protected ArrayList<Pair<String, Byte>> mMessageAndFilterHitList;
 

@@ -1,6 +1,5 @@
 package lbd.FSNER.FSF.LabelFile;
 
-import iitb.CRF.DataSequence;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,10 +9,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.CRF.HandlingSequenceSet;
-import lbd.CRF.HandlingSequenceSet.FileType;
-import lbd.CRF.Sequence;
-import lbd.CRF.SequenceSet;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
@@ -25,6 +20,11 @@ import lbd.FSNER.Utils.FileUtils;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.LabelEncoding.BILOU;
 import lbd.FSNER.Utils.WriterOutput;
+import lbd.data.handler.DataSequence;
+import lbd.data.handler.HandlingSequenceSet;
+import lbd.data.handler.HandlingSequenceSet.FileType;
+import lbd.data.handler.Sequence;
+import lbd.data.handler.SequenceSet;
 
 public class SimpleLabelFile extends AbstractLabelFile {
 
@@ -295,7 +295,6 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	protected void printFilterStatistics() {
 

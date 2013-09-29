@@ -6,6 +6,11 @@
   <name>Filter-Stream Named Entity Recognition</name>
   <description>Implementation in Java for FS-NER by Diego Oliveira.</description>
   <dependencies>
+    <dependency>
+	  <groupId>org.json</groupId>
+	  <artifactId>json</artifactId>
+	  <version>20090211</version>
+	</dependency>
   	<dependency>
 	  <groupId>colt</groupId>
 	  <artifactId>colt</artifactId>

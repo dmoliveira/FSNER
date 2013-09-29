@@ -1,10 +1,11 @@
 package lbd.FSNER.Model;
 
-import iitb.CRF.DataSequence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import lbd.data.handler.DataSequence;
 
 public abstract class AbstractUpdateControl implements Serializable {
 

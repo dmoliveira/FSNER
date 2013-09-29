@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class SequenceLabelElement implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+
 	protected String term;
 	protected int label;
 

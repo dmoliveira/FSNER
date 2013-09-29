@@ -1,6 +1,5 @@
 package lbd.FSNER;
 
-import iitb.CRF.DataSequence;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -8,12 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import lbd.CRF.Sequence;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.LabelEncoding.BILOU;
 import lbd.FSNER.Utils.LabelEncoding.EncodingType;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
+import lbd.data.handler.Sequence;
 
 public class FSNERModusOperandi {
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Utils.LabelEncoding.BILOU;
-import iitb.CRF.DataSequence;
+import lbd.data.handler.DataSequence;
 
 public class SupportEntity {
 	

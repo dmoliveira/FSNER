@@ -1,6 +1,5 @@
 package lbd.FSNER.Model;
 
-import iitb.CRF.DataSequence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.HashMap;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Model.AbstractFilter.FilterMode;
+import lbd.data.handler.DataSequence;
 
 public abstract class AbstractActivityControl implements Serializable {
 
