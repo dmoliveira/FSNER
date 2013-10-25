@@ -8,12 +8,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import lbd.FSNER.ActivityControl.ParallelActivityControl;
 import lbd.FSNER.ActivityControl.SimpleActivityControl;
 import lbd.FSNER.Collection.CollectionDefinition;
 import lbd.FSNER.Collection.CollectionDefinition.CollectionName;
+import lbd.FSNER.Collection.CollectionDefinition.FileExtension;
 import lbd.FSNER.Collection.DataCollection;
 import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
@@ -23,13 +26,10 @@ import lbd.FSNER.Evaluation.AmbiguityEvaluator;
 import lbd.FSNER.Evaluation.GeneralizationEvaluator;
 import lbd.FSNER.Evaluation.LearningEvaluator;
 import lbd.FSNER.Evaluation.SimpleBILOUEvaluator;
-import lbd.FSNER.FSF.LabelFile.SimpleLabelFile;
 import lbd.FSNER.Filter.FtrSingleTermDictionary4;
-import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMAndScore;
-import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMNewOrScore;
-import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMOrScore;
-import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMSimpleAndScore;
-import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMSimpleSumScore;
+import lbd.FSNER.LabelFile.SimpleLabelFile;
+import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMOrContinuosScore;
+import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMOrDiscreteScore;
 import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMSumScore;
 import lbd.FSNER.Model.AbstractActivityControl;
 import lbd.FSNER.Model.AbstractEvaluator;
@@ -79,35 +79,7 @@ public class FSNER implements Serializable {
 		for(FilterParameters cFilterParameters : vFilterParametersList) {
 			System.out.println("-- FilterConfiguration: " + cFilterParameters);
 			//Save.optionalDirectory = "FilterCombinationHitTraining/" + cFilterParameters.toString();'
-			/*CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_Casa_PER,
-					CollectionName.Zunnit_Extra_Casa_ORG, CollectionName.Zunnit_Extra_Casa_LOC,
-					CollectionName.Zunnit_Extra_Casa_EVT, CollectionName.Zunnit_Extra_Casa_MISC,
-					CollectionName.Zunnit_Extra_Casos_de_Policia_PER,
-					CollectionName.Zunnit_Extra_Casos_de_Policia_ORG, CollectionName.Zunnit_Extra_Casos_de_Policia_LOC,
-					CollectionName.Zunnit_Extra_Casos_de_Policia_EVT, CollectionName.Zunnit_Extra_Casos_de_Policia_MISC,
-					CollectionName.Zunnit_Extra_Emprego_PER,
-					CollectionName.Zunnit_Extra_Emprego_ORG, CollectionName.Zunnit_Extra_Emprego_LOC,
-					CollectionName.Zunnit_Extra_Emprego_EVT, CollectionName.Zunnit_Extra_Emprego_MISC,
-					CollectionName.Zunnit_Extra_Esportes_PER,
-					CollectionName.Zunnit_Extra_Esportes_ORG, CollectionName.Zunnit_Extra_Esportes_LOC,
-					CollectionName.Zunnit_Extra_Esportes_EVT, CollectionName.Zunnit_Extra_Esportes_MISC,
-					CollectionName.Zunnit_Extra_Famosos_PER,
-					CollectionName.Zunnit_Extra_Famosos_ORG, CollectionName.Zunnit_Extra_Famosos_LOC,
-					CollectionName.Zunnit_Extra_Famosos_EVT, CollectionName.Zunnit_Extra_Famosos_MISC,
-					CollectionName.Zunnit_Extra_Noticia_PER,
-					CollectionName.Zunnit_Extra_Noticia_ORG, CollectionName.Zunnit_Extra_Noticia_LOC,
-					CollectionName.Zunnit_Extra_Noticia_EVT, CollectionName.Zunnit_Extra_Noticia_MISC,
-					CollectionName.Zunnit_Extra_TV_e_Lazer_PER,
-					CollectionName.Zunnit_Extra_TV_e_Lazer_ORG, CollectionName.Zunnit_Extra_TV_e_Lazer_LOC,
-					CollectionName.Zunnit_Extra_TV_e_Lazer_EVT, CollectionName.Zunnit_Extra_TV_e_Lazer_MISC};*/
-
-			/*CollectionName [] vSubcollection = {
-					CollectionName.Zunnit_Extra_Noticia_PER,
-					CollectionName.Zunnit_Extra_Noticia_ORG, CollectionName.Zunnit_Extra_Noticia_LOC,
-					CollectionName.Zunnit_Extra_Noticia_EVT};*/
-
-			/*CollectionName [] vSubcollection = {CollectionName.PER_MSM13_CONQUEST, CollectionName.ORG_MSM13_CONQUEST, CollectionName.LOC_MSM13_CONQUEST, CollectionName.MISC_MSM13_CONQUEST};*/
-			/*CollectionName [] vSubcollection = {
+			CollectionName [] vSubcollection = {
 					CollectionName.PlayerCV, CollectionName.VenueCV, CollectionName.TeamCV,
 					CollectionName.CompanyCV, CollectionName.GeolocCV, CollectionName.PersonCV,
 					CollectionName.OrganizationCV, CollectionName.PER_MSM13_V15_PREPROCESSED_CV,
@@ -136,9 +108,10 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_TV_e_Lazer_EVT, CollectionName.Zunnit_Extra_TV_e_Lazer_MISC,
 					CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG,
 					CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT,
-					CollectionName.Zunnit_Extra_All_MISC};*/
+					CollectionName.Zunnit_Extra_All_MISC};
 			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
-			CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER};
+			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
+			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Shuf_PER, CollectionName.Zunnit_Shuf_LOC, CollectionName.Zunnit_Shuf_ORG, CollectionName.Zunnit_Shuf_MISC};
 
 			for(CollectionName cCollection : vSubcollection) {
 				FSNER vFSNER = new FSNER();
@@ -151,7 +124,7 @@ public class FSNER implements Serializable {
 		mFilterParameters = pFilterParameters;
 
 		initializeVariables(pCollectionName);
-		runStandardFSF(mCollectionDefinition.getDataCollection(pCollectionName));
+		runStandardFSNER(mCollectionDefinition.getDataCollection(pCollectionName));
 
 		mNERModel.writeNERModelSpecification(mCollectionDefinition.getDataCollection(pCollectionName).mFilenameList, pFilterParameters);
 
@@ -190,38 +163,35 @@ public class FSNER implements Serializable {
 		song.play();
 	}
 
-	protected void runStandardFSF(DataCollection pDataCollection) {
-		String vDir = CollectionDefinition.Directory.Collection;
-		String vTrainFile;
-		String vTestFile;
-		String vFilename;
-		String vTermListRestrictionName = CollectionDefinition.Directory
-				.Dictionary + pDataCollection.mTermListRestrictionName;
+	protected void runStandardFSNER(DataCollection pDataCollection) {
 
 		for(int cIteration = 1; cIteration <= Parameters.FSNERExecution.trainFileIteration; cIteration++) {
-			vFilename = pDataCollection.getFilename(cIteration - 1);
-			vTrainFile = vDir + vFilename + CollectionDefinition.FileExtension.Train;
-			vTestFile = vDir + vFilename + CollectionDefinition.FileExtension.Test;
+
+			String vTrainFile = CollectionDefinition.getFilenameAddress(pDataCollection, cIteration, FileExtension.Train);
+			String vTestFile = CollectionDefinition.getFilenameAddress(pDataCollection, cIteration, FileExtension.Test);
 
 			if(cIteration == 1) {
-				System.out.println("Train: " + vTrainFile.replace(vDir, "") +
-						" Test: " + vTestFile.replace(vDir, "") + " -- CV" + cIteration);
+				System.out.println(MessageFormat.format("Train:{0} - Test:{1}", vTrainFile, vTestFile));
 			}
 
-			runFSF(vTrainFile, vTestFile, "", vTermListRestrictionName);
+			runFSNERCore(vTrainFile, vTestFile, "", pDataCollection);
 
 			if(Parameters.Save.isToSaveNERModel) {
-				writeObject(Parameters.getOutputDirectory() +
-						Constants.FSNERModel + Symbol.HYPHEN +  vFilename + Symbol.DOT + Constants.FileExtention.FSNERModel);
+				writeObject(Parameters.getOutputDirectory() + Constants.FSNERModel + Symbol.HYPHEN
+						+ pDataCollection.getFilename(cIteration - 1) + Symbol.DOT + Constants.FileExtention.FSNERModel);
 			}
 		}
 	}
 
-	protected void runFSF(String trainFile, String testFile, String referenceDataFile, String pTermListRestrictionFile) {
+	protected void runFSNERCore(String trainFile, String testFile, String referenceDataFile, DataCollection pDataCollection) {
+
 		//-- Set Label Encoding (Mandatory!)
 		LabelEncoding.setEncodingType(EncodingType.BILOU);
 
-		mNERModel = new SimpleNERModel();
+		//-- Create filenames
+		String vTermListRestrictionName = CollectionDefinition.Directory.Dictionary + pDataCollection.mTermListRestrictionName;
+
+		mNERModel = new SimpleNERModel(pDataCollection);
 
 		//-- Start count time
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
@@ -234,13 +204,10 @@ public class FSNER implements Serializable {
 		AbstractUpdateControl simpleUpdateControl =  new SimpleUpdateControl(0);
 
 		//-- Create Label File Score Models
-		AbstractTermRestrictionChecker termRestrictionChecker = new SimpleTermRestrictionChecker(pTermListRestrictionFile);
-		AbstractLabelFileLabelCalculatorModel orScoreModel = new LCMOrScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel andScoreModel = new LCMAndScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel simpleANDScoreModel = new LCMSimpleAndScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel sumScoreModel = new LCMSumScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel sumSimpleScoreModel = new LCMSimpleSumScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel sumNewOrScoreModel = new LCMNewOrScore(termRestrictionChecker);
+		AbstractTermRestrictionChecker termRestrictionChecker = new SimpleTermRestrictionChecker(vTermListRestrictionName);
+		AbstractLabelFileLabelCalculatorModel orDiscreteScoreModel = new LCMOrDiscreteScore(termRestrictionChecker);
+		AbstractLabelFileLabelCalculatorModel orContinuosScoreModel = new LCMOrContinuosScore(termRestrictionChecker);
+		AbstractLabelFileLabelCalculatorModel sumScoreModel = new LCMSumScore(termRestrictionChecker); //Default [!]
 
 		//-- Joint Components to NERModel
 		mNERModel.addModelActivityControl(simpleActivityControl);
@@ -250,12 +217,12 @@ public class FSNER implements Serializable {
 		mNERModel.addFilterParameters(mFilterParameters);
 
 		//-- Joint Subcomponents
-		simpleLabelFile.addSequenceScoreCalculatorModel(sumScoreModel);
+		simpleLabelFile.addSequenceScoreCalculatorModel(orDiscreteScoreModel);
 		((LCMSumScore)sumScoreModel).setFilterProbability(0);
 		((LCMSumScore)sumScoreModel).setAlpha(0);
 
 		//-- Execute FS-NER
-		mNERModel.allocModel(new String [] {pTermListRestrictionFile});
+		mNERModel.allocModel(new String [] {vTermListRestrictionName});
 		mNERModel.load(trainFile);
 		mNERModel.labelFile(testFile);
 		mNERModel.evaluate(mNERModel.getTaggedFilenameAddress(), testFile, "(Label)");
@@ -289,6 +256,10 @@ public class FSNER implements Serializable {
 
 	public DataSequence labelSequence(DataSequence pSequence) {
 		return mNERModel.getLabelFile().labelSequence(pSequence);
+	}
+
+	public List<String> labelSequenceToList (DataSequence pSequence) {
+		return LabelEncoding.getEntities(labelSequence(pSequence));
 	}
 
 	public void writeOverviewStatistics(String pOutputFilenameAddress) {

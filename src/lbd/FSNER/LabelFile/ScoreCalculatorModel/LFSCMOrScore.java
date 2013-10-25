@@ -1,15 +1,16 @@
 package lbd.FSNER.LabelFile.ScoreCalculatorModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Component.Statistic.FilterProbability;
+import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Model.AbstractLabelFileScoreCalculatorModel;
 import lbd.FSNER.Utils.LabelEncoding;
+import lbd.data.handler.DataSequence;
 
 public class LFSCMOrScore extends AbstractLabelFileScoreCalculatorModel{
 
@@ -25,7 +26,8 @@ public class LFSCMOrScore extends AbstractLabelFileScoreCalculatorModel{
 
 	@Override
 	public double calculateScore(int index,
-			HashMap<String, SequenceLabel> proccessedSequenceMap,
+			DataSequence pSequence,
+			Map<String, SequenceLabel> proccessedSequenceMap,
 			ArrayList<AbstractDataPreprocessor> dataProcessorList,
 			ArrayList<AbstractFilter> filterList) {
 
@@ -34,29 +36,26 @@ public class LFSCMOrScore extends AbstractLabelFileScoreCalculatorModel{
 		String term;
 
 		SequenceLabel sequenceLabelProcessed;
-		FilterProbability filterProbability;
+		FilterProbabilityHandler filterProbability;
 		AbstractDataPreprocessor dataPreprocessor;
 
 		for(AbstractFilter filter : filterList) {
 
 			//-- Get common term percentage
-			dataPreprocessor = dataProcessorList.get(filter.getFilterPreprocessingTypeNameIndex());
+			dataPreprocessor = dataProcessorList.get(filter.getFilterPreprocessingTypeIndex());
 			sequenceLabelProcessed = proccessedSequenceMap.get(filter.getPreprocesingTypeName());
 
 			term = sequenceLabelProcessed.getTerm(index);
 
 			if(filter.getFilterState() == FilterState.Active &&
-					(!isUnrealibleSituation || filter.isToUseFilterInUnreliableSituation()) &&
+					!isUnrealibleSituation &&
 					dataPreprocessor.getCommonTermProbability(term) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
 
 				//-- Get filter instance id determined by the index
 				filterProbability = filter.getFilterProbability();
-				filterInstanceIndexId = filter.getSequenceInstanceId(sequenceLabelProcessed, index);
+				filterInstanceIndexId = filter.getSequenceInstanceId(pSequence, sequenceLabelProcessed, index);
 
-				if((!filterInstanceIndexId.isEmpty() &&
-						(!filter.considerFilterProbability() ||
-								(filterProbability.getProbability(filterInstanceIndexId) > FILTER_PROBABILITY && // >
-										filterProbability.getInstanceFrequency(filterInstanceIndexId) > filter.getInstanceFrequencyThreshould())))) {
+				if(!filterInstanceIndexId.isEmpty() && filterProbability.getProbability(filterInstanceIndexId) > FILTER_PROBABILITY) {
 
 					score = filter.calculateScore(sequenceLabelProcessed, index);
 

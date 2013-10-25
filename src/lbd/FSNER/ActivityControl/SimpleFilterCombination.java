@@ -5,6 +5,7 @@ import java.util.Map;
 
 import lbd.FSNER.Model.AbstractCombineFiltersInActiveControl;
 import lbd.FSNER.Model.AbstractFilter;
+import lbd.FSNER.Model.AbstractMetaFilter.MetaFilterType;
 
 public class SimpleFilterCombination extends AbstractCombineFiltersInActiveControl{
 
@@ -21,7 +22,7 @@ public class SimpleFilterCombination extends AbstractCombineFiltersInActiveContr
 			if(indexList[indexDepthPosition] < currentFilterListSize) {
 
 				if(indexDepthPosition > 0) {
-					addMultiFilterToFilterList(filterList, indexList, indexDepthPosition);
+					addMetaFilterToFilterList(MetaFilterType.Multi, filterList, indexList, indexDepthPosition, 0);
 				}
 
 				if(indexDepthPosition < indexList.length-1) {

@@ -4,12 +4,13 @@ package lbd.FSNER.Model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Configuration.Debug;
-import lbd.FSNER.Model.AbstractFilter.FilterMode;
+import lbd.FSNER.Model.AbstractFilter.FilterStage;
 import lbd.data.handler.DataSequence;
 
 public abstract class AbstractActivityControl implements Serializable {
@@ -18,55 +19,82 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	protected List<AbstractDataPreprocessor> mDataPreprocessorList;
 	protected List<AbstractFilter> mFilterList;
+
 	protected Map<String, List<AbstractFilter>> mFilterListPerDataPreprocessor;
+	protected Map<String, Set<AbstractFilter>> mClassNameSingleFilterMap;
 
 	protected List<DataSequence> mSequenceList;
-	protected List<String> mEntityList;
+	protected Set<String> mEntitySet;
+
+	protected Map<String, Map<String, Integer>> mPredictSubSequenceLabel;
 
 	protected AbstractCombineFiltersInActiveControl mFilterCombination;
-
-	protected final double COMMON_TERM_PROBABILTY = 1.1;
 
 	public AbstractActivityControl(AbstractCombineFiltersInActiveControl pFilterCombination) {
 
 		mDataPreprocessorList = new ArrayList<AbstractDataPreprocessor>();
 		mFilterList = new ArrayList<AbstractFilter>();
-		mSequenceList = new ArrayList<DataSequence>();
-		mEntityList = new ArrayList<String>();
+
 		mFilterListPerDataPreprocessor = new HashMap<String, List<AbstractFilter>>();
+		mClassNameSingleFilterMap = new HashMap<String, Set<AbstractFilter>>();
+
+		mSequenceList = new ArrayList<DataSequence>();
+		mEntitySet = new HashSet<String>();
 
 		mFilterCombination = pFilterCombination;
+
+		mPredictSubSequenceLabel = new HashMap<String, Map<String, Integer>>();
+	}
+
+	public void addActivity(List<AbstractActivity> pActivityList) {
+		for(AbstractActivity cActivity : pActivityList) {
+			addActivity(cActivity);
+		}
 	}
 
 	public void addActivity(AbstractActivity pActivity) {
-
 		if(pActivity instanceof AbstractDataPreprocessor) {
 			mDataPreprocessorList.add((AbstractDataPreprocessor) pActivity);
 		} else if(pActivity instanceof AbstractFilter) {
+			addAbstractFilter(pActivity);
+		}
+	}
 
-			mFilterList.add((AbstractFilter) pActivity);
+	private void addAbstractFilter(AbstractActivity pActivity) {
 
-			//-- Adding data preprocessor name to filter
-			mFilterList.get(mFilterList.size()-1).setPreprocessingTypeName(
-					mDataPreprocessorList.get(mFilterList.get(mFilterList.size()-1).
-							getFilterPreprocessingTypeNameIndex()).getActivityName());
+		AbstractFilter vFilter = (AbstractFilter) pActivity;
+		int vDataProcessorIndex = vFilter.getFilterPreprocessingTypeIndex();
+		String vDataProcessorName = mDataPreprocessorList.get(vDataProcessorIndex).getActivityName();
 
-			//-- Adding filter to data preprocessor list
-			int dpIndex = ((AbstractFilter) pActivity).getFilterPreprocessingTypeNameIndex();
-			if(!mFilterListPerDataPreprocessor.containsKey(mDataPreprocessorList.get(dpIndex).getActivityName())) {
-				mFilterListPerDataPreprocessor.put(mDataPreprocessorList.get(dpIndex).getActivityName(), new ArrayList<AbstractFilter>());
+		//-- Adding data preprocessor name to filter
+		vFilter.setPreprocessingTypeName(vDataProcessorName);
+
+		//-- Initiating filter to map of data preprocessor
+		if(!mFilterListPerDataPreprocessor.containsKey(vDataProcessorName)) {
+			mFilterListPerDataPreprocessor.put(vDataProcessorName, new ArrayList<AbstractFilter>());
+		}
+
+		mFilterList.add(vFilter);
+		mFilterListPerDataPreprocessor.get(vDataProcessorName).add(vFilter);
+		addAbstractFilterToSingleFilterMap(vFilter, vDataProcessorName);
+	}
+
+	private void addAbstractFilterToSingleFilterMap(AbstractFilter vFilter,	String vDataProcessorName) {
+		if(!(vFilter instanceof AbstractMetaFilter)) {
+			if(!mClassNameSingleFilterMap.containsKey(vFilter.getClass().getName())) {
+				mClassNameSingleFilterMap.put(vFilter.getClass().getName(), new HashSet<AbstractFilter>());
 			}
-			mFilterListPerDataPreprocessor.get(mDataPreprocessorList.get(dpIndex).getActivityName()).add(((AbstractFilter) pActivity));
+			mClassNameSingleFilterMap.get(vFilter.getClass().getName()).add(vFilter);
 		}
 	}
 
 	public void startActivityControl(String pContextSourceFile) {
 
 		//-- Set FilterMode
-		AbstractFilter.setFilterMode(FilterMode.inLoad);
+		AbstractFilter.setFilterStage(FilterStage.Train);
 
 		//-- Restarts entity list
-		mEntityList.clear();
+		mEntitySet.clear();
 
 		//-- Start the activity control.
 		startActivityControlSub(pContextSourceFile);
@@ -92,26 +120,17 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	public abstract void update(List<DataSequence> pSequenceList);
 
-	protected void addFilterStatistic(AbstractFilter pFilter, SequenceLabel pSequenceLabelProcessed) {
-
-		String pSequenceInstanceId;
+	protected void addFilterStatistic(AbstractFilter pFilter, DataSequence pSequence, SequenceLabel pSequenceLabelProcessed) {
 
 		for(int i = 0; i < pSequenceLabelProcessed.size(); i++) {
-			if(mDataPreprocessorList.get(pFilter.getFilterPreprocessingTypeNameIndex()).
-					getCommonTermProbability(pSequenceLabelProcessed.getTerm(i)) < COMMON_TERM_PROBABILTY) {
 
-				pSequenceInstanceId = pFilter.getSequenceInstanceId(pSequenceLabelProcessed, i);
+			String vSequenceInstanceId = pFilter.getSequenceInstanceId(pSequence, pSequenceLabelProcessed, i);
 
-				if(!pSequenceInstanceId.isEmpty()) {
-					synchronized (this) {
-						pFilter.getFilterProbability().addStatistic(pSequenceInstanceId,
-								pSequenceLabelProcessed.getTerm(i),
-								pSequenceLabelProcessed.getLabel(i));
-
-						if(Debug.ActivityControl.printFilterInstanceStatistics) {
-							pFilter.setFilterTerm(pSequenceInstanceId, pSequenceLabelProcessed.getTerm(i));
-						}
-					}
+			if(!vSequenceInstanceId.isEmpty()) {
+				synchronized (this) {
+					pFilter.getFilterProbability().addStatistic(vSequenceInstanceId,
+							pSequenceLabelProcessed.getTerm(i),
+							pSequenceLabelProcessed.getLabel(i));
 				}
 			}
 		}
@@ -125,7 +144,11 @@ public abstract class AbstractActivityControl implements Serializable {
 		return(mFilterList);
 	}
 
-	public List<String> getEntityList() {
-		return(mEntityList);
+	public Set<String> getEntitySet() {
+		return(mEntitySet);
+	}
+
+	public Set<AbstractFilter> getFiltersByClassName(String pFilterClassName) {
+		return mClassNameSingleFilterMap.get(pFilterClassName);
 	}
 }

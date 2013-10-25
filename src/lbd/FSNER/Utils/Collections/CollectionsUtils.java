@@ -1,15 +1,15 @@
 package lbd.FSNER.Utils.Collections;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import lbd.FSNER.Utils.Symbol;
 
 public class CollectionsUtils {
 
-	public static int sumIntegerValueInMap(HashMap<String, Integer> pMap) {
+	public static int sumIntegerValueInMap(Map<String, Integer> pMap) {
 		Iterator<Entry<String, Integer>> cIte = pMap.entrySet().iterator();
 		int vTotalSum = 0;
 
@@ -20,7 +20,7 @@ public class CollectionsUtils {
 		return vTotalSum;
 	}
 
-	public static String GetTerms(ArrayList<String> pList) {
+	public static String GetTerms(List<String> pList) {
 		String vTermList = Symbol.EMPTY;
 
 		for(String cTerm : pList) {

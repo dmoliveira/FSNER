@@ -20,6 +20,7 @@ import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
 import lbd.FSNER.Utils.Annotations.DefaultValue;
+import lbd.data.handler.DataSequence;
 
 public class FtrSingleTermDictionary4 extends AbstractFilter{
 
@@ -216,7 +217,7 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel pSequenceLabelProcessed, int pIndex) {
 		String vId = Symbol.EMPTY;
 

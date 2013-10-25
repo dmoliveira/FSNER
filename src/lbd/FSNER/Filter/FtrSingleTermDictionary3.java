@@ -18,6 +18,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
 import lbd.FSNER.Utils.Annotations.Comment;
+import lbd.data.handler.DataSequence;
 
 @Comment(message="Official Filter")
 public class FtrSingleTermDictionary3 extends AbstractFilter{
@@ -196,7 +197,7 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;

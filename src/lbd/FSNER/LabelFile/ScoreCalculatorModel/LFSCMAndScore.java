@@ -3,15 +3,17 @@ package lbd.FSNER.LabelFile.ScoreCalculatorModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Component.Statistic.FilterProbability;
+import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Model.AbstractLabelFileScoreCalculatorModel;
 import lbd.FSNER.Utils.LabelEncoding;
+import lbd.data.handler.DataSequence;
 
 public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 
@@ -28,7 +30,8 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 
 	@Override
 	public double calculateScore(int index,
-			HashMap<String, SequenceLabel> proccessedSequenceMap,
+			DataSequence pSequence,
+			Map<String, SequenceLabel> proccessedSequenceMap,
 			ArrayList<AbstractDataPreprocessor> dataProcessorList,
 			ArrayList<AbstractFilter> filterList) {
 
@@ -40,53 +43,49 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 		int label = -1;
 
 		SequenceLabel sequenceLabelProcessed;
-		FilterProbability filterProbability;
+		FilterProbabilityHandler filterProbability;
 		AbstractDataPreprocessor dataPreprocessor;
 
-		HashMap<Integer, HashMap<String, FilterProbability>> filterClassNameMap = new HashMap<Integer, HashMap<String, FilterProbability>>();
+		HashMap<Integer, HashMap<String, FilterProbabilityHandler>> filterClassNameMap = new HashMap<Integer, HashMap<String, FilterProbabilityHandler>>();
 
 		for(AbstractFilter filter : filterList) {
 
-			if(filterClassNameMap.containsKey(filter.getFilterPreprocessingTypeNameIndex()) &&
-					filterClassNameMap.get(filter.getFilterPreprocessingTypeNameIndex()).containsKey(filter.getCommonFilterName())) {
+			if(filterClassNameMap.containsKey(filter.getFilterPreprocessingTypeIndex()) &&
+					filterClassNameMap.get(filter.getFilterPreprocessingTypeIndex()).containsKey(filter.getFilterClassName())) {
 				continue;
 			}
 
 			//-- Get common term percentage
-			dataPreprocessor = dataProcessorList.get(filter.getFilterPreprocessingTypeNameIndex());
+			dataPreprocessor = dataProcessorList.get(filter.getFilterPreprocessingTypeIndex());
 			sequenceLabelProcessed = proccessedSequenceMap.get(filter.getPreprocesingTypeName());
 
 			term = sequenceLabelProcessed.getTerm(index);
 			label = sequenceLabelProcessed.getLabel(index);
 
-			if(filter.getFilterState() == FilterState.Active &&
-					(!isUnrealibleSituation || filter.isToUseFilterInUnreliableSituation()) &&
+			if(filter.getFilterState() == FilterState.Active && !isUnrealibleSituation &&
 					dataPreprocessor.getCommonTermProbability(term) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
 
 				//-- Get filter instance id determined by the index
 				filterProbability = filter.getFilterProbability();
-				filterInstanceIndexId = filter.getSequenceInstanceId(sequenceLabelProcessed, index);
+				filterInstanceIndexId = filter.getSequenceInstanceId(pSequence, sequenceLabelProcessed, index);
 
-				if((!filterInstanceIndexId.isEmpty() &&
-						(!filter.considerFilterProbability() ||
-								(filterProbability.getProbability(filterInstanceIndexId) >= FILTER_PROBABILITY &&
-								filterProbability.getInstanceFrequency(filterInstanceIndexId) > filter.getInstanceFrequencyThreshould())))) {
+				if(!filterInstanceIndexId.isEmpty() && filterProbability.getProbability(filterInstanceIndexId) >= FILTER_PROBABILITY) {
 
 					filterScore = filter.calculateScore(sequenceLabelProcessed, index);
 
 					if(filterScore > SCORE_THRESHOLD) {
 
-						if(!filterClassNameMap.containsKey(filter.getFilterPreprocessingTypeNameIndex())) {
-							filterClassNameMap.put(filter.getFilterPreprocessingTypeNameIndex(), new HashMap<String, FilterProbability>());
+						if(!filterClassNameMap.containsKey(filter.getFilterPreprocessingTypeIndex())) {
+							filterClassNameMap.put(filter.getFilterPreprocessingTypeIndex(), new HashMap<String, FilterProbabilityHandler>());
 						}
 
-						filterClassNameMap.get(filter.getFilterPreprocessingTypeNameIndex()).put(filter.getCommonFilterName(), filterProbability);
+						filterClassNameMap.get(filter.getFilterPreprocessingTypeIndex()).put(filter.getFilterClassName(), filterProbability);
 
 						if(maxFilterTimeActivated(filterClassNameMap)) {
 
 							finalScore = 1;
 
-							addToFilterStatistic(term, filterClassNameMap.get(filter.getFilterPreprocessingTypeNameIndex()),
+							addToFilterStatistic(term, filterClassNameMap.get(filter.getFilterPreprocessingTypeIndex()),
 									LabelEncoding.isEntity(label));
 							break;
 						}
@@ -98,9 +97,9 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 		return (finalScore);
 	}
 
-	protected boolean maxFilterTimeActivated(HashMap<Integer, HashMap<String, FilterProbability>> filterClassNameMap) {
+	protected boolean maxFilterTimeActivated(HashMap<Integer, HashMap<String, FilterProbabilityHandler>> filterClassNameMap) {
 
-		Iterator<Entry<Integer, HashMap<String, FilterProbability>>> ite = filterClassNameMap.entrySet().iterator();
+		Iterator<Entry<Integer, HashMap<String, FilterProbabilityHandler>>> ite = filterClassNameMap.entrySet().iterator();
 
 		boolean isFilterSurpassThreshold = false;
 
@@ -118,11 +117,11 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 		return(isFilterSurpassThreshold);
 	}
 
-	protected void addToFilterStatistic(String pTerm, HashMap<String, FilterProbability> filterClassName,
+	protected void addToFilterStatistic(String pTerm, HashMap<String, FilterProbabilityHandler> filterClassName,
 			boolean isEntity) {
 
-		Iterator<Entry<String, FilterProbability>> ite = filterClassName.entrySet().iterator();
-		FilterProbability filterProbability;
+		Iterator<Entry<String, FilterProbabilityHandler>> ite = filterClassName.entrySet().iterator();
+		FilterProbabilityHandler filterProbability;
 
 		while(ite.hasNext()) {
 			filterProbability = ite.next().getValue();

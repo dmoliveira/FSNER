@@ -9,6 +9,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrCombineTermsInSequence extends AbstractFilter{
 
@@ -32,8 +33,6 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 
 		this.blockSize = blockSize;
 		this.sequenceSimilarityThreshold = sequenceSimilarityThreshold;
-
-		this.mIsToConsiderFilterProbability = false;
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;
 		String combinedTerm;

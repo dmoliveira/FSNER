@@ -14,7 +14,8 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
-import lbd.FSNER.Utils.SupportEntity;
+import lbd.FSNER.Utils.EntityUtils;
+import lbd.data.handler.DataSequence;
 
 public class FtrClusterHandler extends AbstractFilter{
 
@@ -79,7 +80,7 @@ public class FtrClusterHandler extends AbstractFilter{
 		Entity entity;
 
 		for(String entityValue : entityValueListInSequence) {
-			entity = SupportEntity.getEntity(entityValue, entityList);
+			entity = EntityUtils.getEntity(entityValue, entityList);
 			if(entity != null) {
 				entityListInSequence.add(entity);
 			}
@@ -160,10 +161,10 @@ public class FtrClusterHandler extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(SequenceLabel sequenceLabelProcessed,
+	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed,
 			int index) {
 
-		Entity entity = SupportEntity.getEntity(sequenceLabelProcessed.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(sequenceLabelProcessed.getTerm(index), entityList);
 
 		double threshold;
 		double maximumSequenceScore;

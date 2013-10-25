@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import lbd.FSNER.Collection.DataCollection;
 import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.FilterParameters;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.FileUtils;
+import lbd.FSNER.Utils.LabelEncoding;
 
 public abstract class AbstractNERModel implements Serializable {
 
@@ -26,16 +29,23 @@ public abstract class AbstractNERModel implements Serializable {
 	protected AbstractLabelFile mLabelFile;
 	protected AbstractEvaluator mEvaluator;
 
+	//-- Filters
 	protected FilterParameters mFilterParameters;
 
 	//-- Files
 	protected String mContextFilenameAddress;
+	protected DataCollection mDataCollection;
 
 	//-- used to calculate generalization
 	protected Map<String, Object> mEntityMap;
 	protected int mEntityGeneralizedNumber;
 
-	public AbstractNERModel() {
+	public AbstractNERModel(DataCollection pDataCollection) {
+
+		//-- Set Label Encoding (Mandatory!)
+		LabelEncoding.checkLabelEncoding();
+
+		mDataCollection = pDataCollection;
 		mEntityMap = new HashMap<String, Object>();
 	}
 
@@ -129,7 +139,7 @@ public abstract class AbstractNERModel implements Serializable {
 
 	protected void addLoadedEntity() {
 		//System.out.println("Entity in Train: ");
-		for(String entityValue : mActivityControl.getEntityList()) {
+		for(String entityValue : mActivityControl.getEntitySet()) {
 			if(!mEntityMap.containsKey(entityValue)) {
 				mEntityMap.put(entityValue, null);
 				//System.out.println(entityValue);
@@ -209,8 +219,8 @@ public abstract class AbstractNERModel implements Serializable {
 		return(mEntityMap);
 	}
 
-	public List<String> getEntityList() {
-		return(mActivityControl.getEntityList());
+	public Set<String> getEntitySet() {
+		return(mActivityControl.getEntitySet());
 	}
 
 	public AbstractUpdateControl getUpdateControl() {

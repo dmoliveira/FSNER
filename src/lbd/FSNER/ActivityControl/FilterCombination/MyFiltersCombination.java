@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import lbd.FSNER.Filter.FtrCapitalizedTerms;
-import lbd.FSNER.Filter.FtrEntityProbability;
+import lbd.FSNER.Filter.FtrToken;
 import lbd.FSNER.Model.AbstractCombineFiltersInActiveControl;
 import lbd.FSNER.Model.AbstractFilter;
+import lbd.FSNER.Model.AbstractMetaFilter.MetaFilterType;
 
 public class MyFiltersCombination extends AbstractCombineFiltersInActiveControl{
 
@@ -20,8 +21,8 @@ public class MyFiltersCombination extends AbstractCombineFiltersInActiveControl{
 		String [] filterClassNameList;
 
 		//-- Generate Combinations of filters
-		filterClassNameList = new String [] {FtrEntityProbability.class.getName(), FtrCapitalizedTerms.class.getName()};
-		generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
+		filterClassNameList = new String [] {FtrToken.class.getName(), FtrCapitalizedTerms.class.getName()};
+		generateMetaFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList, MetaFilterType.Multi, 0);
 	}
 
 }

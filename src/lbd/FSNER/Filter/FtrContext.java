@@ -11,6 +11,7 @@ import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.CommonEnum.Flexibility;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrContext extends AbstractFilter{
 
@@ -100,7 +101,7 @@ public class FtrContext extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(SequenceLabel sequenceLabelProcessed, int index) {
+	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;
 
@@ -117,7 +118,7 @@ public class FtrContext extends AbstractFilter{
 	}
 
 	public int getContextKey() {
-		return(mPreprocessingTypeNameIndex);
+		return(mPreprocessingTypeIndex);
 	}
 
 }

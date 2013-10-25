@@ -75,7 +75,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 		if(phase == Phase.LoadSequence) {
 			loadSequence(sequence);
 		} else if(phase == Phase.Adjust) {
-			X();
+			X(sequence);
 		}
 	}
 
@@ -146,7 +146,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 
 	}
 
-	protected void X() {
+	protected void X(DataSequence pSequence) {
 		for(int i = startFilterList; i < endFilterList; i++) {
 
 			//processedSequenceMap = PreprocessData.preprocessSequence(sequenceList.get(i), dataPreprocessorList);
@@ -157,7 +157,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 				filter.adjust(sequenceLabel);
 
 				//-- Add General Statistics
-				addFilterStatistic(filter, sequenceLabel);
+				addFilterStatistic(filter, pSequence, sequenceLabel);
 			}
 		}
 	}

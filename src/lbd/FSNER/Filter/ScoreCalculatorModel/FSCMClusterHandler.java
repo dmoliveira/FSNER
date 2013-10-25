@@ -8,7 +8,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
-import lbd.FSNER.Utils.SupportEntity;
+import lbd.FSNER.Utils.EntityUtils;
 
 public class FSCMClusterHandler extends AbstractFilterScoreCalculatorModel{
 
@@ -21,7 +21,7 @@ public class FSCMClusterHandler extends AbstractFilterScoreCalculatorModel{
 			int index) {
 
 		double score = 0;
-		Entity entity = SupportEntity.getEntity(sequenceLabelProcessed.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(sequenceLabelProcessed.getTerm(index), entityList);
 
 		ArrayList<Cluster> clusterList = clusterHandler.getClusterMap().get(sequenceLabelProcessed.getTerm(index));
 

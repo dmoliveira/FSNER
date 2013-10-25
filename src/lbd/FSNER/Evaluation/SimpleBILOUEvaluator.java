@@ -1,32 +1,41 @@
 package lbd.FSNER.Evaluation;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Evaluation.Component.TermLabeled;
 import lbd.FSNER.Model.AbstractEvaluator;
 import lbd.FSNER.Utils.LabelEncoding.BILOU;
+import lbd.FSNER.Utils.Symbol;
 
 public class SimpleBILOUEvaluator extends AbstractEvaluator{
 
 	private static final long serialVersionUID = 1L;
 
+	private Map<String, Integer> mLabelAssignedWrong;
+	private int mTotalLabelAssignedWrong;
+
 	public SimpleBILOUEvaluator(ArrayList<String> pFilenameList, OutputStyle outputStyle) {
 		super(pFilenameList, outputStyle);
+		mLabelAssignedWrong = new HashMap<String, Integer>();
+		mTotalLabelAssignedWrong = 0;
 	}
 
 	@Override
-	protected void evaluateTerm(TermLabeled termFromTagged,
-			TermLabeled termFromTest, int lineNumber) {
+	protected void evaluateTerm(TermLabeled pTermFromTagged, TermLabeled pTermFromTest, int pLineNumber) {
 
-		if(!termFromTagged.getTerm().equals(termFromTest.getTerm())) {
+		if(!pTermFromTagged.getTerm().equals(pTermFromTest.getTerm())) {
 			new Throwable(MessageFormat.format("Error: term \"{0}\" are different from term\"{1}\" (line {2})",
-					termFromTagged.getTerm(), termFromTest.getTerm(), lineNumber));
+					pTermFromTagged.getTerm(), pTermFromTest.getTerm(), pLineNumber));
 		}
 
-		String labelTagged = termFromTagged.getLabel();
-		String labelTest = termFromTest.getLabel();
+		String vLabelTagged = pTermFromTagged.getLabel();
+		String vLabelTest = pTermFromTest.getLabel();
 
 		/** Naive Evaluation **/
 		/*if(!BILOU.Outside.name().equals(labelTest) && !BILOU.Outside.name().equals(labelTagged)) {
@@ -39,15 +48,42 @@ public class SimpleBILOUEvaluator extends AbstractEvaluator{
 			mCurrentStatisticalFile.addFP();
 		}*/
 
-		/** Very Strict Evaluation for Entity Labels**/
-		if(labelTest.equals(BILOU.Outside.name()) && !labelTagged.equals(BILOU.Outside.name())) {
+		/** Very Strict Evaluation for Entity Labels **/
+		if(vLabelTest.equals(BILOU.Outside.name()) && !vLabelTagged.equals(BILOU.Outside.name())) {
 			mCurrentStatisticalFile.addFP();
-		} else if(!labelTest.equals(BILOU.Outside.name())) {
-			if(((Parameters.Evaluator.isToEvaluateOnTokenLevel)? !labelTagged.equals(BILOU.Outside.name()) : labelTagged.equals(labelTest))) {
+		} else if(!vLabelTest.equals(BILOU.Outside.name())) {
+
+			if(!vLabelTagged.equals(vLabelTest)) {
+				String vKey = vLabelTest.substring(0,1) + Symbol.HYPHEN + vLabelTagged.substring(0,1);
+
+				if(!mLabelAssignedWrong.containsKey(vKey)) {
+					mLabelAssignedWrong.put(vKey, 0);
+				}
+				mLabelAssignedWrong.put(vKey, mLabelAssignedWrong.get(vKey) + 1);
+				mTotalLabelAssignedWrong++;
+			}
+
+			if(((Parameters.Evaluator.isToEvaluateOnTokenLevel)? !vLabelTagged.equals(BILOU.Outside.name()) : vLabelTagged.equals(vLabelTest))) {
 				mCurrentStatisticalFile.addTP();
 			} else {
 				mCurrentStatisticalFile.addFN();
 			}
+		}
+	}
+
+	public void printLabelAssignedWrongStatistics() {
+		System.out.println("\n\n-- Label Assigned Wrong In Test");
+		for(String cKey : mLabelAssignedWrong.keySet()) {
+			System.out.println(cKey + ": " + MessageFormat.format("{0,number,#.##}",
+					(100.0 * mLabelAssignedWrong.get(cKey))/mTotalLabelAssignedWrong));
+		}
+	}
+
+	@Override
+	protected void afterEvaluate(String pTaggedFilenameAddress,	String pTestFilenameAddress) throws IOException {
+		super.afterEvaluate(pTaggedFilenameAddress, pTestFilenameAddress);
+		if(Debug.Evaluator.isToPrintLabelAssignedWrong) {
+			printLabelAssignedWrongStatistics();
 		}
 	}
 

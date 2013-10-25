@@ -5,6 +5,7 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrShiftFilterPosition extends AbstractFilter {
 
@@ -23,7 +24,7 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 		this.filter = filter;
 		this.shiftPosition = shiftPosition;
 		//this.commonFilterName = "Shf.SP:" + filter.getCommonFilterName();//+ shiftPosition + CommonTag.DOT
-		this.mCommonFilterName = filter.getCommonFilterName();//+ shiftPosition + CommonTag.DOT
+		this.mFilterClassName = filter.getFilterClassName();//+ shiftPosition + CommonTag.DOT
 	}
 
 	@Override
@@ -69,11 +70,11 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		int newIndex = index + shiftPosition;
 		String id = ((newIndex > -1 && newIndex < sequenceLabelProcessed.size())?
-				"id:" + this.mId + Symbol.DOT + filter.getSequenceInstanceId(
+				"id:" + this.mId + Symbol.DOT + filter.getSequenceInstanceId(pSequence,
 						sequenceLabelProcessed, newIndex) : Symbol.EMPTY);
 
 		return (id);

@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.LabelEncoding.BILOU;
@@ -200,5 +201,18 @@ public class FileUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static List<String> getFileList(String pDirectoryAddress) {
+	
+		List<String> vFileList = new ArrayList<String>();
+	
+		for(File cFile : new File(pDirectoryAddress).listFiles()) {
+			if (cFile.isFile()) {
+				vFileList.add(cFile.getName());
+			}
+		}
+	
+		return vFileList;
 	}
 }

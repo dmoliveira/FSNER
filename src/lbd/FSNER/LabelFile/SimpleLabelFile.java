@@ -1,4 +1,4 @@
-package lbd.FSNER.FSF.LabelFile;
+package lbd.FSNER.LabelFile;
 
 
 import java.io.FileNotFoundException;
@@ -263,7 +263,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		//-- Force Y(i) To be equals an outside label
 		pSequence.set_y(pIndex, LabelEncoding.getOutsideLabel());
 
-		int vMostProbablyLabel = mLabelCalculator.calculateMostProbablyLabel(pIndex, pProccessedSequenceMap,
+		int vMostProbablyLabel = mLabelCalculator.calculateMostProbablyLabel(pIndex, pSequence, pProccessedSequenceMap,
 				mActivityControl.getDataPreprocessorList(), mActivityControl.getFilterList());
 
 		if(Debug.LabelFile.printTermIdentifiedAsEntity && LabelEncoding.BILOU.isEntity(
@@ -305,12 +305,14 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		String vMessageFormat = "\t{0} ({1}) {2} {3} {4}";
 
 		for(AbstractFilter filter : mActivityControl.getFilterList()) {
-			if(filter.getFilterProbability().getTotalAssignedLabelsInTest() > 0) {
+			if(filter.getFilterProbability().getTotalAssignedLabelsInTest() > 0
+					&& Debug.Filter.printFilterStatisticsWherePrecisionLessEqual
+					>= filter.getFilterProbability().getFilterPrecisionInTest()) {
 				System.out.println(MessageFormat.format(vMessageFormat,
 						filter.getActivityName() ,
 						filter.getPreprocesingTypeName(),
-						filter.getFilterProbability().getFilterStatisticForCorrectAssignedLabelsInTest(),
-						filter.getFilterProbability().getFilterStatisticForAssignedLabelsInTest(),
+						filter.getFilterProbability().getFilterPrecisionStatisticInTest(),
+						filter.getFilterProbability().getFilterRecallStatisticInTest(),
 						filter.getFilterProbability().getFilterF1StatisticInTest()));
 
 				printTermStatisticsByFilter(filter);

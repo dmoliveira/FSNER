@@ -1,30 +1,25 @@
 package lbd.FSNER.Filter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
-import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
-public class FtrEntityProbability extends AbstractFilter{
+public class FtrToken extends AbstractFilter{
 
 	private static final long serialVersionUID = 1L;
 
-	protected Map<String, Object> mEntityList;
+	//Token: Revisit - Entity must be more than one token.
+	protected Set<String> mEntitySet;
 
-	public FtrEntityProbability(int pPreprocessingTypeNameIndex,
-			AbstractFilterScoreCalculatorModel vScoreCalculator) {
-
-		super(ClassName.getSingleName(FtrEntityProbability.class.getName()),
-				pPreprocessingTypeNameIndex, vScoreCalculator);
-
-		mEntityList = new HashMap<String, Object>();
-		//this.commonFilterName = "EP" + preprocessingTypeNameIndex;
-		//this.commonFilterName = "Wrd" + preprocessingTypeNameIndex;
+	public FtrToken(int pPreprocessingTypeNameIndex) {
+		super(ClassName.getSingleName(FtrToken.class.getName()), pPreprocessingTypeNameIndex);
+		mEntitySet = new HashSet<String>();
 	}
 
 	@Override
@@ -46,9 +41,8 @@ public class FtrEntityProbability extends AbstractFilter{
 
 	@Override
 	public void loadTermSequence(SequenceLabel pSequenceLabelProccessed, int pIndex) {
-
 		if(LabelEncoding.isEntity(pSequenceLabelProccessed.getLabel(pIndex))) {
-			mEntityList.put(pSequenceLabelProccessed.getTerm(pIndex), null);
+			mEntitySet.add(pSequenceLabelProccessed.getTerm(pIndex));
 		}
 	}
 
@@ -71,12 +65,12 @@ public class FtrEntityProbability extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(SequenceLabel pSequenceLabelProcessed,
+	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed,
 			int pIndex) {
 
 		String vId = Symbol.EMPTY;
 
-		if(mEntityList.containsKey(pSequenceLabelProcessed.getTerm(pIndex))) {
+		if(mEntitySet.contains(pSequenceLabelProcessed.getTerm(pIndex))) {
 			vId = "id:" + mId + Symbol.HYPHEN + pSequenceLabelProcessed.getTerm(pIndex);
 		}
 

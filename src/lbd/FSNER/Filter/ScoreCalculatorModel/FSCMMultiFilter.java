@@ -1,6 +1,6 @@
 package lbd.FSNER.Filter.ScoreCalculatorModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
@@ -9,7 +9,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 public class FSCMMultiFilter extends AbstractFilterScoreCalculatorModel{
 
 	private static final long serialVersionUID = 1L;
-	protected ArrayList<AbstractFilter> filterList;
+	protected List<AbstractFilter> filterList;
 
 	@Override
 	protected double calculateScore(SequenceLabel sequenceLabel, int index) {
@@ -31,7 +31,7 @@ public class FSCMMultiFilter extends AbstractFilterScoreCalculatorModel{
 		return (numberFilterActivated == filterList.size())? 1 : 0;
 	}
 
-	public void setFilterList(ArrayList<AbstractFilter> filterList) {
+	public void setFilterList(List<AbstractFilter> filterList) {
 		this.filterList = filterList;
 	}
 

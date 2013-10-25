@@ -5,17 +5,27 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrState extends AbstractFilter {
 
 	private static final long serialVersionUID = 1L;
 
+	// -- Parameterization
+	protected int mNumberPreviousStatesToConsider;
+	protected boolean mIsToConsiderStatePerToken;
+
 	public FtrState(int preprocessingTypeNameIndex,
+			int pNumberPreviousStatesToConsider,
+			boolean pIsToConsiderStatePerToken,
 			AbstractFilterScoreCalculatorModel scoreCalculator) {
 
-		super(ClassName.getSingleName(FtrState.class.getName()),
-				preprocessingTypeNameIndex, scoreCalculator);
-		// TODO Auto-generated constructor stub
+		super(ClassName.getSingleName(FtrState.class.getName()) + ".prevStr:"
+				+ pNumberPreviousStatesToConsider + ".StrTkn:"
+				+ pIsToConsiderStatePerToken, preprocessingTypeNameIndex,
+				scoreCalculator);
+		mNumberPreviousStatesToConsider = pNumberPreviousStatesToConsider;
+		mIsToConsiderStatePerToken = pIsToConsiderStatePerToken;
 	}
 
 	@Override
@@ -57,16 +67,34 @@ public class FtrState extends AbstractFilter {
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
-			SequenceLabel sequenceLabelProcessed, int index) {
-		String id = Symbol.EMPTY;
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+			SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
-		if(index > 0){// && sequenceLabelProcessed.getLabel(index - 1) != LabelEncoding.BILOU.Outside.ordinal()) {
-			id = "id:" + this.mId + Symbol.HYPHEN + sequenceLabelProcessed.getTerm(index) + Symbol.COLON
-					+ sequenceLabelProcessed.getLabel(index - 1);
+		String vId = Symbol.EMPTY;
+
+		if (mNumberPreviousStatesToConsider <= 0) {
+			return vId;
 		}
 
-		return id;
+		if (pIndex - mNumberPreviousStatesToConsider >= 0) {// &&
+			// sequenceLabelProcessed.getLabel(index
+			// - 1) !=
+			// LabelEncoding.BILOU.Outside.ordinal())
+			// {
+			String vPreviousStates = Symbol.EMPTY;
+			for (int cState = pIndex - mNumberPreviousStatesToConsider; cState < pIndex; cState++) {
+				vPreviousStates += pSequence.y(cState) + Symbol.HYPHEN;
+			}
+
+			vId = "id:"
+					+ this.mId
+					+ Symbol.HYPHEN
+					+ ((mIsToConsiderStatePerToken) ? pSequenceLabelProcessed
+							.getTerm(pIndex) + Symbol.COLON : Symbol.EMPTY)
+							+ vPreviousStates;
+		}
+
+		return vId;
 	}
 
 	@Override

@@ -1,8 +1,13 @@
 package lbd.FSNER.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import lbd.data.handler.DataSequence;
+
 public class LabelEncoding {
 
-	public static enum EncodingType {BILOU, BIO, IO, BILOUUnitContext, BILOUContext};
+	public static enum EncodingType {BILOU, BIO, IO};
 
 	public static enum BILOU {Beginning, Inside, Last, Outside, UnitToken;
 
@@ -66,13 +71,29 @@ public class LabelEncoding {
 			isEntity = isEntityBIO(label);
 		} else if(sEncodingType == EncodingType.IO) {
 			isEntity = isEntityIO(label);
-		} else if(sEncodingType == EncodingType.BILOUUnitContext) {
-			isEntity = isEntityBILOUUnitContext(label);
-		} else if(sEncodingType == EncodingType.BILOUContext) {
-			isEntity = isEntityBILOUContext(label);
 		}
 
 		return(isEntity);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static Enum[] getLabels() {
+
+		if(sEncodingType == null) {
+			new Throwable("-- Error: Set one of the Encoding Type available before start the NERModel.");
+		}
+
+		Enum [] vLabelList = null;
+
+		if(sEncodingType == EncodingType.BILOU) {
+			vLabelList = BILOU.values();
+		} else if(sEncodingType == EncodingType.BIO) {
+			vLabelList =  BIO.values();
+		} else if(sEncodingType == EncodingType.IO) {
+			vLabelList =  IO.values();
+		}
+
+		return(vLabelList);
 	}
 
 	protected static boolean isEntityBILOU(int label) {
@@ -118,10 +139,6 @@ public class LabelEncoding {
 			alphabetSize = BIO.values().length;
 		} else if(sEncodingType == EncodingType.IO) {
 			alphabetSize = IO.values().length;
-		} else if(sEncodingType == EncodingType.BILOUUnitContext) {
-			alphabetSize = BILOUUnitContext.values().length;
-		} else if(sEncodingType == EncodingType.BILOUContext) {
-			alphabetSize = BILOUContext.values().length;
 		}
 
 		return(alphabetSize);
@@ -137,10 +154,6 @@ public class LabelEncoding {
 			vOrdinalLabel = BIO.valueOf(pLabelName).ordinal();
 		} else if(sEncodingType == EncodingType.IO && IO.valueOf(pLabelName) != null) {
 			vOrdinalLabel = IO.valueOf(pLabelName).ordinal();
-		} else if(sEncodingType == EncodingType.BILOUUnitContext && BILOUUnitContext.valueOf(pLabelName) != null) {
-			vOrdinalLabel = BILOUUnitContext.valueOf(pLabelName).ordinal();
-		} else if(sEncodingType == EncodingType.BILOUContext && BILOUContext.valueOf(pLabelName) != null) {
-			vOrdinalLabel = BILOUContext.valueOf(pLabelName).ordinal();
 		}
 
 		return(vOrdinalLabel);
@@ -148,20 +161,65 @@ public class LabelEncoding {
 
 	public static int getOutsideLabel() {
 
-		int outsideLabel = -1;
+		int vOutsideLabel = -1;
 
 		if(sEncodingType == EncodingType.BILOU) {
-			outsideLabel = BILOU.Outside.ordinal();
+			vOutsideLabel = BILOU.Outside.ordinal();
 		} else if(sEncodingType == EncodingType.BIO) {
-			outsideLabel = BIO.Outside.ordinal();
+			vOutsideLabel = BIO.Outside.ordinal();
 		} else if(sEncodingType == EncodingType.IO) {
-			outsideLabel = IO.Outside.ordinal();
-		} else if(sEncodingType == EncodingType.BILOUUnitContext) {
-			outsideLabel = BILOUUnitContext.Outside.ordinal();
-		} else if(sEncodingType == EncodingType.BILOUContext) {
-			outsideLabel = BILOUContext.Outside.ordinal();
+			vOutsideLabel = IO.Outside.ordinal();
 		}
 
-		return(outsideLabel);
+		return(vOutsideLabel);
+	}
+
+	public static List<String> getEntities(DataSequence pLabeledSequence) {
+		//TODO: Implement behavior for the others encodings (IO,BIO, etc).
+		return getBILOUEncodingEntities(pLabeledSequence);
+	}
+
+	public static List<String> getBILOUEncodingEntities(DataSequence pLabeledSequence) {
+		List<String> vEntities = new ArrayList<String>();
+		String vEntity = Symbol.EMPTY;
+		BILOU vLastLabel = BILOU.Outside;
+
+		for (int cIndex = 0; cIndex < pLabeledSequence.length(); cIndex++) {
+			if (pLabeledSequence.y(cIndex) == BILOU.Beginning.ordinal()) {
+				if (vLastLabel == BILOU.Beginning || vLastLabel == BILOU.Inside) {
+					vEntities.add(vEntity.trim());
+				}
+				vEntity = (String) pLabeledSequence.x(cIndex);
+				vLastLabel = BILOU.Beginning;
+			} else if (pLabeledSequence.y(cIndex) == BILOU.Inside.ordinal()) {
+				vEntity += Symbol.SPACE + ((String) pLabeledSequence.x(cIndex)).trim();
+				vLastLabel = BILOU.Inside;
+			} else if (pLabeledSequence.y(cIndex) == BILOU.Last.ordinal()) {
+				vEntity += Symbol.SPACE + ((String) pLabeledSequence.x(cIndex)).trim();
+				vEntities.add(vEntity.trim());
+				vEntity = Symbol.EMPTY;
+				vLastLabel = BILOU.Last;
+			} else if (pLabeledSequence.y(cIndex) == BILOU.UnitToken.ordinal()) {
+				if (vLastLabel == BILOU.Beginning || vLastLabel == BILOU.Inside) {
+					vEntities.add(vEntity.trim());
+				}
+				vEntities.add(((String) pLabeledSequence.x(cIndex)).trim());
+				vEntity = Symbol.EMPTY;
+				vLastLabel = BILOU.UnitToken;
+			} else if (pLabeledSequence.y(cIndex) == BILOU.Outside.ordinal()
+					&& (vLastLabel == BILOU.Beginning || vLastLabel == BILOU.Inside)) {
+				vEntities.add(vEntity.trim());
+				vEntity = Symbol.EMPTY;
+				vLastLabel = BILOU.Outside;
+			}
+		}
+
+		return vEntities;
+	}
+
+	public static void checkLabelEncoding() {
+		if(getEncodingType() == null) {
+			throw new IllegalStateException("[Error] Need to initialized Encoding Type by setEncodingType().");
+		}
 	}
 }

@@ -1,35 +1,42 @@
 package lbd.FSNER.NERModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import lbd.FSNER.Component.Statistic.FPESimple;
+import lbd.FSNER.Collection.DataCollection;
+import lbd.FSNER.Component.Statistic.SimpleFilterProbability;
 import lbd.FSNER.Configuration.FilterParameters.FilterType;
 import lbd.FSNER.DataPreprocessor.DPLowerCase;
 import lbd.FSNER.DataPreprocessor.DPPlainSequence;
 import lbd.FSNER.DataPreprocessor.DPStopWord;
 import lbd.FSNER.Filter.FtrAffix;
-import lbd.FSNER.Filter.FtrCapitalizedTerms;
-import lbd.FSNER.Filter.FtrContext;
-import lbd.FSNER.Filter.FtrEntityProbability;
-import lbd.FSNER.Filter.FtrSingleTermDictionary;
-import lbd.FSNER.Filter.FtrSingleTermDictionary4;
+import lbd.FSNER.Filter.FtrEntityContext;
+import lbd.FSNER.Filter.FtrEntityTerm;
+import lbd.FSNER.Filter.FtrGazetteer;
 import lbd.FSNER.Filter.FtrState;
+import lbd.FSNER.Filter.FtrToken;
+import lbd.FSNER.Filter.FtrTokenLength;
+import lbd.FSNER.Filter.FtrWindow;
+import lbd.FSNER.Filter.FtrWindow.WindowType;
+import lbd.FSNER.Filter.FtrWordType;
 import lbd.FSNER.Filter.MultiFilter;
-import lbd.FSNER.Filter.Component.Context.ContextType;
-import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMMultiFilter;
 import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMNoScore;
-import lbd.FSNER.Model.AbstractActivityControl;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Model.AbstractNERModel;
-import lbd.FSNER.Utils.CommonEnum.Flexibility;
+import lbd.FSNER.Utils.Symbol;
+import lbd.FSNER.Utils.Annotations.DefaultValue;
 
 public class SimpleNERModel extends AbstractNERModel {
 
 	private static final long serialVersionUID = 1L;
 
 	protected boolean displayGeneralizationStatistics = false;
+
+	public SimpleNERModel(DataCollection pDataCollection) {
+		super(pDataCollection);
+	}
 
 	@Override
 	protected void allocModelSub(String[] initializeFilenameList) {
@@ -86,191 +93,143 @@ public class SimpleNERModel extends AbstractNERModel {
 
 			/** Filter Word Level **/
 			// -- Probabilistic Entity Filter (CommonClass:Wrd)
-			if (mFilterParameters.isFilterActive(FilterType.EntityProbability)) {
-				addEntityProbability(i);
+			if (mFilterParameters.isFilterActive(FilterType.EntityTerm)) {
+				addEntityTermFilter(i);
 			}
 
 			/** Dictionary Filter **/
-			if (mFilterParameters.isFilterActive(FilterType.Dictionary)) {
-				addDictionaryFilters(i);
+			if (i == 0 && mFilterParameters.isFilterActive(FilterType.Dictionary)) {
+				addGazetteerFilters(i);
 			}
 
-			// activityControl.addActivity(new FtrSingleTermDictionary(i, new
-			// FSCMNoScore(),
-			// activityControl.getDataPreprocessorList().get(i)));
-			// activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
-			// activityControl.addActivity(new FtrFullTermDictionary(i, new
-			// FSCMNoScore(),
-			// activityControl.getDataPreprocessorList().get(i)));
-			// activityControl.addActivity(new FtrSimpleDictionary(i, new
-			// FSCMNoScore(),
-			// activityControl.getDataPreprocessorList().get(i)));
-
-			/** Context Filter Level **/
-			// -- Context Filter (Variation in Flexibility[Restricted, Partial,
-			// Total], ContextType[AllContext, Prefix, Suffix],
-			// WindowSize[1..5])
 			if (mFilterParameters.isFilterActive(FilterType.Context)) {
+				//addOldContextFilters(i);
 				addContextFilters(i);
 			}
 
-			// -- Vocab Filter
-			// activityControl.addActivity(new FtrVocab(i, new FSCMNoScore(),
-			// 0.25, 2));
-			// activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
-
-			/*
-			 * if(i == 1) { int windowSideSize = 10;//10 AbstractFilter filter =
-			 * new FtrVocab2(i, new FSCMNoScore(), 10);
-			 * filter.setFilterState(FilterState.Auxiliary);
-			 * 
-			 * activityControl.addActivity(filter);
-			 * 
-			 * for(int s = 1; s <= windowSideSize; s++) {
-			 * //activityControl.addActivity(new FtrShiftFilterPosition(i, new
-			 * FSCMNoScore(), filter, s));
-			 * //activityControl.getFilterList().get(
-			 * activityControl.getFilterList
-			 * ().size()-1).setFilterState(FilterState.Auxiliary);
-			 * 
-			 * activityControl.addActivity(new FtrShiftFilterPosition(i, new
-			 * FSCMNoScore(), filter, -s));
-			 * activityControl.getFilterList().get(activityControl
-			 * .getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
-			 * 
-			 * } }
-			 */
-
-			// -- BagOfWords Filter
-			/*
-			 * for(int flexIndex = 0; flexIndex < Flexibility.values().length;
-			 * flexIndex++) { for(int genUseIndex = 0; genUseIndex < 2;
-			 * genUseIndex++) { activityControl.addActivity(new FtrBagOfWords(i,
-			 * new FSCMNoScore(), Flexibility.values()[flexIndex], (genUseIndex
-			 * != 0), 0.7)); } }
-			 */
-
-			// -- Combine Terms in Sequence Filter
-			/*
-			 * for(int blockSizeIndex = 4; blockSizeIndex > 0;
-			 * blockSizeIndex--){ //for(double threshold = 1; threshold > 0.8;
-			 * threshold-= 0.1) { activityControl.addActivity(new
-			 * FtrCombineTermsInSequence(i, new FSCMNoScore(), blockSizeIndex,
-			 * 0.8));//3, 0.8 //} }
-			 */
-
 			/** Orthographic Filter Level **/
 			// -- Affix Filter (CommonClass:Afx)
-			if (i < 4 && mFilterParameters.isFilterActive(FilterType.Affix)) {
+			if (mFilterParameters.isFilterActive(FilterType.Affix)) {
 				addOrthographicFilters(i);
 			}
 
 			// -- Spell Filters
-			if (i == 0
-					&& mFilterParameters
-					.isFilterActive(FilterType.CapitalizedTerms)) {
+			if (i == 0 && mFilterParameters.isFilterActive(FilterType.WordType)) {
 				addSpellFilters(i);
 			}
+
+			/** Token Length **/
+			//addTokenLengthFilter(i);
 
 			/** State Filter **/
 			if (mFilterParameters.isFilterActive(FilterType.State)) {
 				addStateFilter(i);
 			}
 
-			// -- MultiFilters (Filters Combination in an AND manner)
-			// aggregateFilter(activityControl, i);
+			/** WindowFilter **/
+			if(mFilterParameters.isFilterActive(FilterType.Window)) {
+				//List<AbstractFilter> vTokenWindowFilterList = createWindowFilters(i, FtrToken.class.getName(), 2, WindowType.Both);
+				//List<AbstractFilter> vAfixWindowFilterList = createWindowFilters(i, FtrAffix.class.getName(), 2, WindowType.Both);
+				List<AbstractFilter> vWordTypeWindowFilterList = createWindowFilters(i, FtrWordType.class.getName(), 2, WindowType.Both);
+				//List<AbstractFilter> vTokenLengthWindowFilterList = createWindowFilters(i, FtrTokenLength.class.getName(), 2, WindowType.Both);
+				List<AbstractFilter> vStateLengthWindowFilterList = createWindowFilters(i, FtrState.class.getName(), 0, WindowType.Prefix);
+				//List<AbstractFilter> vContextFilterList = createWindowFilters(i, FtrEntityContext.class.getName(), 0, WindowType.Prefix);
+
+				//-- MetaFilters
+				//addMetaFilters(i, FtrWordType.class.getName(), vContextFilterList);
+				//List<AbstractFilter> vMultiFilterWordTypeAndContext = createMetaFilters(i, FtrWordType.class.getName(), vContextFilterList);
+
+				//mActivityControl.addActivity(new ArrayList<AbstractActivity>(vMultiFilterWordTypeAndContext));
+
+			}
 		}
 
 		// -- Add probability filter element
 		for (AbstractFilter filter : mActivityControl.getFilterList()) {
-			filter.setProbabilityFilterElement(new FPESimple());
-			// if(filter.getFilterPreprocessingTypeNameIndex() > 0)
-			// filter.setFilterState(FilterState.Auxiliary);
-			// filter.setFilterState(FilterState.Auxiliary);
+			filter.setProbabilityFilter(new SimpleFilterProbability());
 		}
 	}
 
-	protected void addEntityProbability(int i) {
-		mActivityControl.addActivity(new FtrEntityProbability(i,
-				new FSCMNoScore()));
-		//activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
-		// activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setUseFilterInUnrealiableSituation(false);
+	private List<AbstractFilter> createMetaFilters(int i, String pFilterClassName, List<AbstractFilter> pFilterListToCombine) {
+		List<AbstractFilter> vMetaFiltersList = new ArrayList<AbstractFilter>();
+		for(AbstractFilter cBasicFilter : mActivityControl.getFiltersByClassName(pFilterClassName)) {
+			for(AbstractFilter cFilterToCombine : pFilterListToCombine) {
+				List<AbstractFilter> vFilterList = new ArrayList<AbstractFilter>();
+				vFilterList.add(cBasicFilter);
+				vFilterList.add(cFilterToCombine);
+				vMetaFiltersList.add(new MultiFilter(i, new FSCMNoScore(), vFilterList));
+			}
+		}
+
+		return vMetaFiltersList;
 	}
 
-	protected void addDictionaryFilters(int i) {
-		ArrayList<AbstractFilter> dictionaryFilters = new ArrayList<AbstractFilter>();
-		int dictionaryListNumber = FtrSingleTermDictionary4
-				.getDictionaryListNumber();
+	private List<AbstractFilter> createWindowFilters(int i, String pFilterClassName, int pWindowSize, WindowType pWindowType) {
 
-		for (int j = 0; j < dictionaryListNumber; j++) {
+		List<AbstractFilter> vWindowFilterList = new ArrayList<AbstractFilter>();
 
-			dictionaryFilters.add(new FtrSingleTermDictionary4(i,
-					new FSCMNoScore(), mActivityControl
-					.getDataPreprocessorList().get(i), j,
-					(j <= 0)? null : (FtrSingleTermDictionary4)dictionaryFilters.get(j-1)));
+		for(AbstractFilter cFilter : mActivityControl.getFiltersByClassName(pFilterClassName)) {
+
+			List<AbstractFilter> vFilterList = new ArrayList<AbstractFilter>();
+			vFilterList.add(cFilter);
+
+			if(pWindowType != WindowType.Suffix) {
+				AbstractFilter vWindowFilter = new FtrWindow(i, new FSCMNoScore(), pWindowSize, WindowType.Prefix, vFilterList);
+				vWindowFilter.setFilterState(FilterState.Auxiliary);
+				vWindowFilterList.add(vWindowFilter);
+			}
+
+			if(pWindowType != WindowType.Prefix) {
+				AbstractFilter vWindowFilter = new FtrWindow(i, new FSCMNoScore(), pWindowSize, WindowType.Suffix, vFilterList);
+				vWindowFilter.setFilterState(FilterState.Auxiliary);
+				vWindowFilterList.add(vWindowFilter);
+			}
+
+			if(pWindowType == WindowType.Both) {
+				AbstractFilter vWindowFilter = new FtrWindow(i, new FSCMNoScore(), pWindowSize, WindowType.Both, vFilterList);
+				vWindowFilter.setFilterState(FilterState.Auxiliary);
+				vWindowFilterList.add(vWindowFilter);
+			}
 		}
-		// Utilizar apenas quando ativado 'adicionar conjunto de treino'
-		// dictionaryFilters.add(new FtrSingleTermDictionary4(i, new
-		// FSCMNoScore(), activityControl.getDataPreprocessorList().get(i),
-		// dictionaryFilters.size()));
 
-		for (AbstractFilter filter : dictionaryFilters) {
-			mActivityControl.addActivity(filter);
-			mActivityControl.getFilterList()
-			.get(mActivityControl.getFilterList().size() - 1)
-			.setFilterState(FilterState.Auxiliary);
+		return vWindowFilterList;
+	}
+
+	protected void addEntityTermFilter(int i) {
+		mActivityControl.addActivity(new FtrEntityTerm(i));
+
+		AbstractFilter vTokenFilter = new FtrToken(i);
+		vTokenFilter.setFilterState(FilterState.Auxiliary);
+		mActivityControl.addActivity(vTokenFilter);
+	}
+
+	protected void addGazetteerFilters(int i) {
+
+		String vDictionaryDirectory = mDataCollection.mDictionaryAddress + mDataCollection.mDictionaryName + Symbol.SLASH;
+
+		for (String cFilenameAddress : lbd.FSNER.Utils.FileUtils.getFileList(vDictionaryDirectory)) {
+			AbstractFilter vFilter = new FtrGazetteer(vDictionaryDirectory + cFilenameAddress, i, new FSCMNoScore());
+			vFilter.setFilterState(FilterState.Auxiliary);
+			mActivityControl.addActivity(vFilter);
 		}
 	}
 
 	protected void addContextFilters(int i) {
-		for (int flexibilityIndex = Flexibility.values().length - 3; flexibilityIndex >= 0; flexibilityIndex--) {
-			for (int windowSize = 3; windowSize > 2; windowSize--) {//DEFAULT: WindowSize = 3, > 2;
-				// (current)
-				// 3; > 2
-				for (int contextTypeIndex = 1; contextTypeIndex < ContextType
-						.values().length; contextTypeIndex++) {
-					if (flexibilityIndex > 1 || windowSize > 2) {// > 1 > 2
-						mActivityControl
-						.addActivity(new FtrContext(
-								i,
-								new FSCMNoScore(),
-								ContextType.values()[contextTypeIndex],
-								windowSize
-								+ ((ContextType.values()[contextTypeIndex] == ContextType.AllContext) ? -1
-										: 0), Flexibility
-										.values()[flexibilityIndex]));
-						/*activityControl
-						.getFilterList()
-						.get(activityControl.getFilterList().size() - 1)
-						.setFilterState(FilterState.Auxiliary);*/
-					} else {
-						mActivityControl
-						.addActivity(new FtrContext(
-								i,
-								new FSCMNoScore(),
-								ContextType.values()[contextTypeIndex],
-								windowSize
-								+ ((ContextType.values()[contextTypeIndex] == ContextType.AllContext) ? -1
-										: 0), Flexibility
-										.values()[flexibilityIndex]));
-						mActivityControl
-						.getFilterList()
-						.get(mActivityControl.getFilterList().size() - 1)
-						.setFilterState(FilterState.Auxiliary);
-					}
-				}
-			}
-		}
+		//mActivityControl.addActivity(new FtrEntityContext(i, 1));
+		mActivityControl.addActivity(new FtrEntityContext(i, 2));
+		mActivityControl.addActivity(new FtrEntityContext(i, 3));
 	}
 
+	@DefaultValue(value="affixTypeIndex = 0; affixSize = 3; affixSize > 1")
 	protected void addOrthographicFilters(int i) {
 		for (int affixTypeIndex = 0; affixTypeIndex < FtrAffix.AffixType
 				.values().length; affixTypeIndex++) {
-			for (int affixSize = 3; affixSize > 1; affixSize--) {//Default: (afxSize=3, > 1)
+			for (int affixSize = 4; affixSize > 1; affixSize--) {
+
 				mActivityControl
 				.addActivity(new FtrAffix(i, new FSCMNoScore(),
-						FtrAffix.AffixType.values()[affixTypeIndex],
-						affixSize));
+						FtrAffix.AffixType.values()[affixTypeIndex], affixSize));
+
 				mActivityControl.getFilterList()
 				.get(mActivityControl.getFilterList().size() - 1)
 				.setFilterState(FilterState.Auxiliary);
@@ -280,22 +239,21 @@ public class SimpleNERModel extends AbstractNERModel {
 
 	protected void addSpellFilters(int i) {
 		ArrayList<AbstractFilter> spellFilters = new ArrayList<AbstractFilter>();
-		spellFilters.add(new FtrCapitalizedTerms(i, new FSCMNoScore()));
-		// spellFilters.add(new FtrAllCapitalized(i, new FSCMNoScore()));
-		// spellFilters.add(new FtrCapitalizedPossibleTerms(i, new
-		// FSCMNoScore()));
-		// spellFilters.add(new FtrHasDigit(i, new FSCMNoScore()));
-		// spellFilters.add(new FtrHasPontuaction(i, new FSCMNoScore()));
+		spellFilters.add(new FtrWordType(i, new FSCMNoScore()));
+		//spellFilters.add(new FtrCapitalizedTerms(i, new FSCMNoScore()));
+		//spellFilters.add(new FtrAllCapitalized(i, new FSCMNoScore()));
+		//spellFilters.add(new FtrCapitalizedPossibleTerms(i, new
+		//		FSCMNoScore()));
+		//spellFilters.add(new FtrHasDigit(i, new FSCMNoScore()));
+		//spellFilters.add(new FtrHasPontuaction(i, new FSCMNoScore()));
 
-		// activityControl.addActivity(new FtrPosition(i, new FSCMNoScore()));
-		// activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
-		// activityControl.addActivity(new FtrTermLength(i, new FSCMNoScore()));
+		//activityControl.addActivity(new FtrPosition(i, new FSCMNoScore()));
+		//activityControl.getFilterList().get(activityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
+		//activityControl.addActivity(new FtrTermLength(i, new FSCMNoScore()));
 
 		for (AbstractFilter filter : spellFilters) {
 			mActivityControl.addActivity(filter);
-			mActivityControl.getFilterList()
-			.get(mActivityControl.getFilterList().size() - 1)
-			.setFilterState(FilterState.Auxiliary);
+			//mActivityControl.getFilterList().get(mActivityControl.getFilterList().size() - 1).setFilterState(FilterState.Auxiliary);
 		}
 
 		/*
@@ -313,111 +271,30 @@ public class SimpleNERModel extends AbstractNERModel {
 		 */
 	}
 
-	protected void addStateFilter(int i) {
-		mActivityControl.addActivity(new FtrState(i,
-				new FSCMNoScore()));
-		mActivityControl.getFilterList().get(mActivityControl.getFilterList().size()-1).setFilterState(FilterState.Auxiliary);
+	protected void addTokenLengthFilter(int i) {
+		FtrTokenLength vFilter = new FtrTokenLength(i);
+		vFilter.setFilterState(FilterState.Auxiliary);
+		mActivityControl.addActivity(vFilter);
 	}
 
-	protected void aggregateFilter(AbstractActivityControl activityControl,
-			int dataProcessorIndex) {
+	@DefaultValue(value="vNumberPreviousState: {1,2,3}; vIsToConsiderStatePerTerm: {true}")
+	protected void addStateFilter(int i) {
 
-		ArrayList<MultiFilter> multiFilterList = new ArrayList<MultiFilter>();
+		int [] vNumberPreviousState = {3};
+		boolean [] vIsToConsiderStatePerTerm = {false};
 
-		// -- Example of filters
-		// filters.add(new FtrCapitalizedTerms(dataProcessorIndex, new
-		// FSCMNoScore()));
-		// filters.add(new FtrSimilarSequence(dataProcessorIndex, new
-		// FSCMNoScore(), 1));
-		// filters.add(new FtrCombineTermsInSequence(dataProcessorIndex, new
-		// FSCMNoScore(), 3, 0.2));
-		// filters.add(new FtrDictionary(dataProcessorIndex, new FSCMNoScore(),
-		// activityControl.getDataPreprocessorList().get(dataProcessorIndex)));
+		for(int cNumberPreviousState : vNumberPreviousState) {
+			for(boolean cIsToConsiderStatePerTerm : vIsToConsiderStatePerTerm) {
 
-		// -- Prefix (2) + Suffix (2)
-		/*
-		 * ArrayList<AbstractFilter> filters1 = new ArrayList<AbstractFilter>();
-		 * filters1.add(new FtrContext(dataProcessorIndex, new FSCMNoScore(),
-		 * ContextType.Prefix, 2, Flexibility.Total)); filters1.add(new
-		 * FtrContext(dataProcessorIndex, new FSCMNoScore(), ContextType.Suffix,
-		 * 2, Flexibility.Total)); multiFilterList.add(new
-		 * MultiFilter(dataProcessorIndex, new FSCMMultiFilter(), filters1));
-		 */
+				mActivityControl
+				.addActivity(new FtrState(i, cNumberPreviousState, cIsToConsiderStatePerTerm, new FSCMNoScore()));
 
-		// -- Prefix (1) + Combine Terms In Sequence
-		/*
-		 * ArrayList<AbstractFilter> filters2 = new ArrayList<AbstractFilter>();
-		 * filters2.add(new FtrContext(dataProcessorIndex, new FSCMNoScore(),
-		 * ContextType.Prefix, 1, Flexibility.Total)); filters2.add(new
-		 * FtrCombineTermsInSequence(dataProcessorIndex, new FSCMNoScore(), 3,
-		 * 0.2)); multiFilterList.add(new MultiFilter(dataProcessorIndex, new
-		 * FSCMMultiFilter(), filters2));
-		 */
-
-		// -- Prefix (1) + Dictionary + Affix(Pfx+Sfx(3))
-		/*
-		 * ArrayList<AbstractFilter> filters3 = new ArrayList<AbstractFilter>();
-		 * filters3.add(new FtrContext(dataProcessorIndex, new FSCMNoScore(),
-		 * ContextType.Prefix, 1, Flexibility.Total)); filters3.add(new
-		 * FtrSingleTermDictionary(dataProcessorIndex, new FSCMNoScore(),
-		 * activityControl.getDataPreprocessorList().get(dataProcessorIndex)));
-		 * filters3.add(new FtrAffix(dataProcessorIndex, new FSCMNoScore(),
-		 * FtrAffix.AffixType.Prefix, 3)); filters3.add(new
-		 * FtrAffix(dataProcessorIndex, new FSCMNoScore(),
-		 * FtrAffix.AffixType.Suffix, 3)); multiFilterList.add(new
-		 * MultiFilter(dataProcessorIndex, new FSCMMultiFilter(), filters3));
-		 */
-
-		// -- CombineTermsInSequence + Dictionary + Affix(Pfx+Sfx(3))
-		/*
-		 * ArrayList<AbstractFilter> filters4 = new ArrayList<AbstractFilter>();
-		 * filters4.add(new FtrCombineTermsInSequence(dataProcessorIndex, new
-		 * FSCMNoScore(), 1, 0.2)); filters4.add(new
-		 * FtrSingleTermDictionary(dataProcessorIndex, new FSCMNoScore(),
-		 * activityControl.getDataPreprocessorList().get(dataProcessorIndex)));
-		 * filters4.add(new FtrAffix(dataProcessorIndex, new FSCMNoScore(),
-		 * FtrAffix.AffixType.Prefix, 3)); filters4.add(new
-		 * FtrAffix(dataProcessorIndex, new FSCMNoScore(),
-		 * FtrAffix.AffixType.Suffix, 4)); multiFilterList.add(new
-		 * MultiFilter(dataProcessorIndex, new FSCMMultiFilter(), filters4));
-		 */
-
-		// -- EntityProbability + Dictionary
-		/*
-		 * ArrayList<AbstractFilter> filters5 = new ArrayList<AbstractFilter>();
-		 * filters5.add(new FtrEntityProbability(dataProcessorIndex, new
-		 * FSCMNoScore())); filters5.add(new
-		 * FtrSingleTermDictionary(dataProcessorIndex, new FSCMNoScore(),
-		 * activityControl.getDataPreprocessorList().get(dataProcessorIndex)));
-		 * multiFilterList.add(new MultiFilter(dataProcessorIndex, new
-		 * FSCMMultiFilter(), filters5));
-		 */
-
-		// -- Prefix (1) + Affix(Sfx(1)) + Dictionary
-		ArrayList<AbstractFilter> filters6 = new ArrayList<AbstractFilter>();
-		filters6.add(new FtrContext(dataProcessorIndex, new FSCMNoScore(),
-				ContextType.Prefix, 1, Flexibility.Total));
-		filters6.add(new FtrAffix(dataProcessorIndex, new FSCMNoScore(),
-				FtrAffix.AffixType.Suffix, 1));
-		filters6.add(new FtrSingleTermDictionary(dataProcessorIndex,
-				new FSCMNoScore(), activityControl.getDataPreprocessorList()
-				.get(dataProcessorIndex)));
-		multiFilterList.add(new MultiFilter(dataProcessorIndex,
-				new FSCMMultiFilter(), filters6));
-
-		for (MultiFilter multiFilter : multiFilterList) {
-			// multiFilter.setConsiderFilterProbability(false);
-			// multiFilter.setUseFilterInUnrealiableSituation(false);
-			multiFilter.setLoadAsSimpleFilter(true);
-			activityControl.addActivity(multiFilter);
+				mActivityControl.getFilterList()
+				.get(mActivityControl.getFilterList().size() - 1)
+				.setFilterState(FilterState.Auxiliary);
+			}
 		}
 	}
-
-	/*
-	 * @Override public void evaluate() { if(displayGeneralizationStatistics)
-	 * System.out.println("-- Number of New Entities [" +
-	 * entityGeneralizedNumber + "] (= Generalization)"); }
-	 */
 
 	@Override
 	protected void updateSub(String updateSource) {

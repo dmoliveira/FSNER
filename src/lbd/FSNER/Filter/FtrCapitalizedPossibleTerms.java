@@ -9,6 +9,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 
@@ -24,7 +25,7 @@ public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 				preprocessingTypeNameIndex, scoreCalculator);
 
 		termsCapitalized = new HashMap<String, Object>();
-		this.mCommonFilterName = "Ort" + preprocessingTypeNameIndex;
+		this.mFilterClassName = "Ort" + preprocessingTypeNameIndex;
 	}
 
 
@@ -75,7 +76,7 @@ public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		return ((termsCapitalized.containsKey(sequenceLabelProcessed.getTerm(index).toLowerCase()))?

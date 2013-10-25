@@ -10,7 +10,7 @@ import java.util.Map;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.TermLevelStatisticsAnalysis;
 import lbd.FSNER.Configuration.Debug;
-import lbd.FSNER.Model.AbstractFilter.FilterMode;
+import lbd.FSNER.Model.AbstractFilter.FilterStage;
 import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.DataSequence;
@@ -56,7 +56,7 @@ public abstract class AbstractLabelFile implements Serializable {
 		mLabelCalculator.setIsUnrealibleSituation(pIsUnrealibleSituation);
 
 		//-- Set Filter Mode
-		AbstractFilter.setFilterMode(FilterMode.inLabel);
+		AbstractFilter.setFilterStage(FilterStage.Label);
 
 		mSequenceNumber = 0;
 
@@ -87,7 +87,7 @@ public abstract class AbstractLabelFile implements Serializable {
 		mLabelCalculator.setIsUnrealibleSituation(pIsUnrealibleSituation);
 
 		//-- Set Filter Mode
-		AbstractFilter.setFilterMode(FilterMode.inLabel);
+		AbstractFilter.setFilterStage(FilterStage.Label);
 
 		//-- Clear some objects
 		mEntityList.clear();

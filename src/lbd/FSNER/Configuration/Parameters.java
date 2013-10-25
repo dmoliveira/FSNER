@@ -11,7 +11,28 @@ public class Parameters {
 	public static String dataEncoding = Constants.CharsetEncoding.UTF8;
 
 	public static class FSNERExecution {
-		public static int trainFileIteration = 5;// default #5
+		public static int trainFileIteration = 1;// default #5
+	}
+
+	public static class Filter {
+
+		public static class Context {
+			@DefaultValue(value="4")
+			public static int maximumContextSize = 4;
+
+			@DefaultValue(value="4")
+			public static int maximumEntitySizeToSearch = 4;
+		}
+
+		public static class Gazetter {
+			@DefaultValue(value="3")
+			public static int minimumAcceptedDictionaryTermEntry = 3;
+		}
+
+		public static class Affix {
+			@DefaultValue(value="4")
+			public static int minimumTermSize = 5;
+		}
 	}
 
 	public static class HandleFile {
@@ -41,11 +62,14 @@ public class Parameters {
 
 		@DefaultValue(value="false")
 		public static boolean isItUpdate = false;
+
+		@DefaultValue(value="false")
+		public static int subSequenceLabelSize = 3;
 	}
 
 	public static class Evaluator {
 		@DefaultValue(value="false")
-		public static boolean isToEvaluateOnTokenLevel = true;
+		public static boolean isToEvaluateOnTokenLevel = false;
 
 		@DefaultValue(value="false")
 		public static final boolean isToUseInvalidResults = false;

@@ -15,7 +15,7 @@ public class FilterParameters implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public enum FilterType {EntityProbability, Dictionary, Context, Affix, CapitalizedTerms, State};
+	public enum FilterType {EntityTerm, Dictionary, Context, Affix, WordType, State, Window, Test};
 	protected HashMap<FilterType, Boolean> mFilterTypeMap;
 
 	public FilterParameters() {

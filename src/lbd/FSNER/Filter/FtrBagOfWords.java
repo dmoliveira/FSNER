@@ -10,6 +10,7 @@ import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.CommonEnum.Flexibility;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrBagOfWords extends AbstractFilter{
 
@@ -93,12 +94,12 @@ public class FtrBagOfWords extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;
 		int idNumber = bagOfWordsMap.get(bagOfWordsIdMap.get(
-				mPreprocessingTypeNameIndex)).getBagOfWordsId(
+				mPreprocessingTypeIndex)).getBagOfWordsId(
 						sequenceLabelProcessed, index, flexibility, isGeneralUse, threshold);
 
 		if(idNumber > -1) {

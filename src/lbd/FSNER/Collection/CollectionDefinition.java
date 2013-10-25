@@ -52,7 +52,8 @@ public class CollectionDefinition implements Serializable{
 		Zunnit_Extra_Famosos_MISC, Zunnit_Extra_Noticias_PER, Zunnit_Extra_Noticias_ORG, Zunnit_Extra_Noticias_LOC,
 		Zunnit_Extra_Noticias_EVT, Zunnit_Extra_Noticias_MISC, Zunnit_Extra_TV_e_Lazer_PER, Zunnit_Extra_TV_e_Lazer_ORG,
 		Zunnit_Extra_TV_e_Lazer_LOC, Zunnit_Extra_TV_e_Lazer_EVT, Zunnit_Extra_TV_e_Lazer_MISC,
-		Zunnit_Extra_All_PER, Zunnit_Extra_All_ORG, Zunnit_Extra_All_LOC, Zunnit_Extra_All_EVT, Zunnit_Extra_All_MISC};
+		Zunnit_Extra_All_PER, Zunnit_Extra_All_ORG, Zunnit_Extra_All_LOC, Zunnit_Extra_All_EVT, Zunnit_Extra_All_MISC,
+		Zunnit_Shuf_PER, Zunnit_Shuf_ORG, Zunnit_Shuf_LOC, Zunnit_Shuf_MISC};
 
 		public HashMap<String, DataCollection> mDataCollectionMap;
 
@@ -152,6 +153,11 @@ public class CollectionDefinition implements Serializable{
 			createCVCollection(CollectionName.Zunnit_Extra_All_EVT.name(), "none/", "Zunnit-GloboExtraCollection-All-EVT-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Extra_All_MISC.name(), "Extra/MISC", "Zunnit-GloboExtraCollection-All-MISC-CV{0}", CollectionDefinition.Dictionary.PortugueseStopWords);
 
+			createCVCollection(CollectionName.Zunnit_Shuf_PER.name(), "Shuf", "shuf-PER", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Shuf_ORG.name(), "Shuf", "shuf-ORG", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Shuf_LOC.name(), "Shuf", "shuf-LOC", CollectionDefinition.Dictionary.PortugueseStopWords);
+			createCVCollection(CollectionName.Zunnit_Shuf_MISC.name(), "Shuf", "shuf-MISC", CollectionDefinition.Dictionary.PortugueseStopWords);
+
 			/*createCVCollection(CollectionName.PER_MSM13CV.name(), "MSM13/PER", "MSM13Collection(PER)", CollectionDefinition.Dictionary.EnglishStopWords);
 		createCVCollection(CollectionName.ORG_MSM13CV.name(), "MSM13/ORG", "MSM13Collection(ORG)", CollectionDefinition.Dictionary.EnglishStopWords);
 		createCVCollection(CollectionName.LOC_MSM13CV.name(), "MSM13/LOC", "MSM13Collection(LOC)", CollectionDefinition.Dictionary.EnglishStopWords);
@@ -182,6 +188,11 @@ public class CollectionDefinition implements Serializable{
 			return mDataCollectionMap.get(pCollectionName.name());
 		}
 
-
+		public static String getFilenameAddress(DataCollection pDataCollection, int pIteration, String pFileExtension) {
+			String vDirectory = CollectionDefinition.Directory.Collection;
+			String vFilename = pDataCollection.getFilename(pIteration - 1);
+			String vFilenameAddress = vDirectory + vFilename + pFileExtension;
+			return vFilenameAddress;
+		}
 
 }

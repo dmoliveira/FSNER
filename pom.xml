@@ -7,29 +7,14 @@
   <description>Implementation in Java for FS-NER by Diego Oliveira.</description>
   <dependencies>
     <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.13</version>
+    </dependency>
+    <dependency>
 	  <groupId>org.json</groupId>
 	  <artifactId>json</artifactId>
 	  <version>20090211</version>
-	</dependency>
-  	<dependency>
-	  <groupId>colt</groupId>
-	  <artifactId>colt</artifactId>
-	  <version>1.2.0</version>
-	</dependency>
-	<dependency>
-	  <groupId>trove</groupId>
-	  <artifactId>trove</artifactId>
-	  <version>1.0.2</version>
-    </dependency>
-	<dependency>
-	  <groupId>fsner_dependecies</groupId>
-      <artifactId>CRF</artifactId>
-      <version>1.0</version>
-	</dependency>
-	<dependency>
-	  <groupId>fsner_dependecies</groupId>
-      <artifactId>LBFGS</artifactId>
-      <version>1.0</version>
 	</dependency>
   </dependencies>
   <build>

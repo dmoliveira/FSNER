@@ -5,6 +5,7 @@ import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMEntityless;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrEntityless extends FtrEntity {
 
@@ -17,12 +18,12 @@ public class FtrEntityless extends FtrEntity {
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(SequenceLabel sequenceLabelProcessed,
+	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed,
 			int index) {
 
 		String id = Symbol.EMPTY;
 
-		if(mFilterMode == FilterMode.inLabel) {
+		if(mFilterStage == FilterStage.Label) {
 			for(int i = 0; i < entityList.size(); i++) {
 
 				if(mScoreCalculator instanceof FSCMEntityless &&

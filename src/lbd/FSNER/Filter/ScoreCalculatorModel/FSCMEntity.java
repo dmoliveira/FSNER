@@ -6,7 +6,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
-import lbd.FSNER.Utils.SupportEntity;
+import lbd.FSNER.Utils.EntityUtils;
 
 public class FSCMEntity extends AbstractFilterScoreCalculatorModel{
 
@@ -18,7 +18,7 @@ public class FSCMEntity extends AbstractFilterScoreCalculatorModel{
 
 		double sequenceScore = calculateScore(sequenceLabel, index);
 
-		Entity entity = SupportEntity.getEntity(sequenceLabel.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(sequenceLabel.getTerm(index), entityList);
 
 		sequenceScore = (entity != null && sequenceScore > entity.getMinScore())? sequenceScore : 0;
 
@@ -30,7 +30,7 @@ public class FSCMEntity extends AbstractFilterScoreCalculatorModel{
 
 		double termsTotalScore = 0;
 
-		Entity entity = SupportEntity.getEntity(sequenceLabel.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(sequenceLabel.getTerm(index), entityList);
 
 		Term term;
 

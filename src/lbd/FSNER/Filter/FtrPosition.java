@@ -8,6 +8,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrPosition extends AbstractFilter{
 
@@ -22,7 +23,7 @@ public class FtrPosition extends AbstractFilter{
 		super(ClassName.getSingleName(FtrPosition.class.getName()),
 				preprocessingTypeNameIndex, scoreCalculator);
 
-		this.mCommonFilterName = "Pos" + preprocessingTypeNameIndex;
+		this.mFilterClassName = "Pos" + preprocessingTypeNameIndex;
 		positionMap = new HashMap<Integer, Object>();
 	}
 
@@ -74,7 +75,7 @@ public class FtrPosition extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		return (((positionMap.containsKey(index))? "id:" + mId + Symbol.DOT + index : Symbol.EMPTY));

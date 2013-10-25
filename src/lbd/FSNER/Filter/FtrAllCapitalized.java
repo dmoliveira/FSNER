@@ -5,6 +5,7 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrAllCapitalized extends AbstractFilter {
 
@@ -15,7 +16,7 @@ public class FtrAllCapitalized extends AbstractFilter {
 		super(ClassName.getSingleName(FtrAllCapitalized.class.getName()),
 				preprocessingTypeNameIndex, scoreCalculator);
 
-		this.mCommonFilterName = "Ort" + preprocessingTypeNameIndex;
+		this.mFilterClassName = "Ort" + preprocessingTypeNameIndex;
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class FtrAllCapitalized extends AbstractFilter {
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;

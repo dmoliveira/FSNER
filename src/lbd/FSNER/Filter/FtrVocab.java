@@ -10,6 +10,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.DataSequence;
 
 public class FtrVocab extends AbstractFilter{
 
@@ -28,7 +29,7 @@ public class FtrVocab extends AbstractFilter{
 				preprocessingTypeNameIndex, scoreCalculator);
 
 		vocabEntityMap = new HashMap<String, HashMap<String, Object>>();
-		this.mCommonFilterName = "Voc";
+		this.mFilterClassName = "Voc";
 		this.threshold = threshold;
 		this.windowSideSize = windowSideSize;
 	}
@@ -101,7 +102,7 @@ public class FtrVocab extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;

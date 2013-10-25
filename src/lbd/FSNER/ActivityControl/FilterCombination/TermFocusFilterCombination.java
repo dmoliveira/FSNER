@@ -5,9 +5,10 @@ import java.util.Map;
 
 import lbd.FSNER.Filter.FtrCapitalizedTerms;
 import lbd.FSNER.Filter.FtrContext;
-import lbd.FSNER.Filter.FtrEntityProbability;
+import lbd.FSNER.Filter.FtrToken;
 import lbd.FSNER.Model.AbstractCombineFiltersInActiveControl;
 import lbd.FSNER.Model.AbstractFilter;
+import lbd.FSNER.Model.AbstractMetaFilter.MetaFilterType;
 
 public class TermFocusFilterCombination extends
 AbstractCombineFiltersInActiveControl {
@@ -22,14 +23,14 @@ AbstractCombineFiltersInActiveControl {
 		String [] filterClassNameList;
 
 		//-- Generate Combinations of filters
-		filterClassNameList = new String [] {FtrEntityProbability.class.getName(), FtrContext.class.getName()};
-		generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
+		filterClassNameList = new String [] {FtrToken.class.getName(), FtrContext.class.getName()};
+		generateMetaFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList, MetaFilterType.Multi, 0);
 
-		filterClassNameList = new String [] {FtrEntityProbability.class.getName(), FtrCapitalizedTerms.class.getName()};
-		generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
+		filterClassNameList = new String [] {FtrToken.class.getName(), FtrCapitalizedTerms.class.getName()};
+		generateMetaFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList, MetaFilterType.Multi, 0);
 
-		filterClassNameList = new String [] {FtrEntityProbability.class.getName(), FtrContext.class.getName(), FtrCapitalizedTerms.class.getName()};
-		generateMultiFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList);
+		filterClassNameList = new String [] {FtrToken.class.getName(), FtrContext.class.getName(), FtrCapitalizedTerms.class.getName()};
+		generateMetaFiltersBySpecificCombinations(new int [filterClassNameList.length], 0, filterList, firstFilterClassNameMap, nextFilterClassNameMap, filterClassNameList, MetaFilterType.Multi, 0);
 
 	}
 }

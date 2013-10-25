@@ -1,10 +1,12 @@
 package lbd.FSNER.ActivityControl;
 
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Debug;
@@ -14,9 +16,9 @@ import lbd.FSNER.Model.AbstractActivityControl;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
+import lbd.FSNER.Utils.EntityUtils;
 import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.SimpleStopWatch;
-import lbd.FSNER.Utils.SupportEntity;
 import lbd.data.handler.DataSequence;
 import lbd.data.handler.SequenceSet;
 import lbd.data.handler.SequenceSetHandler;
@@ -31,6 +33,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		// super(new CapitalizationFocusFilterCombination());
 		//super(new TermComplementaryFocusFilterCombination()); //USE State Filter - Caution [!]
 		//super(new ContextFocusFilterCombination());
+		//super(new CustomFilterCombination());
 	}
 
 	@Override
@@ -73,6 +76,9 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		if (Debug.ActivityControl.showElapsedTime) {
 			vStopWatch.show("Adjust Time:");
 		}
+
+		// -- Pos Processament
+
 	}
 
 	@Override
@@ -116,14 +122,13 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	@Override
 	protected void loadSequence(DataSequence pSequence) {
 
-		Map<String, SequenceLabel> vProcessedSequenceMap = PreprocessData
-				.preprocessSequence(pSequence, mDataPreprocessorList);
-		SequenceLabel sequenceLabel;
+		if(pSequence == null || pSequence.length() == 0) {
+			return;
+		}
 
-		AbstractDataPreprocessor vDataPreprocessor;
-		boolean[] vHasAddedDataProcessor;
+		Map<String, SequenceLabel> vProcessedSequenceMap = PreprocessData.preprocessSequence(pSequence, mDataPreprocessorList);
+		Set<SequenceLabel> vSequenceLabelPreprocessedSet = new HashSet<SequenceLabel>();
 
-		int dataProcessorIndex;
 		int vEntityIndex;
 
 		// -- Load Action Before Sequence
@@ -131,42 +136,50 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 		for (int i = 0; i < pSequence.length(); i++) {
 
-			vEntityIndex = SupportEntity.getEntityIndex(pSequence, i);
-			vHasAddedDataProcessor = new boolean[mDataPreprocessorList.size()];
+			vEntityIndex = EntityUtils.getEntityIndex(pSequence, i);
+
+			if(vEntityIndex == -1) {
+				return;
+			}
 
 			synchronized (this) {
 				if (LabelEncoding.isEntity(pSequence.y(i))) {
-					mEntityList.add((String) pSequence.x(i));
+					mEntitySet.add((String) pSequence.x(i));
 				}
 			}
 
-			for (AbstractFilter filter : mFilterList) {
+			for (AbstractFilter cFilter : mFilterList) {
 
-				sequenceLabel = vProcessedSequenceMap.get(filter
-						.getPreprocesingTypeName());
-				dataProcessorIndex = filter
-						.getFilterPreprocessingTypeNameIndex();
+				SequenceLabel vSequenceLabel = vProcessedSequenceMap.get(cFilter.getPreprocesingTypeName());
 
-				filter.loadTermSequenceRestricted(sequenceLabel, vEntityIndex);
+				int vDataProcessorIndex = cFilter.getFilterPreprocessingTypeIndex();
 
-				// -- Add General Statistics for Common Terms
-				if (!vHasAddedDataProcessor[dataProcessorIndex]) {
-					vDataPreprocessor = mDataPreprocessorList
-							.get(dataProcessorIndex);
-					synchronized (this) {
-						vDataPreprocessor
-						.computeCommonTermsInSequence(sequenceLabel);
-					}
-					vHasAddedDataProcessor[dataProcessorIndex] = true;
-				}
+				cFilter.loadTermSequence(vSequenceLabel, vEntityIndex);
+
+				// -- Calculate term commonness
+				calculateTermCommonness(vSequenceLabelPreprocessedSet, vSequenceLabel, vDataProcessorIndex);
 			}
 
 			// -- shift index to optimize search for entities
-			i = (vEntityIndex > -1) ? vEntityIndex : i;
+			i = vEntityIndex;
 		}
 
 		// -- Load Action After Sequence
 		loadActionAfterSequenceIteration(vProcessedSequenceMap);
+	}
+
+	private void calculateTermCommonness(Set<SequenceLabel> vSequenceLabelPreprocessedSet,
+			SequenceLabel vSequenceLabel, int vDataProcessorIndex) {
+
+		if (!vSequenceLabelPreprocessedSet.contains(vSequenceLabel)) {
+
+			vSequenceLabelPreprocessedSet.add(vSequenceLabel);
+			AbstractDataPreprocessor vDataPreprocessor = mDataPreprocessorList.get(vDataProcessorIndex);
+
+			synchronized (this) {
+				vDataPreprocessor.computeCommonTermsInSequence(vSequenceLabel);
+			}
+		}
 	}
 
 	@Override
@@ -206,30 +219,22 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 		Iterator<Entry<String, List<AbstractFilter>>> ite = mFilterListPerDataPreprocessor
 				.entrySet().iterator();
-		Entry<String, List<AbstractFilter>> entry;
 
-		SequenceLabel sequenceLabelPreprocessed;
+		Entry<String, List<AbstractFilter>> vEntry;
+		List<AbstractFilter> vFilterList;
+
 		int dataProcessIndex;
 		int firstFilterIndex = 0;
 
 		while (ite.hasNext()) {
 
-			entry = ite.next();
-			dataProcessIndex = entry.getValue().get(firstFilterIndex)
-					.getFilterPreprocessingTypeNameIndex();
+			vEntry = ite.next();
+			vFilterList = vEntry.getValue();
+
+			dataProcessIndex = vEntry.getValue().get(firstFilterIndex).getFilterPreprocessingTypeIndex();
 
 			for (DataSequence sequence : sequenceList) {
-
-				sequenceLabelPreprocessed = mDataPreprocessorList.get(
-						dataProcessIndex).preprocessingSequence(sequence);
-
-				for (AbstractFilter filter : entry.getValue()) {
-
-					filter.adjust(sequenceLabelPreprocessed);
-
-					// -- Add General Statistics
-					addFilterStatistic(filter, sequenceLabelPreprocessed);
-				}
+				addSequenceToFilters(vFilterList, dataProcessIndex, sequence);
 			}
 		}
 
@@ -237,17 +242,36 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		printFilterStatistics();
 	}
 
-	@SuppressWarnings("unused")
+	private void addSequenceToFilters(List<AbstractFilter> pFilterList, int pDataProcessIndex,
+			DataSequence pSequence) {
+
+		SequenceLabel vSequenceLabelPreprocessed;
+		vSequenceLabelPreprocessed = mDataPreprocessorList.get(pDataProcessIndex).preprocessingSequence(pSequence);
+
+		for (AbstractFilter cFilter : pFilterList) {
+
+			cFilter.adjust(vSequenceLabelPreprocessed);
+
+			// -- Add General Statistics
+			addFilterStatistic(cFilter, pSequence, vSequenceLabelPreprocessed);
+		}
+	}
+
 	protected void printFilterStatistics() {
 		if (!Parameters.SimpleActivityControl.isItUpdate
 				&& Debug.ActivityControl.printFilterStatistics) {
-			System.out.println("- Filters TRAINING statistics");
+			System.out.println("\n- Filters TRAINING statistics");
 			for (AbstractFilter filter : mFilterList) {
 				if (filter.getFilterState() != FilterState.Auxiliary) {
 					filter.printFilterProbabilityInstanceStatistics();
 				}
 			}
 		}
+
+		if(Debug.ActivityControl.printFilterStatistics || Debug.ActivityControl.printFilterInstanceStatistics) {
+			System.out.print("\n--- Total Filters Number: " + mFilterList.size());
+		}
+		System.out.println();
 	}
 
 	@Override

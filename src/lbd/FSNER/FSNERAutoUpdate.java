@@ -12,6 +12,7 @@ import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractNERModel;
@@ -25,13 +26,6 @@ import lbd.Utils.SoundToClass;
 public class FSNERAutoUpdate extends FSNER {
 
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	protected void runFSF(String trainFile, String testFile,
-			String referenceDataFile, String pTermListRestrictionFile) {
-		super.runFSF(trainFile, testFile, referenceDataFile,
-				pTermListRestrictionFile);
-	}
 
 	@Override
 	protected void updateModel(AbstractNERModel pNERTagger, String pTopicFile,
@@ -102,7 +96,7 @@ public class FSNERAutoUpdate extends FSNER {
 
 			// ArrayList<String> topicList = getTopicList(updateFile);
 			streamList.addAll(getTweetStream(out, nerTagger,
-					nerTagger.getEntityList(), 2, Symbol.EMPTY,
+					nerTagger.getEntitySet(), 2, Symbol.EMPTY,
 					TSEngine.MAX_RESULT_ALLOWED, "pt", "recent"));
 
 			out.flush();
@@ -127,37 +121,36 @@ public class FSNERAutoUpdate extends FSNER {
 		// Call proper evaluator Evaluator.evaluate("Final Results after Stream Update: ", "", nerTagger.getTaggedFilenameAddress(), testFile);
 	}
 
-	protected List<List<String>> getTweetStream(Writer out,
-			AbstractNERModel nerTagger, List<String> termList,
-			int maxThreadNumber, String topicTerm, int maxResults,
-			String language, String resultType) {
+	protected List<List<String>> getTweetStream(Writer pWriter,
+			AbstractNERModel pNERTagger, Set<String> pEntitySet,
+			int pMaxThreadNumber, String pTopicTerm, int pMaxResults,
+			String pLanguage, String pResultType) {
 
 		List<List<String>> streamList = new ArrayList<List<String>>();
-		TSEngineControl tSEngineControl = new TSEngineControl(maxThreadNumber);
+		TSEngineControl tSEngineControl = new TSEngineControl(pMaxThreadNumber);
 
 		int termNumber = 1;
 		String updateMessage;
 
-		System.out.println("Looking for a total of (" + termList.size()
-				+ ") terms in tweets");
+		System.out.println("Looking for a total of (" + pEntitySet.size() + ") terms in tweets");
 
-		for (String term : termList) {
+		for (String term : pEntitySet) {
 
 			tSEngineControl.waitUntilCanAddMore();
 			tSEngineControl.add(new TSEngine());
 
 			updateMessage = "\t("
 					+ new DecimalFormat("#.##")
-			.format(100.0 * ((termNumber++) / (double) termList
+			.format(100.0 * ((termNumber++) / (double) pEntitySet
 					.size())) + "%)"
 					+ "\t...looked for tweets of " + term;
 
 			tSEngineControl.getLastTSEngine().executeQuery(
-					out,
+					pWriter,
 					term
-					+ ((!topicTerm.isEmpty()) ? Symbol.SPACE
-							+ topicTerm : Symbol.EMPTY), maxResults,
-							language, resultType, streamList, updateMessage);
+					+ ((!pTopicTerm.isEmpty()) ? Symbol.SPACE
+							+ pTopicTerm : Symbol.EMPTY), pMaxResults,
+							pLanguage, pResultType, streamList, updateMessage);
 		}
 
 		tSEngineControl.waitUntilAllFinish();

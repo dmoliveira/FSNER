@@ -3,6 +3,12 @@ package lbd.FSNER.Configuration;
 import lbd.FSNER.Utils.Annotations.DefaultValue;
 
 public interface Debug {
+
+	public interface Filter {
+		@DefaultValue(value="100")
+		public double printFilterStatisticsWherePrecisionLessEqual = 100;
+	}
+
 	public interface ActivityControl {
 
 		@DefaultValue(value="false")
@@ -61,16 +67,19 @@ public interface Debug {
 
 	public interface Evaluator {
 		@DefaultValue(value="false")
-		public boolean isToPrintParcialStatistics = false;
+		public boolean isToPrintParcialStatistics = true;
 
 		@DefaultValue(value="false")
 		public boolean isToWriteParcialStatistics = false;
 
 		@DefaultValue(value="true")
-		public boolean isToPrintStatistics = true;
+		public boolean isToPrintStatistics = false;
 
 		//TODO: Diego - Despite it not write, the folder was created.
 		@DefaultValue(value="false")
 		public boolean isToWriteStatistics = false;
+
+		@DefaultValue(value="false")
+		public boolean isToPrintLabelAssignedWrong = false;
 	}
 }

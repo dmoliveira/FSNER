@@ -43,6 +43,8 @@ public abstract class AbstractEvaluator implements Serializable {
 	public enum OutputStyle {Plain, Latex, FilterModelHit}
 	protected OutputStyle outputStyle;
 
+	private static final boolean SHOW_WARNINGS = false;
+
 	public AbstractEvaluator(ArrayList<String> pFilenameList, OutputStyle outputStyle) {
 		mTaggedFileList = new ArrayList<String>();
 		mTestFileList = new ArrayList<String>();
@@ -130,6 +132,10 @@ public abstract class AbstractEvaluator implements Serializable {
 
 				vTaggedTerm = getTerm(vTaggedLine);
 				vTestTerm = getTerm(vTestLine);
+
+				if(SHOW_WARNINGS && !vTaggedTerm.getTerm().equals(vTestTerm.getTerm())) {
+					System.out.println("[Warning] Tagged/Test Term - Line " + cLine + ":  '" + vTaggedTerm.getTerm() + "' != Test Term '" + vTestTerm.getTerm() + "'");
+				}
 
 				evaluateTerm(vTaggedTerm, vTestTerm, cLine);
 			}

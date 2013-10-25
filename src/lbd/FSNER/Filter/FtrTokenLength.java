@@ -2,19 +2,18 @@ package lbd.FSNER.Filter;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
-import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
+import lbd.data.handler.DataSequence;
 
-public class FtrTermLength extends AbstractFilter{
+public class FtrTokenLength extends AbstractFilter{
 
 	private static final long serialVersionUID = 1L;
 
-	public FtrTermLength(int preprocessingTypeNameIndex,
-			AbstractFilterScoreCalculatorModel scoreCalculator) {
-		super(ClassName.getSingleName(FtrTermLength.class.getName()),
-				preprocessingTypeNameIndex, scoreCalculator);
+	public FtrTokenLength(int preprocessingTypeNameIndex) {
+		super(ClassName.getSingleName(FtrTokenLength.class.getName()),
+				preprocessingTypeNameIndex);
 
-		this.mCommonFilterName = "Ort" + preprocessingTypeNameIndex;
+		this.mFilterClassName = "Ort" + preprocessingTypeNameIndex;
 	}
 
 	@Override
@@ -62,8 +61,8 @@ public class FtrTermLength extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(
+	protected String getSequenceInstanceIdSub(DataSequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
-		return ("id:" + this.mId + ".len:" + sequenceLabelProcessed.getTerm(index));
+		return ("id:" + this.mId + ".len:" + sequenceLabelProcessed.getTerm(index).length());
 	}
 }
