@@ -21,7 +21,7 @@ import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.FileUtils;
 import lbd.FSNER.Utils.Symbol;
 import lbd.Utils.StringUtils;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrGazetteer extends AbstractFilter{
 
@@ -72,7 +72,7 @@ public class FtrGazetteer extends AbstractFilter{
 
 				vEntry = vEntry.trim();
 
-				if(!vEntry.isEmpty() && Parameters.Filter.Gazetter.minimumAcceptedDictionaryTermEntry <= vEntry.length()) {
+				if(!vEntry.isEmpty() && Parameters.Filter.Gazetter.mMinimumAcceptedDictionaryTermEntry <= vEntry.length()) {
 
 					String [] vEntrySplitted = vEntry.split(Symbol.SPACE);
 					int vEntrySize = vEntrySplitted.length;
@@ -140,7 +140,7 @@ public class FtrGazetteer extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 		String vIdModel = "id:{0}.dic:{1}.entPos:{2}.entSz:{3}";
@@ -151,7 +151,7 @@ public class FtrGazetteer extends AbstractFilter{
 
 		if(mEntityStartPosition == -1) {
 
-			String vTerm = (String) pSequence.x(pIndex);
+			String vTerm = (String) pSequence.getToken(pIndex);
 
 			if(mInvertedIndex.containsKey(vTerm)) {
 
@@ -188,12 +188,12 @@ public class FtrGazetteer extends AbstractFilter{
 		return vId;
 	}
 
-	private String getCandidateEntity(DataSequence pSequence, int pIndex, int pEntitySize) {
+	private String getCandidateEntity(ISequence pSequence, int pIndex, int pEntitySize) {
 
 		String vCandidateEntity = Symbol.EMPTY;
 
 		for(int i = pIndex; i < pIndex + pEntitySize; i++) {
-			vCandidateEntity += pSequence.x(i) + Symbol.SPACE;
+			vCandidateEntity += pSequence.getToken(i) + Symbol.SPACE;
 		}
 
 		return vCandidateEntity.trim();

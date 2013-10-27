@@ -6,9 +6,8 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrPosition extends AbstractFilter{
 
@@ -49,7 +48,7 @@ public class FtrPosition extends AbstractFilter{
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
 
-		if(LabelEncoding.isEntity((sequenceLabelProcessed.getLabel(index))) && index <= MAX_POSITION) {
+		if(index <= MAX_POSITION) {
 			positionMap.put(index, null);
 		}
 	}
@@ -75,7 +74,7 @@ public class FtrPosition extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		return (((positionMap.containsKey(index))? "id:" + mId + Symbol.DOT + index : Symbol.EMPTY));

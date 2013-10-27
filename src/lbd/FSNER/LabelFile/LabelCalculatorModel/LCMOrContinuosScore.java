@@ -2,8 +2,9 @@ package lbd.FSNER.LabelFile.LabelCalculatorModel;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractTermRestrictionChecker;
-import lbd.FSNER.Utils.LabelEncoding;
+import lbd.fsner.label.encoding.Label;
 
 public class LCMOrContinuosScore extends LCMOrDiscreteScore{
 
@@ -14,7 +15,6 @@ public class LCMOrContinuosScore extends LCMOrDiscreteScore{
 		super(pTermRestrictionChecker);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected void calculateLabelProbability(int pIndex, String pTerm,
 			SequenceLabel pSequenceLabelProcessed,
@@ -22,11 +22,11 @@ public class LCMOrContinuosScore extends LCMOrDiscreteScore{
 			String pFilterInstanceId) {
 
 		if (!pFilterInstanceId.isEmpty()) {
-			for(Enum cLabel : LabelEncoding.getLabels()) {
-				double vLabelProbability = pFilterProbability.getProbability(pFilterInstanceId, cLabel.ordinal());
-				mLabelProbability[cLabel.ordinal()] += vLabelProbability;
+			for(int cLabel = 0; cLabel < mLabelProbability.length; cLabel++) {
+				double vLabelProbability = pFilterProbability.getProbability(pFilterInstanceId, cLabel);
+				mLabelProbability[cLabel] += vLabelProbability;
 				pFilterProbability.addToFilterStatisticForAssignedLabels(pTerm,
-						LabelEncoding.isEntity(pSequenceLabelProcessed.getLabel(pIndex)), true);
+						Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequenceLabelProcessed.getLabel(pIndex))), true);
 			}
 		}
 	}

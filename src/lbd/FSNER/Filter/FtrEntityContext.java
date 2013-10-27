@@ -8,7 +8,7 @@ import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.EntityUtils;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrEntityContext extends AbstractFilter{
 
@@ -21,8 +21,8 @@ public class FtrEntityContext extends AbstractFilter{
 
 	protected int mContextSizeUsed;
 
-	protected int mMaximumContextSize = Parameters.Filter.Context.maximumContextSize;
-	protected int mMaximumEntitySizeToSearch = Parameters.Filter.Context.maximumEntitySizeToSearch;
+	protected int mMaximumContextSize = Parameters.Filter.Context.mMaximumContextSize;
+	protected int mMaximumEntitySizeToSearch = Parameters.Filter.Context.mMaximumEntitySizeToSearch;
 
 	// -- Memory for load
 	private int mEndEntityIndex;
@@ -111,7 +111,7 @@ public class FtrEntityContext extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		boolean vWasContextFound =false;
 		String vContextText = Symbol.EMPTY;

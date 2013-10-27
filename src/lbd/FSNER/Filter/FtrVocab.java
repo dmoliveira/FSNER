@@ -8,9 +8,8 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrVocab extends AbstractFilter{
 
@@ -56,8 +55,7 @@ public class FtrVocab extends AbstractFilter{
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
 
-		if(sequenceLabelProcessed.size() >= MIN_SEQUENCE_SIZE &&
-				LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index))) {
+		if(sequenceLabelProcessed.size() >= MIN_SEQUENCE_SIZE) {
 			addSequence(sequenceLabelProcessed, index);
 		}
 
@@ -102,7 +100,7 @@ public class FtrVocab extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;

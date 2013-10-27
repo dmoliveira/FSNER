@@ -91,8 +91,8 @@ public class FSNERAutoUpdate extends FSNER {
 
 		try {
 
-			Writer out = new OutputStreamWriter(new FileOutputStream(
-					"./Team-StreamTweet.data"), Parameters.dataEncoding);
+			Writer out = new OutputStreamWriter(new FileOutputStream("./Team-StreamTweet.data"),
+					Parameters.DataHandler.mDataEncoding);
 
 			// ArrayList<String> topicList = getTopicList(updateFile);
 			streamList.addAll(getTweetStream(out, nerTagger,
@@ -191,7 +191,7 @@ public class FSNERAutoUpdate extends FSNER {
 		try {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(topicFile), Parameters.dataEncoding));
+					new FileInputStream(topicFile), Parameters.DataHandler.mDataEncoding));
 
 			while ((line = in.readLine()) != null) {
 				topicList.add(line);

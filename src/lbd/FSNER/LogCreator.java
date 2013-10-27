@@ -17,7 +17,7 @@ import lbd.FSNER.Component.ClusterHandler;
 import lbd.FSNER.Component.Sequence;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class LogCreator {
 	
@@ -280,12 +280,12 @@ public class LogCreator {
 	 * 
 	 *************************************************************************************************************************/
 	
-	protected static void writeSequenceScore(Writer out, DataSequence sequence, ArrayList<Double> scoreList) throws IOException {
+	protected static void writeSequenceScore(Writer out, ISequence sequence, ArrayList<Double> scoreList) throws IOException {
 		
 		int scoreIndex = 0;
 		
 		for(int i = 0; i < sequence.length(); i++)
-			out.write(sequence.x(i) + SPACE);
+			out.write(sequence.getToken(i) + SPACE);
 		
 		out.write("\n\t Score: " + ((scoreList.size() == 0)?"---":""));
 		

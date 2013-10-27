@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 
 public abstract class AbstractLabelFileScoreCalculatorModel implements Serializable {
@@ -14,7 +14,7 @@ public abstract class AbstractLabelFileScoreCalculatorModel implements Serializa
 	protected boolean isUnrealibleSituation;
 
 	public abstract double calculateScore(int index,
-			DataSequence pSequence,
+			ISequence pSequence,
 			Map<String, SequenceLabel> proccessedSequenceMap,
 			ArrayList<AbstractDataPreprocessor> dataProcessorList,
 			ArrayList<AbstractFilter> filterList);

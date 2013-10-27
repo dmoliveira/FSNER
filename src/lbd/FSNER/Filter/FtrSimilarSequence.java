@@ -7,8 +7,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrSimilarSequence extends AbstractFilter{
 
@@ -51,15 +50,12 @@ public class FtrSimilarSequence extends AbstractFilter{
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
 
-		if(LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index))) {
+		sequenceList.add(new HashMap<String, Object>());
+		HashMap<String, Object> termSequenceMap = sequenceList.get(sequenceList.size()-1);
 
-			sequenceList.add(new HashMap<String, Object>());
-			HashMap<String, Object> termSequenceMap = sequenceList.get(sequenceList.size()-1);
-
-			for(int i = 0; i < sequenceLabelProcessed.size(); i++) {
-				if(i != index) {
-					termSequenceMap.put(sequenceLabelProcessed.getTerm(i), null);
-				}
+		for(int i = 0; i < sequenceLabelProcessed.size(); i++) {
+			if(i != index) {
+				termSequenceMap.put(sequenceLabelProcessed.getTerm(i), null);
 			}
 		}
 
@@ -85,7 +81,7 @@ public class FtrSimilarSequence extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = "";
 

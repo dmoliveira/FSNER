@@ -5,7 +5,7 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrState extends AbstractFilter {
 
@@ -67,7 +67,7 @@ public class FtrState extends AbstractFilter {
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		String vId = Symbol.EMPTY;
@@ -83,7 +83,7 @@ public class FtrState extends AbstractFilter {
 			// {
 			String vPreviousStates = Symbol.EMPTY;
 			for (int cState = pIndex - mNumberPreviousStatesToConsider; cState < pIndex; cState++) {
-				vPreviousStates += pSequence.y(cState) + Symbol.HYPHEN;
+				vPreviousStates += pSequence.getLabel(cState) + Symbol.HYPHEN;
 			}
 
 			vId = "id:"

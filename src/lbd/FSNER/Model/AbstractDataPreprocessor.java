@@ -5,7 +5,7 @@ import java.util.HashMap;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Component.Statistic.SimpleFilterProbability;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public abstract class AbstractDataPreprocessor extends AbstractActivity {
 
@@ -20,12 +20,12 @@ public abstract class AbstractDataPreprocessor extends AbstractActivity {
 		mCommonTermMap = new HashMap<String, SimpleFilterProbability>();
 	}
 
-	public SequenceLabel preprocessingSequence(DataSequence pSequence) {
+	public SequenceLabel preprocessingSequence(ISequence pSequence) {
 
 		SequenceLabel vSequenceLabel = new SequenceLabel();
 
 		for(int i = 0; i < pSequence.length(); i++) {
-			vSequenceLabel.add(preprocessingTerm((String)pSequence.x(i), pSequence.y(i)));
+			vSequenceLabel.add(preprocessingTerm((String)pSequence.getToken(i), pSequence.getLabel(i)));
 		}
 
 		return (vSequenceLabel);

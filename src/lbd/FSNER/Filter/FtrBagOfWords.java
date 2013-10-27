@@ -8,9 +8,8 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.CommonEnum.Flexibility;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrBagOfWords extends AbstractFilter{
 
@@ -69,7 +68,7 @@ public class FtrBagOfWords extends AbstractFilter{
 
 		BagOfWords bagOfWords = bagOfWordsMap.get(mId);
 
-		if(bagOfWords != null && LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index))) {
+		if(bagOfWords != null) {
 			bagOfWords.addSequence(sequenceLabelProcessed, index);
 		}
 	}
@@ -94,7 +93,7 @@ public class FtrBagOfWords extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;

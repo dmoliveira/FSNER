@@ -5,14 +5,15 @@ import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Model.AbstractLabelFileLabelCalculatorModel;
 import lbd.FSNER.Model.AbstractTermRestrictionChecker;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
@@ -31,14 +32,13 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
 	@Override
 	public int calculateMostProbablyLabelSub(int pIndex,
-			DataSequence pSequence,
+			ISequence pSequence,
 			Map<String, SequenceLabel> pProccessedSequenceMap,
 			List<AbstractDataPreprocessor> pDataProcessorList,
 			List<AbstractFilter> pFilterList) {
 
-		int vMostProbablyLabel = LabelEncoding.getOutsideLabel();
+		int vMostProbablyLabel = Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal();
 		int vLastFilterPreprocessingTypeNameIndex = -1;
-		double vScore = SCORE_THRESHOLD;
 
 		boolean vWasFilterActivated = false;
 
@@ -48,9 +48,6 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		SequenceLabel vSequenceLabelProcessed = null;
 		FilterProbabilityHandler vFilterProbability = null;
 		AbstractDataPreprocessor vDataPreprocessor = null;
-
-		mLabelProbability = new double [LabelEncoding.getAlphabetSize()];
-		mNormalizationFactor  = new int[LabelEncoding.getAlphabetSize()];
 
 		double vFilterLabelMaxProbability;
 		int vFilterLabelChoosed;
@@ -76,13 +73,9 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
 				if(!vFilterInstanceId.isEmpty() &&	vFilterProbability.getProbability(vFilterInstanceId) > this.vAlpha) {
 
-					vScore = cFilter.calculateScore(vSequenceLabelProcessed, pIndex);
-
-					//if(score > SCORE_THRESHOLD) {
-
 					vFilterLabelMaxProbability = 0;
-					vFilterLabelChoosed = LabelEncoding.getOutsideLabel();
-					for(int i = 0; i < LabelEncoding.getAlphabetSize(); i++) {
+					vFilterLabelChoosed = Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal();
+					for(int i = 0; i < Parameters.DataHandler.mLabelEncoding.getAlphabetSize(); i++) {
 						//TODO: Test normalization only when prob. > 0
 						mLabelProbability[i] += vFilterProbability.getProbability(vFilterInstanceId, i);
 						mNormalizationFactor[i]++;
@@ -95,8 +88,8 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 					vWasFilterActivated = true;
 
 					vFilterProbability.addToFilterStatisticForAssignedLabels(vTerm,
-							LabelEncoding.isEntity(vSequenceLabelProcessed.getLabel(pIndex)), LabelEncoding.isEntity(vFilterLabelChoosed));
-					//}
+							Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vSequenceLabelProcessed.getLabel(pIndex))),
+							Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vFilterLabelChoosed)));
 				}
 			}
 		}
@@ -110,7 +103,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
 	protected int getMostProbablyLabel(String term, double [] labelProbability, int [] normalizationFactor) {
 
-		int mostProbablyLabel = LabelEncoding.getOutsideLabel();
+		int mostProbablyLabel = Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal();
 		double maxProbability = -1;
 		double probability = -1;
 
@@ -118,11 +111,11 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 			System.out.println("Term: " + term);
 		}
 
-		for(int i = 0; i < LabelEncoding.getAlphabetSize(); i++) {
+		for(int i = 0; i < Parameters.DataHandler.mLabelEncoding.getAlphabetSize(); i++) {
 
 			probability = labelProbability[i]/normalizationFactor[i];
 			if(vShowProbabilityForLabel && term.length() > 2) {
-				System.out.println("Prob(" + LabelEncoding.BILOU.values()[i].name() + "): " + probability);
+				System.out.println("Prob(" + Label.getLabel(i).getValue() + "): " + probability);
 			}
 
 			if(probability > maxProbability) {
@@ -132,13 +125,13 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		}
 
 		if(vShowProbabilityForLabel && term.length() > 2) {
-			System.out.println(">> Chosen Label: " + LabelEncoding.BILOU.values()[mostProbablyLabel].name());
+			System.out.println(">> Chosen Label: " + Label.getLabel(mostProbablyLabel).getValue());
 		}
 		if(vShowProbabilityForLabel && term.length() > 2) {
 			System.out.println("-----------------");
 		}
 
-		return((maxProbability >= vFilterProbability)? mostProbablyLabel : LabelEncoding.getOutsideLabel());
+		return((maxProbability >= vFilterProbability)? mostProbablyLabel : Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal());
 	}
 
 	public void setFilterProbability(double filterProbability) {

@@ -4,7 +4,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Model.AbstractMetaFilter;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrTranslate extends AbstractMetaFilter{
 
@@ -20,7 +20,7 @@ public class FtrTranslate extends AbstractMetaFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed,
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed,
 			int pIndex) {
 
 		String vId = Symbol.EMPTY;

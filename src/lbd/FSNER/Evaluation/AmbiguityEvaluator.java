@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Evaluation.Component.TermLabeled;
-import lbd.FSNER.Utils.LabelEncoding.BILOU;
 
 public class AmbiguityEvaluator extends SimpleBILOUEvaluator {
 
@@ -40,7 +39,7 @@ public class AmbiguityEvaluator extends SimpleBILOUEvaluator {
 		ambiguityEntityTermsInTestFile = new HashMap<String, Object>();
 
 		BufferedReader testIn = new BufferedReader(new InputStreamReader(
-				new FileInputStream(testFilenameAddress), Parameters.dataEncoding));
+				new FileInputStream(testFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 		String lineTest;
 		String termLowerCase;
@@ -57,7 +56,7 @@ public class AmbiguityEvaluator extends SimpleBILOUEvaluator {
 					termsInTestFile.put(termLowerCase, AmbiguityType.None);
 				}
 
-				if(termTest.getLabel().equals(BILOU.Outside.name())) {
+				if(termTest.getLabel().equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 					if(AmbiguityType.None == termsInTestFile.get(termLowerCase)) {
 						termsInTestFile.put(termLowerCase, AmbiguityType.Outside);
 					} else if(AmbiguityType.Entity == termsInTestFile.get(termLowerCase)) {
@@ -81,7 +80,7 @@ public class AmbiguityEvaluator extends SimpleBILOUEvaluator {
 	protected void evaluateTerm(TermLabeled termFromTagged,
 			TermLabeled termFromTest, int lineNumber) {
 
-		if(!termFromTest.getLabel().equals(BILOU.Outside.name())) {
+		if(!termFromTest.getLabel().equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 			entityTermsInTestFile.put(termFromTest.getTerm().toLowerCase(), null);
 		}
 

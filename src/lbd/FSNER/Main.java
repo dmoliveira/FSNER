@@ -11,7 +11,7 @@ public class Main {
 	public static void main(String [] args) {
 
 		ArrayList<FilterParameters> vFilterParametersList = FilterParameters.loadFilterConfiguration(
-				FileUtils.getListOfOnlyFiles(Parameters.Directory.filterConfiguration).get(0));
+				FileUtils.getListOfOnlyFiles(Parameters.Directory.mFilterConfiguration).get(0));
 
 		for(FilterParameters cFilterParameters : vFilterParametersList) {
 			System.out.println("-- FilterConfiguration: " + cFilterParameters);

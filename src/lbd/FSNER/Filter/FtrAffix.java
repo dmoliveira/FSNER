@@ -8,9 +8,8 @@ import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrAffix extends AbstractFilter{
 
@@ -22,7 +21,7 @@ public class FtrAffix extends AbstractFilter{
 	protected Map<String, Object> mAffixMap;
 	protected int mAffixSize;
 
-	protected static final int MINIMUM_TERM_SIZE = Parameters.Filter.Affix.minimumTermSize;
+	protected static final int MINIMUM_TERM_SIZE = Parameters.Filter.Affix.mMinimumTermSize;
 
 	public FtrAffix(int pPreprocessingTypeNameIndex, AbstractFilterScoreCalculatorModel pScoreCalculator,
 			AffixType pAffixType, int pAffixSize) {
@@ -55,9 +54,7 @@ public class FtrAffix extends AbstractFilter{
 
 	@Override
 	public void loadTermSequence(SequenceLabel pSequenceLabelProcessed, int pIndex) {
-		if(LabelEncoding.isEntity(pSequenceLabelProcessed.getLabel(pIndex))) {
-			generateAffixes(pSequenceLabelProcessed.getTerm(pIndex));
-		}
+		generateAffixes(pSequenceLabelProcessed.getTerm(pIndex));
 	}
 
 	public void generateAffixes(String pTerm) {
@@ -118,7 +115,7 @@ public class FtrAffix extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		String vId = Symbol.EMPTY;

@@ -18,7 +18,7 @@ import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
 import lbd.FSNER.Utils.Annotations.Comment;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 @Comment(message="Official Filter")
 public class FtrSingleTermDictionary3 extends AbstractFilter{
@@ -110,7 +110,7 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 		try {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(dictionaryFilenameAddress), Parameters.dataEncoding));
+					new FileInputStream(dictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 			sDictionaryList.add(new HashMap<String, HashMap<String, Object>> ());
 			HashMap<String, HashMap<String, Object>> dictionaryMap = sDictionaryList.get(sDictionaryList.size() - 1);
@@ -197,7 +197,7 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;

@@ -17,7 +17,6 @@ import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.FilterParameters;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.FileUtils;
-import lbd.FSNER.Utils.LabelEncoding;
 
 public abstract class AbstractNERModel implements Serializable {
 
@@ -41,10 +40,6 @@ public abstract class AbstractNERModel implements Serializable {
 	protected int mEntityGeneralizedNumber;
 
 	public AbstractNERModel(DataCollection pDataCollection) {
-
-		//-- Set Label Encoding (Mandatory!)
-		LabelEncoding.checkLabelEncoding();
-
 		mDataCollection = pDataCollection;
 		mEntityMap = new HashMap<String, Object>();
 	}

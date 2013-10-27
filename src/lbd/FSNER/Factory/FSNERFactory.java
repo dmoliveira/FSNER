@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import lbd.FSNER.FSNER;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.FSNER.Utils.LabelEncoding.EncodingType;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.Sequence;
 
@@ -26,7 +24,6 @@ public class FSNERFactory {
 
 	// To optimize use this as singleton instance.
 	public FSNERFactory() {
-		LabelEncoding.setEncodingType(EncodingType.BILOU);
 		fsnermap = new HashMap<EntityType, FSNER>();
 		for (EntityType cEntityType : EntityType.values()) {
 			fsnermap.put(cEntityType, FSNER.loadObject(MessageFormat.format(

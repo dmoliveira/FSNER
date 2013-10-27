@@ -26,6 +26,7 @@ import lbd.FSNER.Evaluation.AmbiguityEvaluator;
 import lbd.FSNER.Evaluation.GeneralizationEvaluator;
 import lbd.FSNER.Evaluation.LearningEvaluator;
 import lbd.FSNER.Evaluation.SimpleBILOUEvaluator;
+import lbd.FSNER.Evaluation.SimpleEvaluator;
 import lbd.FSNER.Filter.FtrSingleTermDictionary4;
 import lbd.FSNER.LabelFile.SimpleLabelFile;
 import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMOrContinuosScore;
@@ -43,13 +44,12 @@ import lbd.FSNER.NERModel.SimpleNERModel;
 import lbd.FSNER.TermRestrictionChecker.SimpleTermRestrictionChecker;
 import lbd.FSNER.UpdateControl.SimpleUpdateControl;
 import lbd.FSNER.Utils.FileUtils;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.FSNER.Utils.LabelEncoding.EncodingType;
 import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
 import lbd.Utils.SoundToClass;
 import lbd.Utils.songStorms;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
+import lbd.fsner.entity.Entity;
 
 public class FSNER implements Serializable {
 
@@ -74,12 +74,12 @@ public class FSNER implements Serializable {
 	public static void main(String [] args) {
 
 		ArrayList<FilterParameters> vFilterParametersList = FilterParameters.loadFilterConfiguration(
-				FileUtils.getListOfOnlyFiles(Parameters.Directory.filterConfiguration).get(0));
+				FileUtils.getListOfOnlyFiles(Parameters.Directory.mFilterConfiguration).get(0));
 
 		for(FilterParameters cFilterParameters : vFilterParametersList) {
 			System.out.println("-- FilterConfiguration: " + cFilterParameters);
 			//Save.optionalDirectory = "FilterCombinationHitTraining/" + cFilterParameters.toString();'
-			CollectionName [] vSubcollection = {
+			/*CollectionName [] vSubcollection = {
 					CollectionName.PlayerCV, CollectionName.VenueCV, CollectionName.TeamCV,
 					CollectionName.CompanyCV, CollectionName.GeolocCV, CollectionName.PersonCV,
 					CollectionName.OrganizationCV, CollectionName.PER_MSM13_V15_PREPROCESSED_CV,
@@ -108,10 +108,9 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_TV_e_Lazer_EVT, CollectionName.Zunnit_Extra_TV_e_Lazer_MISC,
 					CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG,
 					CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT,
-					CollectionName.Zunnit_Extra_All_MISC};
-			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
-			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_All_PER, CollectionName.Zunnit_Extra_All_ORG, CollectionName.Zunnit_Extra_All_LOC, CollectionName.Zunnit_Extra_All_EVT, CollectionName.Zunnit_Extra_All_MISC};
+					CollectionName.Zunnit_Extra_All_MISC};*/
 			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Shuf_PER, CollectionName.Zunnit_Shuf_LOC, CollectionName.Zunnit_Shuf_ORG, CollectionName.Zunnit_Shuf_MISC};
+			CollectionName [] vSubcollection = {CollectionName.Zunnit_Shuf};
 
 			for(CollectionName cCollection : vSubcollection) {
 				FSNER vFSNER = new FSNER();
@@ -165,7 +164,7 @@ public class FSNER implements Serializable {
 
 	protected void runStandardFSNER(DataCollection pDataCollection) {
 
-		for(int cIteration = 1; cIteration <= Parameters.FSNERExecution.trainFileIteration; cIteration++) {
+		for(int cIteration = 1; cIteration <= Parameters.FSNERExecution.mTrainFileIteration; cIteration++) {
 
 			String vTrainFile = CollectionDefinition.getFilenameAddress(pDataCollection, cIteration, FileExtension.Train);
 			String vTestFile = CollectionDefinition.getFilenameAddress(pDataCollection, cIteration, FileExtension.Test);
@@ -176,7 +175,7 @@ public class FSNER implements Serializable {
 
 			runFSNERCore(vTrainFile, vTestFile, "", pDataCollection);
 
-			if(Parameters.Save.isToSaveNERModel) {
+			if(Parameters.Save.mIsToSaveNERModel) {
 				writeObject(Parameters.getOutputDirectory() + Constants.FSNERModel + Symbol.HYPHEN
 						+ pDataCollection.getFilename(cIteration - 1) + Symbol.DOT + Constants.FileExtention.FSNERModel);
 			}
@@ -184,10 +183,6 @@ public class FSNER implements Serializable {
 	}
 
 	protected void runFSNERCore(String trainFile, String testFile, String referenceDataFile, DataCollection pDataCollection) {
-
-		//-- Set Label Encoding (Mandatory!)
-		LabelEncoding.setEncodingType(EncodingType.BILOU);
-
 		//-- Create filenames
 		String vTermListRestrictionName = CollectionDefinition.Directory.Dictionary + pDataCollection.mTermListRestrictionName;
 
@@ -200,6 +195,7 @@ public class FSNER implements Serializable {
 		//-- Create Components
 		AbstractActivityControl simpleActivityControl = new SimpleActivityControl();
 		AbstractActivityControl parallelActivityControl = new ParallelActivityControl();
+
 		AbstractLabelFile simpleLabelFile = new SimpleLabelFile();
 		AbstractUpdateControl simpleUpdateControl =  new SimpleUpdateControl(0);
 
@@ -218,14 +214,13 @@ public class FSNER implements Serializable {
 
 		//-- Joint Subcomponents
 		simpleLabelFile.addSequenceScoreCalculatorModel(orDiscreteScoreModel);
-		((LCMSumScore)sumScoreModel).setFilterProbability(0);
-		((LCMSumScore)sumScoreModel).setAlpha(0);
 
 		//-- Execute FS-NER
 		mNERModel.allocModel(new String [] {vTermListRestrictionName});
 		mNERModel.load(trainFile);
-		mNERModel.labelFile(testFile);
-		mNERModel.evaluate(mNERModel.getTaggedFilenameAddress(), testFile, "(Label)");
+		mNERModel.labelFile(trainFile);
+		//mNERModel.evaluate(mNERModel.getTaggedFilenameAddress(), testFile, "(Label)");
+		new SimpleEvaluator().evaluate(mNERModel.getTaggedFilenameAddress(), trainFile);
 
 		//-- Other evaluation analisys
 		//mFilterCombinationEvaluator.evaluate(mNERModel.getTaggedFilenameAddress(), testFile, "");
@@ -254,12 +249,18 @@ public class FSNER implements Serializable {
 		mNERModel.labelFile(pFilenameAddressToLabel);
 	}
 
-	public DataSequence labelSequence(DataSequence pSequence) {
+	public ISequence labelSequence(ISequence pSequence) {
 		return mNERModel.getLabelFile().labelSequence(pSequence);
 	}
 
-	public List<String> labelSequenceToList (DataSequence pSequence) {
-		return LabelEncoding.getEntities(labelSequence(pSequence));
+	public List<String> labelSequenceToList (ISequence pSequence) {
+
+		List<String> vEntityList = new ArrayList<String>();
+
+		for(Entity cEntity : Parameters.DataHandler.mLabelEncoding.getEntities(pSequence)) {
+			vEntityList.add(cEntity.getValue());
+		}
+		return vEntityList;
 	}
 
 	public void writeOverviewStatistics(String pOutputFilenameAddress) {

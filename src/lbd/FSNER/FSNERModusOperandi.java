@@ -8,12 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import lbd.FSNER.Configuration.Parameters;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.FSNER.Utils.LabelEncoding.BILOU;
-import lbd.FSNER.Utils.LabelEncoding.EncodingType;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 import lbd.data.handler.Sequence;
+import lbd.fsner.entity.Entity;
 
 public class FSNERModusOperandi {
 
@@ -24,7 +22,7 @@ public class FSNERModusOperandi {
 
 	public static void main(String [] args) {
 
-		String vFSNERModelFilenamePattern = Parameters.Directory.models + "FSNER-Model-Zunnit-GloboExtraCollection-All-{0}-CV1.fsbin";
+		String vFSNERModelFilenamePattern = Parameters.Directory.mModels + "FSNER-Model-Zunnit-GloboExtraCollection-All-{0}-CV1.fsbin";
 		String [] vSentences = {"Romário rebate Leandro Amaral e Renato Gaúcho e abre crise no Vasco",
 				"Os deputados Wagner Montes e Luiz Paulo do PSDB também participaram da audiência",
 				"Copacabana com 26% Laranjeiras com 24% e Flamengo com 19% todos na Zona Sul estão logo em seguida no ranking",
@@ -56,57 +54,29 @@ public class FSNERModusOperandi {
 	public FSNERModusOperandi(String pFSNERModelFile) {
 		mFSNERModelFile = pFSNERModelFile;
 		mFSNER = FSNER.loadObject(mFSNERModelFile);
-		LabelEncoding.setEncodingType(EncodingType.BILOU);
 	}
 
 	public List<String> recognize(String pMessage) {
 		String vEncodedMessage = pMessage;
 		try {
-			vEncodedMessage = new String(vEncodedMessage.getBytes(), Parameters.dataEncoding);
+			vEncodedMessage = new String(vEncodedMessage.getBytes(), Parameters.DataHandler.mDataEncoding);
 		} catch (UnsupportedEncodingException pException) {
 			pException.printStackTrace();
 		}
 
-		DataSequence labeledSequence = mFSNER.labelSequence(new Sequence(vEncodedMessage.split(Symbol.SPACE)));
+		ISequence labeledSequence = mFSNER.labelSequence(new Sequence(vEncodedMessage.split(Symbol.SPACE)));
 		return GetEntities(labeledSequence);
 	}
 
 	//Has same code in FS-NER WebService
-	public static List<String> GetEntities(DataSequence pLabeledSequence) {
-		List<String> vEntities = new ArrayList<String>();
-		String vEntity = Symbol.EMPTY;
-		BILOU vLastLabel = BILOU.Outside;
+	public static List<String> GetEntities(ISequence pLabeledSequence) {
 
-		for (int cIndex = 0; cIndex < pLabeledSequence.length(); cIndex++) {
-			if (pLabeledSequence.y(cIndex) == BILOU.Beginning.ordinal()) {
-				if (vLastLabel == BILOU.Beginning || vLastLabel == BILOU.Inside) {
-					vEntities.add(vEntity.trim());
-				}
-				vEntity = (String) pLabeledSequence.x(cIndex);
-				vLastLabel = BILOU.Beginning;
-			} else if (pLabeledSequence.y(cIndex) == BILOU.Inside.ordinal()) {
-				vEntity += Symbol.SPACE + ((String) pLabeledSequence.x(cIndex)).trim();
-				vLastLabel = BILOU.Inside;
-			} else if (pLabeledSequence.y(cIndex) == BILOU.Last.ordinal()) {
-				vEntity += Symbol.SPACE + ((String) pLabeledSequence.x(cIndex)).trim();
-				vEntities.add(vEntity.trim());
-				vEntity = Symbol.EMPTY;
-				vLastLabel = BILOU.Last;
-			} else if (pLabeledSequence.y(cIndex) == BILOU.UnitToken.ordinal()) {
-				if (vLastLabel == BILOU.Beginning || vLastLabel == BILOU.Inside) {
-					vEntities.add(vEntity.trim());
-				}
-				vEntities.add(((String) pLabeledSequence.x(cIndex)).trim());
-				vEntity = Symbol.EMPTY;
-				vLastLabel = BILOU.UnitToken;
-			} else if (pLabeledSequence.y(cIndex) == BILOU.Outside.ordinal()
-					&& (vLastLabel == BILOU.Beginning || vLastLabel == BILOU.Inside)) {
-				vEntities.add(vEntity.trim());
-				vEntity = Symbol.EMPTY;
-				vLastLabel = BILOU.Outside;
-			}
+		List<String> vEntityList = new ArrayList<String>();
+
+		for(Entity cEntity : Parameters.DataHandler.mLabelEncoding.getEntities(pLabeledSequence)) {
+			vEntityList.add(cEntity.getValue());
 		}
 
-		return vEntities;
+		return vEntityList;
 	}
 }

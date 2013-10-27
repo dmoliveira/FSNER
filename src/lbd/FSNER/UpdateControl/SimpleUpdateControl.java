@@ -2,7 +2,7 @@ package lbd.FSNER.UpdateControl;
 
 import lbd.FSNER.Model.AbstractUpdateControl;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class SimpleUpdateControl extends AbstractUpdateControl{
 
@@ -13,7 +13,7 @@ public class SimpleUpdateControl extends AbstractUpdateControl{
 	}
 
 	@Override
-	public boolean addSequence(DataSequence sequence) {
+	public boolean addSequence(ISequence sequence) {
 
 		String encodedSequence = encodeSequence(sequence);
 
@@ -33,12 +33,12 @@ public class SimpleUpdateControl extends AbstractUpdateControl{
 		return (canAddSequence);
 	}
 
-	protected String encodeSequence(DataSequence sequence) {
+	protected String encodeSequence(ISequence sequence) {
 
 		String encodedSequence = Symbol.EMPTY;
 
 		for(int i = 0; i < sequence.length(); i++) {
-			encodedSequence += sequence.x(i) + Symbol.DOT + sequence.y(i) + Symbol.SPACE;
+			encodedSequence += sequence.getToken(i) + Symbol.DOT + sequence.getLabel(i) + Symbol.SPACE;
 		}
 
 		return(encodedSequence);

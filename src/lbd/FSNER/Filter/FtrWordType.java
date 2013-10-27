@@ -6,7 +6,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrWordType extends AbstractFilter{
 
@@ -64,10 +64,10 @@ public class FtrWordType extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
-		String vToken = (String) pSequence.x(pIndex);
+		String vToken = (String) pSequence.getToken(pIndex);
 		String vWordType = WordType.Common.name();
 
 		if(!vToken.isEmpty()) {

@@ -18,7 +18,7 @@ public interface Debug {
 		public boolean printFilterInstanceStatistics = false;
 
 		@DefaultValue(value="false")
-		public boolean showElapsedTime = false;
+		public boolean showElapsedTime = true;
 
 		@DefaultValue(value="false")
 		public boolean showGeneratedFiltersNumber = false;

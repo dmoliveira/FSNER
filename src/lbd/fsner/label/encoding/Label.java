@@ -1,28 +1,29 @@
 package lbd.fsner.label.encoding;
 
-public class Label {
+import lbd.FSNER.Configuration.Parameters;
 
-	protected String mValue;
-	protected int mOrdinal;
+public enum Label {
+	Beginning("B"),
+	Inside("I"),
+	Last("L"),
+	Outside("O"),
+	UnitToken("U");
 
-	public Label(String pValue, int pOrdinal) {
+	private final String mValue;
+
+	Label(String pValue) {
 		mValue = pValue;
-		mOrdinal = pOrdinal;
 	}
 
 	public String getValue() {
 		return mValue;
 	}
 
-	public void setValue(String pValue) {
-		mValue = pValue;
+	public static Label getLabel(int pIndex) {
+		return Label.values()[pIndex % Parameters.DataHandler.mLabelEncoding.getLabels().size()];
 	}
 
-	public int getOrdinal() {
-		return mOrdinal;
-	}
-
-	public void setOrdinal(int pOrdinal) {
-		mOrdinal = pOrdinal;
+	public static Label getLabel(String pName) {
+		return Label.valueOf(pName);
 	}
 }

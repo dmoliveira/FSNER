@@ -9,14 +9,14 @@ import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.TermLevelStatisticsAnalysis;
+import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter.FilterStage;
 import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 import lbd.data.handler.SequenceSet;
-import lbd.data.handler.SequenceSetHandler;
-import lbd.data.handler.SequenceSetHandler.FileType;
 
 public abstract class AbstractLabelFile implements Serializable {
 
@@ -110,10 +110,10 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	public void updateWithLabeledFile(String pFilenameAddressToLabel) {
 
-		SequenceSet vInputSequenceSet =  SequenceSetHandler.getSequenceSetFromFile(pFilenameAddressToLabel,
-				FileType.TRAINING, false);
+		SequenceSet vInputSequenceSet =  Parameters.DataHandler.mSequenceSetHandler.getSequenceSetFromFile(pFilenameAddressToLabel,
+				Constants.FileType.TRAIN, false);
 
-		DataSequence vSequence;
+		ISequence vSequence;
 
 		//-- Clear some objects
 		mEntityList.clear();
@@ -155,11 +155,11 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	protected abstract void labelFileSub(String pFilenameAddressToLabel);
 
-	public abstract DataSequence labelSequence(DataSequence pSequence);
+	public abstract ISequence labelSequence(ISequence pSequence);
 
-	protected abstract int getLabel(DataSequence pSequence, Map<String, SequenceLabel> pProccessedSequenceMap, int pIndex);
+	protected abstract int getLabel(ISequence pSequence, Map<String, SequenceLabel> pProccessedSequenceMap, int pIndex);
 
-	protected void printNumberedSequence(DataSequence pSequence) {
+	protected void printNumberedSequence(ISequence pSequence) {
 		if(pSequence == null) {
 			System.out.println(MessageFormat.format("[!] WARNING: Sequence no. {0} is null.", mSequenceNumber));
 			return;
@@ -167,7 +167,7 @@ public abstract class AbstractLabelFile implements Serializable {
 
 		String vSequence = Symbol.EMPTY;
 		for(int i = 0; i < pSequence.length(); i++) {
-			vSequence += pSequence.x(i) + ((i < pSequence.length() - 1)? Symbol.SPACE : Symbol.EMPTY);
+			vSequence += pSequence.getToken(i) + ((i < pSequence.length() - 1)? Symbol.SPACE : Symbol.EMPTY);
 		}
 
 		System.out.println(mSequenceNumber + ". " + vSequence);

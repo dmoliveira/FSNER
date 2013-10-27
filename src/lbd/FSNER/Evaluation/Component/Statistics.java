@@ -37,7 +37,7 @@ public class Statistics implements Serializable{
 		mRecall = ((double)mTP) / (mTP + mFN);
 		mF1 = (2 * getPrecision() * getRecall()) / (getPrecision() + getRecall());
 
-		if(!Parameters.Evaluator.isToUseInvalidResults && Double.isNaN(mRecall)) {
+		if(!Parameters.Evaluator.mIsToUseInvalidResults && Double.isNaN(mRecall)) {
 			mIsInvalid = true;
 		}
 	}

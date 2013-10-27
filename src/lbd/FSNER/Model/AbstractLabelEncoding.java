@@ -1,14 +1,19 @@
 package lbd.FSNER.Model;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import lbd.FSNER.Configuration.Parameters;
+import lbd.data.handler.ISequence;
+import lbd.fsner.entity.Entity;
+import lbd.fsner.entity.EntityType;
 import lbd.fsner.label.encoding.Label;
 
 public abstract class AbstractLabelEncoding {
 
-	protected Map<String, Label> mLabelMap;
+	protected Map<String, Label> mLabelStrMap;
+	protected Map<Integer, Label> mLabelIntMap;
 
 	public AbstractLabelEncoding() {
 		createLabelMap();
@@ -22,17 +27,24 @@ public abstract class AbstractLabelEncoding {
 
 	public abstract Label getOutsideLabel();
 
-	public int getLabelIndex(String pLabelValue) {
-		if(!mLabelMap.containsKey(pLabelValue)) {
-			throw new ArrayIndexOutOfBoundsException("Error: Label Value '"
-					+ pLabelValue + "' doesn't exists.");
-		}
-
-		return mLabelMap.get(pLabelValue).getOrdinal();
+	public Label getLabel(String pLabelValue) {
+		return mLabelStrMap.get(pLabelValue);
 	}
 
-	public Set<Label> getLabels() {
-		return new HashSet<Label>(mLabelMap.values());
+	public Label getLabel(int pOrdinalLabel) {
+		return mLabelIntMap.get(pOrdinalLabel);
+	}
+
+	public abstract List<Entity> getEntities(ISequence pSequence);
+
+	public abstract List<Label> getLabels(List<String> pEntityTokenList);
+
+	public List<Label> getLabels() {
+		return new ArrayList<Label>(mLabelStrMap.values());
+	}
+
+	public int getAlphabetSize() {
+		return EntityType.values().length *  Parameters.DataHandler.mLabelEncoding.getLabels().size();
 	}
 
 }

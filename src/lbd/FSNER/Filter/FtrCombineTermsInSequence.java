@@ -7,9 +7,8 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrCombineTermsInSequence extends AbstractFilter{
 
@@ -60,18 +59,16 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 		String combinedTerm = Symbol.EMPTY;
 		HashMap<String, Object> combinedTermsMap;
 
-		if(LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index))) {
 
-			combinedSequenceList.add(new HashMap<String, Object> ());
-			combinedTermsMap = combinedSequenceList.get(combinedSequenceList.size() - 1);
+		combinedSequenceList.add(new HashMap<String, Object> ());
+		combinedTermsMap = combinedSequenceList.get(combinedSequenceList.size() - 1);
 
-			for(int i = 0; i < sequenceLabelProcessed.size(); i += blockSize) {
+		for(int i = 0; i < sequenceLabelProcessed.size(); i += blockSize) {
 
-				combinedTerm = generateCombinedTerm(sequenceLabelProcessed, i);
+			combinedTerm = generateCombinedTerm(sequenceLabelProcessed, i);
 
-				if(!combinedTerm.isEmpty()) {
-					combinedTermsMap.put(combinedTerm, null);
-				}
+			if(!combinedTerm.isEmpty()) {
+				combinedTermsMap.put(combinedTerm, null);
 			}
 		}
 	}
@@ -96,7 +93,7 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;
 		String combinedTerm;

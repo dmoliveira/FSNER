@@ -8,11 +8,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import lbd.FSNER.Component.SequenceLabel;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class FtrEntityTerm extends AbstractFilter{
 
@@ -53,29 +54,26 @@ public class FtrEntityTerm extends AbstractFilter{
 	@Override
 	public void loadTermSequence(SequenceLabel pSequenceLabelProccessed, int pIndex) {
 
-		if(LabelEncoding.isEntity(pSequenceLabelProccessed.getLabel(pIndex))) {
+		mEntity += ((mEntity.isEmpty())? Symbol.EMPTY : Symbol.SPACE) + pSequenceLabelProccessed.getTerm(pIndex);
 
-			mEntity += ((mEntity.isEmpty())? Symbol.EMPTY : Symbol.SPACE) + pSequenceLabelProccessed.getTerm(pIndex);
+		//TODO: Put a more generic type. Using BILOU for now.
+		if(pSequenceLabelProccessed.getLabel(pIndex) == Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal()
+				|| Label.getLabel(pSequenceLabelProccessed.getLabel(pIndex)) == Label.UnitToken) {
 
-			//TODO: Put a more generic type. Using BILOU for now.
-			if(pSequenceLabelProccessed.getLabel(pIndex) == LabelEncoding.BILOU.Last.ordinal()
-					|| pSequenceLabelProccessed.getLabel(pIndex) == LabelEncoding.BILOU.UnitToken.ordinal()) {
+			int vEntitySize = mEntity.split(Symbol.SPACE).length;
+			String vEntityBeginning = mEntity.split(Symbol.SPACE)[0];
 
-				int vEntitySize = mEntity.split(Symbol.SPACE).length;
-				String vEntityBeginning = mEntity.split(Symbol.SPACE)[0];
-
-				if(!mEntityMap.containsKey(vEntitySize)) {
-					mEntityMap.put(vEntitySize, new HashSet<String>());
-				}
-
-				if(!mInvertedIndex.containsKey(vEntityBeginning)) {
-					mInvertedIndex.put(vEntityBeginning, new TreeSet<Integer>(Collections.reverseOrder()));
-				}
-
-				mEntityMap.get(vEntitySize).add(mEntity);
-				mInvertedIndex.get(vEntityBeginning).add(vEntitySize);
-				mEntity = Symbol.EMPTY;
+			if(!mEntityMap.containsKey(vEntitySize)) {
+				mEntityMap.put(vEntitySize, new HashSet<String>());
 			}
+
+			if(!mInvertedIndex.containsKey(vEntityBeginning)) {
+				mInvertedIndex.put(vEntityBeginning, new TreeSet<Integer>(Collections.reverseOrder()));
+			}
+
+			mEntityMap.get(vEntitySize).add(mEntity);
+			mInvertedIndex.get(vEntityBeginning).add(vEntitySize);
+			mEntity = Symbol.EMPTY;
 		}
 	}
 
@@ -97,7 +95,7 @@ public class FtrEntityTerm extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 

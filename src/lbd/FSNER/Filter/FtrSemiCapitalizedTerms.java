@@ -5,7 +5,7 @@ import lbd.FSNER.DataPreprocessor.DPSemiCapitalizationTermsOnly;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrSemiCapitalizedTerms extends AbstractFilter{
 
@@ -65,7 +65,7 @@ public class FtrSemiCapitalizedTerms extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		return ("id:"+mId+"isSemiCapitalized:"+DPSemiCapitalizationTermsOnly.isSemiCapitalized(sequenceLabelProcessed.getTerm(index)));

@@ -3,7 +3,7 @@ package lbd.FSNER.Filter;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.ClassName;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrTokenLength extends AbstractFilter{
 
@@ -61,7 +61,7 @@ public class FtrTokenLength extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 		return ("id:" + this.mId + ".len:" + sequenceLabelProcessed.getTerm(index).length());
 	}

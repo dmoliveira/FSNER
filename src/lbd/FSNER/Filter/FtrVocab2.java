@@ -8,9 +8,8 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrVocab2 extends AbstractFilter{
 
@@ -68,22 +67,19 @@ public class FtrVocab2 extends AbstractFilter{
 
 		String term;
 
-		if(LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index))) {
+		startIndex = (index > windowSideSize)? index - windowSideSize : 0;
+		endIndex = (index + windowSideSize < sequenceLabelProcessed.size())?
+				index + windowSideSize : sequenceLabelProcessed.size();
 
-			startIndex = (index > windowSideSize)? index - windowSideSize : 0;
-			endIndex = (index + windowSideSize < sequenceLabelProcessed.size())?
-					index + windowSideSize : sequenceLabelProcessed.size();
+		for(int i = startIndex; i < endIndex; i++) {
 
-			for(int i = startIndex; i < endIndex; i++) {
+			term = sequenceLabelProcessed.getTerm(i);
 
-				term = sequenceLabelProcessed.getTerm(i);
-
-				if(i != index && !term.isEmpty() && term.length() >= TERM_MIN_SIZE) {
-					if(vocabMap.containsKey(term)) {
-						vocabMap.put(term, vocabMap.get(term) + 1);
-					} else {
-						vocabMap.put(term, 1);
-					}
+			if(i != index && !term.isEmpty() && term.length() >= TERM_MIN_SIZE) {
+				if(vocabMap.containsKey(term)) {
+					vocabMap.put(term, vocabMap.get(term) + 1);
+				} else {
+					vocabMap.put(term, 1);
 				}
 			}
 		}
@@ -169,7 +165,7 @@ public class FtrVocab2 extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		return ((selectedVocabMap.containsKey(sequenceLabelProcessed.getTerm(index)))?

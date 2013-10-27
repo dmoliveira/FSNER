@@ -1,8 +1,11 @@
 package lbd.FSNER.Configuration;
 
+
 public interface Constants {
 
-	public String FSNERModel= "FSNER-Model";
+	public String FSNERModel = "FSNER-Model";
+
+	public String NonAlphaNumericCharacters = "\"¬'¹!@³#£$¢%¨&*()-_+=§/?€®←↓→ø´ª`{[~^]º|«»©“”,<.>·̣̣̣̣̣:;";
 
 	public interface CharsetEncoding {
 		public String ISO88591= "ISO-8859-1";
@@ -22,5 +25,7 @@ public interface Constants {
 			public String LACWekaToFSNERFilterApplication = "lffa";
 		}
 	}
+
+	public static enum FileType {TRAIN, TEST, VALIDATION, LABEL, TAGGED}
 
 }

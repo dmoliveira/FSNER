@@ -2,7 +2,7 @@ package lbd.FSNER.Model;
 
 import java.io.Serializable;
 
-import lbd.FSNER.Utils.LabelEncoding;
+import lbd.FSNER.Configuration.Parameters;
 
 public abstract class AbstractFilterProbability implements Serializable {
 
@@ -14,7 +14,7 @@ public abstract class AbstractFilterProbability implements Serializable {
 	protected int [] mTotalAssignedTermPerLabel;
 
 	public AbstractFilterProbability() {
-		mTotalAssignedTermPerLabel = new int [LabelEncoding.getAlphabetSize()];
+		mTotalAssignedTermPerLabel = new int [Parameters.DataHandler.mLabelEncoding.getAlphabetSize()];
 	}
 
 	public abstract void addLabel(int pLabel);

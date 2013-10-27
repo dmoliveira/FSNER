@@ -1,7 +1,7 @@
 package lbd.data.handler;
 
-public interface DataIter {
+public interface IDataIterator {
 	void startScan();
 	boolean hasNext();
-	DataSequence next();
+	ISequence next();
 };

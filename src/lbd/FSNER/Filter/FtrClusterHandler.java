@@ -13,9 +13,8 @@ import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMClusterHandler;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.EntityUtils;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrClusterHandler extends AbstractFilter{
 
@@ -65,12 +64,7 @@ public class FtrClusterHandler extends AbstractFilter{
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProcessed,
 			int index) {
-
-		int label = sequenceLabelProcessed.getLabel(index);
-
-		if(label != LabelEncoding.BILOU.Outside.ordinal() && label < LabelEncoding.BILOU.values().length) {
-			entityValueListInSequence.add(sequenceLabelProcessed.getTerm(index));
-		}
+		entityValueListInSequence.add(sequenceLabelProcessed.getTerm(index));
 	}
 
 	@Override
@@ -161,7 +155,7 @@ public class FtrClusterHandler extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed,
+	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed,
 			int index) {
 
 		Entity entity = EntityUtils.getEntity(sequenceLabelProcessed.getTerm(index), entityList);

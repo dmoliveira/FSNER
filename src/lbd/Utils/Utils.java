@@ -12,7 +12,7 @@ import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class Utils implements Serializable {
 
@@ -140,12 +140,12 @@ public class Utils implements Serializable {
 	 * @param size The size of the data sequence (optimization)
 	 * @return A String array with the sequence in lower case
 	 */
-	public static String[] convertSequenceToLowerCase(DataSequence data, int size) {
+	public static String[] convertSequenceToLowerCase(ISequence data, int size) {
 
 		String [] seqList = new String[size];
 
 		for(int i = 0; i < size; i++) {
-			seqList[i] = ((String)data.x(i)).toLowerCase();
+			seqList[i] = ((String)data.getToken(i)).toLowerCase();
 		}
 
 		return(seqList);
@@ -162,12 +162,12 @@ public class Utils implements Serializable {
 		return(seqList);
 	}
 
-	public static String[] transformSequenceToArray(DataSequence data, int size) {
+	public static String[] transformSequenceToArray(ISequence data, int size) {
 
 		String [] seqList = new String[size];
 
 		for(int i = 0; i < size; i++) {
-			seqList[i] = (String)data.x(i);
+			seqList[i] = (String)data.getToken(i);
 		}
 
 		return(seqList);

@@ -18,9 +18,9 @@ public class CollectionDefinition implements Serializable{
 	}
 
 	public interface Directory {
-		public final String Collection = Parameters.Directory.collection;
-		public final String Dictionary = Parameters.Directory.dictionary;
-		public final String BrownCluster = Parameters.Directory.cluster + "BrownCluster/";
+		public final String Collection = Parameters.Directory.mCollection;
+		public final String Dictionary = Parameters.Directory.mDictionary;
+		public final String BrownCluster = Parameters.Directory.mCluster + "BrownCluster/";
 	}
 
 	public interface Dictionary {
@@ -53,7 +53,7 @@ public class CollectionDefinition implements Serializable{
 		Zunnit_Extra_Noticias_EVT, Zunnit_Extra_Noticias_MISC, Zunnit_Extra_TV_e_Lazer_PER, Zunnit_Extra_TV_e_Lazer_ORG,
 		Zunnit_Extra_TV_e_Lazer_LOC, Zunnit_Extra_TV_e_Lazer_EVT, Zunnit_Extra_TV_e_Lazer_MISC,
 		Zunnit_Extra_All_PER, Zunnit_Extra_All_ORG, Zunnit_Extra_All_LOC, Zunnit_Extra_All_EVT, Zunnit_Extra_All_MISC,
-		Zunnit_Shuf_PER, Zunnit_Shuf_ORG, Zunnit_Shuf_LOC, Zunnit_Shuf_MISC};
+		Zunnit_Shuf_PER, Zunnit_Shuf_ORG, Zunnit_Shuf_LOC, Zunnit_Shuf_MISC, Zunnit_Shuf};
 
 		public HashMap<String, DataCollection> mDataCollectionMap;
 
@@ -97,10 +97,10 @@ public class CollectionDefinition implements Serializable{
 			createCVCollection(CollectionName.LOC_MSM13_CONQUEST.name(), "MSM13/LOC", "MSM13Collection+ETZ(LOC)v1.5-RUS-RET-RRT-RRL-RRWS-RSW", CollectionDefinition.Dictionary.EnglishStopWords);
 			createCVCollection(CollectionName.MISC_MSM13_CONQUEST.name(), "MSM13/MISC", "MSM13Collection(MISC)v1.5-RUS-RET-RRT-RRL-RRWS-RSW", CollectionDefinition.Dictionary.EnglishStopWords);
 
-			createCVCollection(CollectionName.PER_MSM13_V15_PREPROCESSED_CV.name(), "MSM13/PER", "MSM13Collection(PER)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
-			createCVCollection(CollectionName.ORG_MSM13_V15_PREPROCESSED_CV.name(), "MSM13/ORG", "MSM13Collection(ORG)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
-			createCVCollection(CollectionName.LOC_MSM13_V15_PREPROCESSED_CV.name(), "MSM13/LOC", "MSM13Collection(LOC)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
-			createCVCollection(CollectionName.MISC_MSM13_V15_PREPROCESSED_CV.name(), "MSM13/MISC", "MSM13Collection(MISC)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
+			createCVCollection(CollectionName.PER_MSM13_V15_PREPROCESSED_CV.name(), "General", "MSM13Collection(PER)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
+			createCVCollection(CollectionName.ORG_MSM13_V15_PREPROCESSED_CV.name(), "General", "MSM13Collection(ORG)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
+			createCVCollection(CollectionName.LOC_MSM13_V15_PREPROCESSED_CV.name(), "General", "MSM13Collection(LOC)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
+			createCVCollection(CollectionName.MISC_MSM13_V15_PREPROCESSED_CV.name(), "General", "MSM13Collection(MISC)v1.5-RUS-RET-RRT-RRL-RRWS-RS-CV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
 
 			createCVCollection(CollectionName.SAMPLE_ORG.name(), "MSM13/ORG", "Sample-ORG", CollectionDefinition.Dictionary.EnglishStopWords);
 			//createCVCollection(CollectionName.MISC_MSM13_ETZCV.name(), "MSM13/MISC", "MSM13Collection(MISC)+ETZCV{0}", CollectionDefinition.Dictionary.EnglishStopWords);
@@ -157,6 +157,8 @@ public class CollectionDefinition implements Serializable{
 			createCVCollection(CollectionName.Zunnit_Shuf_ORG.name(), "Shuf", "shuf-ORG", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Shuf_LOC.name(), "Shuf", "shuf-LOC", CollectionDefinition.Dictionary.PortugueseStopWords);
 			createCVCollection(CollectionName.Zunnit_Shuf_MISC.name(), "Shuf", "shuf-MISC", CollectionDefinition.Dictionary.PortugueseStopWords);
+
+			createCVCollection(CollectionName.Zunnit_Shuf.name(), "General", "shuf", CollectionDefinition.Dictionary.PortugueseStopWords);
 
 			/*createCVCollection(CollectionName.PER_MSM13CV.name(), "MSM13/PER", "MSM13Collection(PER)", CollectionDefinition.Dictionary.EnglishStopWords);
 		createCVCollection(CollectionName.ORG_MSM13CV.name(), "MSM13/ORG", "MSM13Collection(ORG)", CollectionDefinition.Dictionary.EnglishStopWords);

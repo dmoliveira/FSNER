@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Evaluation.Component.TermLabeled;
-import lbd.FSNER.Utils.LabelEncoding.BILOU;
 
 public class LearningEvaluator extends SimpleBILOUEvaluator {
 
@@ -42,7 +41,7 @@ public class LearningEvaluator extends SimpleBILOUEvaluator {
 		entityTermsTrainingInTestFile = new HashMap<String, Object>();
 
 		BufferedReader trainingIn = new BufferedReader(new InputStreamReader(
-				new FileInputStream(trainingFilenameAddress), Parameters.dataEncoding));
+				new FileInputStream(trainingFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 		String lineTraining;
 		String termLowerCase;
@@ -55,7 +54,7 @@ public class LearningEvaluator extends SimpleBILOUEvaluator {
 				termTraining = getTerm(lineTraining);
 				termLowerCase = termTraining.getTerm().toLowerCase();
 
-				if(!termTraining.getLabel().equals(BILOU.Outside.name())) {
+				if(!termTraining.getLabel().equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 					entityTermsInTrainingFile.put(termLowerCase, null);
 				}
 			}
@@ -72,14 +71,14 @@ public class LearningEvaluator extends SimpleBILOUEvaluator {
 	protected void evaluateTerm(TermLabeled termFromTagged,
 			TermLabeled termFromTest, int lineNumber) {
 
-		if(!termFromTest.getLabel().equals(BILOU.Outside.name())) {
+		if(!termFromTest.getLabel().equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 			termsInTestFile.put(termFromTagged.getTerm().toLowerCase(), null);
 		}
 
 		if(entityTermsInTrainingFile.containsKey(termFromTagged.getTerm().toLowerCase())) {
 			super.evaluateTerm(termFromTagged, termFromTest, lineNumber);
 
-			if(!termFromTest.getLabel().equals(BILOU.Outside.name())) {
+			if(!termFromTest.getLabel().equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 				entityTermsTrainingInTestFile.put(termFromTagged.getTerm().toLowerCase(), null);
 			}
 		}

@@ -8,6 +8,7 @@ public interface Symbol {
 	public String COLON = ":";
 	public String DOT = ".";
 	public String TAB = "\t";
+	public String CARRIER_RETURN = "\r\n";
 	public String SLASH = "/";
 	public String PIPE = "|";
 	public String PLUS = "+";

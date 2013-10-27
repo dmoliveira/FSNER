@@ -8,7 +8,7 @@ import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMNoScore;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public abstract class AbstractFilter extends AbstractActivity {
 
@@ -54,10 +54,10 @@ public abstract class AbstractFilter extends AbstractActivity {
 
 	public abstract void adjust(SequenceLabel pSequenceProcessedLabel);
 
-	protected abstract String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex);
+	protected abstract String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex);
 
 	// pSequence contains original sequence with labels produced by FS-NER until state i - 1
-	public String getSequenceInstanceId(DataSequence pOriginalSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	public String getSequenceInstanceId(ISequence pOriginalSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 

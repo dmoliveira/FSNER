@@ -11,7 +11,7 @@ import java.util.Set;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter.FilterStage;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public abstract class AbstractActivityControl implements Serializable {
 
@@ -23,7 +23,7 @@ public abstract class AbstractActivityControl implements Serializable {
 	protected Map<String, List<AbstractFilter>> mFilterListPerDataPreprocessor;
 	protected Map<String, Set<AbstractFilter>> mClassNameSingleFilterMap;
 
-	protected List<DataSequence> mSequenceList;
+	protected List<ISequence> mSequenceList;
 	protected Set<String> mEntitySet;
 
 	protected Map<String, Map<String, Integer>> mPredictSubSequenceLabel;
@@ -38,7 +38,7 @@ public abstract class AbstractActivityControl implements Serializable {
 		mFilterListPerDataPreprocessor = new HashMap<String, List<AbstractFilter>>();
 		mClassNameSingleFilterMap = new HashMap<String, Set<AbstractFilter>>();
 
-		mSequenceList = new ArrayList<DataSequence>();
+		mSequenceList = new ArrayList<ISequence>();
 		mEntitySet = new HashSet<String>();
 
 		mFilterCombination = pFilterCombination;
@@ -104,9 +104,9 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	protected abstract void initialize();
 
-	public abstract void load(String pContextSourceFilenameAddress);
+	public abstract void load(String pTrainingFilenameAddress);
 
-	protected abstract void loadSequence(DataSequence pSequence);
+	protected abstract void loadSequence(ISequence pSequence);
 
 	protected abstract void loadActionBeforeSequenceSetIteration();
 
@@ -116,11 +116,11 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	protected abstract void loadActionAfterSequenceSetIteration();
 
-	protected abstract void adjust(List<DataSequence> pSequenceList);
+	protected abstract void adjust(List<ISequence> pSequenceList);
 
-	public abstract void update(List<DataSequence> pSequenceList);
+	public abstract void update(List<ISequence> pSequenceList);
 
-	protected void addFilterStatistic(AbstractFilter pFilter, DataSequence pSequence, SequenceLabel pSequenceLabelProcessed) {
+	protected void addFilterStatistic(AbstractFilter pFilter, ISequence pSequence, SequenceLabel pSequenceLabelProcessed) {
 
 		for(int i = 0; i < pSequenceLabelProcessed.size(); i++) {
 

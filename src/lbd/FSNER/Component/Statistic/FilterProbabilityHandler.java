@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterProbability;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Collections.CollectionsUtils;
+import lbd.fsner.entity.EntityType;
+import lbd.fsner.label.encoding.Label;
 
 public class FilterProbabilityHandler implements Serializable {
 
@@ -48,7 +50,7 @@ public class FilterProbabilityHandler implements Serializable {
 		mEntityTermsWrongAssignedInTestList = new ArrayList<String>();
 
 		mLabelFrequencyInTrainList = new ArrayList<Integer>();
-		for(int i = 0; i < LabelEncoding.getAlphabetSize(); i++) {
+		for(int i = 0; i < EntityType.values().length * Parameters.DataHandler.mLabelEncoding.getLabels().size(); i++) {
 			mLabelFrequencyInTrainList.add(0);
 		}
 	}
@@ -70,7 +72,7 @@ public class FilterProbabilityHandler implements Serializable {
 		mTotalAssignedLabelsInTrain++;
 		mLabelFrequencyInTrainList.set(pLabel, mLabelFrequencyInTrainList.get(pLabel) + 1);
 
-		if(LabelEncoding.isEntity(pLabel)) {
+		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pLabel))) {
 			mEntityTermsAssignedInTrainList.add(pTerm);
 		}
 	}
@@ -187,7 +189,7 @@ public class FilterProbabilityHandler implements Serializable {
 
 	public int getMostProbablyLabel(String pInstanceId) {
 
-		int vLabel = LabelEncoding.getOutsideLabel();
+		int vLabel = Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal();
 		int vMaxNumber = -1;
 
 		AbstractFilterProbability vFilterProbability = mFilterProbabilityMap.get(pInstanceId);

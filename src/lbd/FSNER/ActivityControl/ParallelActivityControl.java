@@ -9,7 +9,7 @@ import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class ParallelActivityControl extends SimpleActivityControl implements Runnable {
 
@@ -19,7 +19,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 
 	protected HashMap<String, SequenceLabel> processedSequenceMap;
 
-	protected DataSequence sequence;
+	protected ISequence sequence;
 	protected static enum Phase{LoadSequence, Adjust};
 	protected Phase phase;
 
@@ -107,7 +107,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 	}
 
 	@Override
-	protected void adjust(final List<DataSequence> sequenceList) {
+	protected void adjust(final List<ISequence> sequenceList) {
 
 		int interval = 0;
 		List<Thread> threadList = new ArrayList<Thread>();
@@ -146,7 +146,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 
 	}
 
-	protected void X(DataSequence pSequence) {
+	protected void X(ISequence pSequence) {
 		for(int i = startFilterList; i < endFilterList; i++) {
 
 			//processedSequenceMap = PreprocessData.preprocessSequence(sequenceList.get(i), dataPreprocessorList);
@@ -162,7 +162,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 		}
 	}
 
-	public void setSequence(DataSequence sequence) {
+	public void setSequence(ISequence sequence) {
 		this.sequence = sequence;
 	}
 

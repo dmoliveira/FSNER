@@ -9,11 +9,11 @@ import java.util.Map;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class PreprocessData {
 
-	public static Map<String, SequenceLabel> preprocessSequence(DataSequence sequence, List<AbstractDataPreprocessor> activityList) {
+	public static Map<String, SequenceLabel> preprocessSequence(ISequence sequence, List<AbstractDataPreprocessor> activityList) {
 
 		Map<String, SequenceLabel> preproccessedSequenceMap = new HashMap<String, SequenceLabel>();
 

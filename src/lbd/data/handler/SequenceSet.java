@@ -3,37 +3,36 @@ package lbd.data.handler;
 import java.util.ArrayList;
 import java.util.List;
 
-// Obs: SegmentSequence is equivalent to Sequence
-public class SequenceSet implements DataIter {
+public class SequenceSet implements IDataIterator {
 
-	private List<SegmentSequence> mSequenceList;
-	private int mCurrentPosition;
+	private List<SequenceSegment> mSequenceList;
+	private int mCurrentIndex;
 
 	public SequenceSet() {
-		mCurrentPosition = 0;
-		mSequenceList = new ArrayList<SegmentSequence>();
+		mSequenceList = new ArrayList<SequenceSegment>();
+		mCurrentIndex = 0;
 	}
 
-	public void addSequence(SegmentSequence sequence) {
-		mSequenceList.add(sequence);
+	public void add(SequenceSegment pSequence) {
+		mSequenceList.add(pSequence);
 	}
 
 	@Override
 	public boolean hasNext() {
-		return (mCurrentPosition < mSequenceList.size());
+		return (mCurrentIndex < mSequenceList.size());
 	}
 
 	@Override
-	public DataSequence next() {
-		return (mSequenceList.get(mCurrentPosition++));
+	public SequenceSegment next() {
+		return (mSequenceList.get(mCurrentIndex++));
 	}
 
 	@Override
 	public void startScan() {
-		mCurrentPosition = 0;
+		mCurrentIndex = 0;
 	}
 
-	public SegmentSequence get(int pIndex) {
+	public SequenceSegment get(int pIndex) {
 		return(mSequenceList.get(pIndex));
 	}
 

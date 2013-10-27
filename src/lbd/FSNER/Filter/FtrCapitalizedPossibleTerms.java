@@ -7,9 +7,8 @@ import lbd.FSNER.DataPreprocessor.DPCapitalizationTermsOnly;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 
@@ -50,8 +49,7 @@ public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
-		if(index > 0 && LabelEncoding.isEntity(sequenceLabelProcessed.getLabel(index)) &&
-				DPCapitalizationTermsOnly.isCapitalized(sequenceLabelProcessed.getTerm(index))) {
+		if(index > 0 && DPCapitalizationTermsOnly.isCapitalized(sequenceLabelProcessed.getTerm(index))) {
 			termsCapitalized.put(sequenceLabelProcessed.getTerm(index).toLowerCase(), null);
 		}
 	}
@@ -76,7 +74,7 @@ public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel sequenceLabelProcessed, int index) {
 
 		return ((termsCapitalized.containsKey(sequenceLabelProcessed.getTerm(index).toLowerCase()))?

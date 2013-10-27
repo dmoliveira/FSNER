@@ -17,10 +17,10 @@ import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
 import lbd.FSNER.Utils.Annotations.DefaultValue;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class FtrSingleTermDictionary4 extends AbstractFilter{
 
@@ -130,7 +130,7 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	protected void loadDictionary(String pDictionaryFilenameAddress) {
 		try {
 			BufferedReader vInputReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(pDictionaryFilenameAddress), Parameters.dataEncoding));
+					new FileInputStream(pDictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 			DictionaryFtr4 vDictionary = new DictionaryFtr4();
 
@@ -217,7 +217,7 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence,
+	protected String getSequenceInstanceIdSub(ISequence pSequence,
 			SequenceLabel pSequenceLabelProcessed, int pIndex) {
 		String vId = Symbol.EMPTY;
 
@@ -298,14 +298,14 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 		int cEntity = 0;
 
 		for(int i = 0; i < pSequence.size(); i++) {
-			if(pSequence.getLabel(i) == LabelEncoding.BILOU.Beginning.ordinal()) {
+			if(Label.getLabel(pSequence.getLabel(i)) == Label.Beginning) {
 				pEntityList.add(pSequence.getTerm(i));
-			} else if(pSequence.getLabel(i) == LabelEncoding.BILOU.Inside.ordinal()) {
+			} else if(Label.getLabel(pSequence.getLabel(i)) == Label.Inside) {
 				pEntityList.add(cEntity, pEntityList.get(cEntity) + Symbol.SPACE + pSequence.getTerm(i));
-			} else if(pSequence.getLabel(i) == LabelEncoding.BILOU.Last.ordinal()) {
+			} else if(Label.getLabel(pSequence.getLabel(i)) == Label.Last) {
 				pEntityList.add(cEntity, pEntityList.get(cEntity) + Symbol.SPACE + pSequence.getTerm(i));
 				cEntity++;
-			} else if(pSequence.getLabel(i) == LabelEncoding.BILOU.UnitToken.ordinal()) {
+			} else if(Label.getLabel(pSequence.getLabel(i)) == Label.UnitToken) {
 				pEntityList.add(pSequence.getTerm(i));
 				cEntity++;
 			}

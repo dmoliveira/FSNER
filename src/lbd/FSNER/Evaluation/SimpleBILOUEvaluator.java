@@ -10,7 +10,6 @@ import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Evaluation.Component.TermLabeled;
 import lbd.FSNER.Model.AbstractEvaluator;
-import lbd.FSNER.Utils.LabelEncoding.BILOU;
 import lbd.FSNER.Utils.Symbol;
 
 public class SimpleBILOUEvaluator extends AbstractEvaluator{
@@ -49,9 +48,10 @@ public class SimpleBILOUEvaluator extends AbstractEvaluator{
 		}*/
 
 		/** Very Strict Evaluation for Entity Labels **/
-		if(vLabelTest.equals(BILOU.Outside.name()) && !vLabelTagged.equals(BILOU.Outside.name())) {
+		if(vLabelTest.equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())
+				&& !vLabelTagged.equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 			mCurrentStatisticalFile.addFP();
-		} else if(!vLabelTest.equals(BILOU.Outside.name())) {
+		} else if(!vLabelTest.equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())) {
 
 			if(!vLabelTagged.equals(vLabelTest)) {
 				String vKey = vLabelTest.substring(0,1) + Symbol.HYPHEN + vLabelTagged.substring(0,1);
@@ -63,7 +63,9 @@ public class SimpleBILOUEvaluator extends AbstractEvaluator{
 				mTotalLabelAssignedWrong++;
 			}
 
-			if(((Parameters.Evaluator.isToEvaluateOnTokenLevel)? !vLabelTagged.equals(BILOU.Outside.name()) : vLabelTagged.equals(vLabelTest))) {
+			if(((Parameters.Evaluator.mIsToEvaluateOnTokenLevel)?
+					!vLabelTagged.equals(Parameters.DataHandler.mLabelEncoding.getOutsideLabel().name())
+					: vLabelTagged.equals(vLabelTest))) {
 				mCurrentStatisticalFile.addTP();
 			} else {
 				mCurrentStatisticalFile.addFN();

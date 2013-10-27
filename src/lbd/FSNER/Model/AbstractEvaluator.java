@@ -98,10 +98,10 @@ public abstract class AbstractEvaluator implements Serializable {
 			String pTestFilenameAddress) throws UnsupportedEncodingException,
 			FileNotFoundException {
 		mCurrentTaggedInput = new BufferedReader(new InputStreamReader(
-				new FileInputStream(pTaggedFilenameAddress), Parameters.dataEncoding));
+				new FileInputStream(pTaggedFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 		mCurrentTestInput = new BufferedReader(new InputStreamReader(
-				new FileInputStream(pTestFilenameAddress), Parameters.dataEncoding));
+				new FileInputStream(pTestFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 		mTaggedFileList.add(pTaggedFilenameAddress);
 		mTestFileList.add(pTestFilenameAddress);

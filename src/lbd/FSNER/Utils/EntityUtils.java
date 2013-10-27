@@ -3,17 +3,19 @@ package lbd.FSNER.Utils;
 import java.util.ArrayList;
 
 import lbd.FSNER.Component.SequenceLabel;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Filter.Component.Entity;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class EntityUtils {
 
-	public static int getEntityIndex(DataSequence pSequence, int pStartPosition) {
+	public static int getEntityIndex(ISequence pSequence, int pStartPosition) {
 
 		int vEntityIndex = -1;
 
 		for(int i = pStartPosition; i < pSequence.length(); i++){
-			if(LabelEncoding.isEntity(pSequence.y(i))) {
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequence.getLabel(i)))) {
 				vEntityIndex = i;
 				break;
 			}
@@ -26,12 +28,12 @@ public class EntityUtils {
 	public static int getEntityEndIndex(SequenceLabel pSequence, int pEntityStartIndex) {
 		int vEntityEndIndex = -1;
 
-		if(pSequence.getLabel(pEntityStartIndex) != LabelEncoding.BILOU.Outside.ordinal()) {
-			if(pSequence.getLabel(pEntityStartIndex) == LabelEncoding.BILOU.UnitToken.ordinal()) {
+		if(!Parameters.DataHandler.mLabelEncoding.isOutside(Label.getLabel(pSequence.getLabel(pEntityStartIndex)))) {
+			if(Label.getLabel(pSequence.getLabel(pEntityStartIndex)) == Label.UnitToken) {
 				vEntityEndIndex = pEntityStartIndex;
 			} else {
 				for(int pEntityIndex = pEntityStartIndex + 1; pEntityIndex < pSequence.size(); pEntityIndex++) {
-					if(pSequence.getLabel(pEntityIndex) == LabelEncoding.BILOU.Last.ordinal()) {
+					if(Label.getLabel(pSequence.getLabel(pEntityIndex)) == Label.Last) {
 						vEntityEndIndex = pEntityIndex;
 						break;
 					}

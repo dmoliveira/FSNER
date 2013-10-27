@@ -9,9 +9,8 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.CommonEnum.Flexibility;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrContext extends AbstractFilter{
 
@@ -73,10 +72,8 @@ public class FtrContext extends AbstractFilter{
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
 
-		int label = sequenceLabelProcessed.getLabel(index);
-
 		//-- Add only one time for the context filter created with the specific affixType.
-		if(contextDataMapForId.get(getContextKey()) == mId && LabelEncoding.isEntity(label)) {
+		if(contextDataMapForId.get(getContextKey()) == mId) {
 			contextMap.get(getContextKey()).addAsContext(sequenceLabelProcessed, index);
 		}
 	}
@@ -101,7 +98,7 @@ public class FtrContext extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		String id = Symbol.EMPTY;
 

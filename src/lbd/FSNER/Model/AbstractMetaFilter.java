@@ -7,7 +7,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.SimpleFilterProbability;
 import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMMultiFilter;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public abstract class AbstractMetaFilter extends AbstractFilter {
 
@@ -129,7 +129,7 @@ public abstract class AbstractMetaFilter extends AbstractFilter {
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
 
 		int vNumberFilterActivated = 0;
 

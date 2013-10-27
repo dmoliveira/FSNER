@@ -5,7 +5,7 @@ import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrShiftFilterPosition extends AbstractFilter {
 
@@ -70,7 +70,7 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		int newIndex = index + shiftPosition;
 		String id = ((newIndex > -1 && newIndex < sequenceLabelProcessed.size())?

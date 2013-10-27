@@ -5,33 +5,33 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public abstract class AbstractUpdateControl implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	protected ArrayList<DataSequence> sequenceListToUpdate;
+	protected ArrayList<ISequence> sequenceListToUpdate;
 	protected HashMap<String, Object> sequenceAdded;
 	protected double threshouldConfidenceSequence;
 
 	public AbstractUpdateControl(double threshouldConfidenceSequence) {
-		sequenceListToUpdate = new ArrayList<DataSequence>();
+		sequenceListToUpdate = new ArrayList<ISequence>();
 		sequenceAdded = new HashMap<String, Object>();
 
 		this.threshouldConfidenceSequence = threshouldConfidenceSequence;
 	}
 
-	public abstract boolean addSequence(DataSequence dataSequence);
+	public abstract boolean addSequence(ISequence dataSequence);
 
-	public ArrayList<DataSequence> getSequenceListToUpdate() {
+	public ArrayList<ISequence> getSequenceListToUpdate() {
 		return(sequenceListToUpdate);
 	}
 
-	public DataSequence getSequence(int index) {
+	public ISequence getSequence(int index) {
 		return(sequenceListToUpdate.get(index));
 	}
 
-	public void removeSequence(DataSequence sequence) {
+	public void removeSequence(ISequence sequence) {
 		sequenceListToUpdate.remove(sequence);
 	}
 

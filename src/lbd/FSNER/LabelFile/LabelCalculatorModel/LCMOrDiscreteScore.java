@@ -5,13 +5,15 @@ import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Model.AbstractLabelFileLabelCalculatorModel;
 import lbd.FSNER.Model.AbstractTermRestrictionChecker;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.data.handler.DataSequence;
+import lbd.FSNER.Utils.Symbol;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class LCMOrDiscreteScore extends AbstractLabelFileLabelCalculatorModel {
 
@@ -20,18 +22,18 @@ public class LCMOrDiscreteScore extends AbstractLabelFileLabelCalculatorModel {
 	// -- Common Term Restriction
 	protected final double COMMON_TERM_PERCENTAGE_THRESHOLD = 1.0;
 
-	public LCMOrDiscreteScore(AbstractTermRestrictionChecker termRestrictionChecker) {
-		super(termRestrictionChecker);
+	public LCMOrDiscreteScore(AbstractTermRestrictionChecker pTermRestrictionChecker) {
+		super(pTermRestrictionChecker);
 	}
 
 	@Override
-	public int calculateMostProbablyLabelSub(int pIndex, DataSequence pSequence,
+	public int calculateMostProbablyLabelSub(int pIndex, ISequence pSequence,
 			Map<String, SequenceLabel> pProccessedSequenceMap,
 			List<AbstractDataPreprocessor> pDataProcessorList,
 			List<AbstractFilter> pFilterList) {
 
-		int vMostProbablyLabel = LabelEncoding.getOutsideLabel();
-		String vTerm = "";
+		int vMostProbablyLabel = Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal();
+		String vTerm = Symbol.EMPTY;
 
 		SequenceLabel vSequenceLabelProcessed = null;
 		AbstractDataPreprocessor vDataPreprocessor = null;
@@ -67,18 +69,20 @@ public class LCMOrDiscreteScore extends AbstractLabelFileLabelCalculatorModel {
 		return vMostProbablyLabel;
 	}
 
-	protected void calculateLabelProbability(int pIndex, String vTerm,
-			SequenceLabel vSequenceLabelProcessed,
-			FilterProbabilityHandler vFilterProbability,
-			String vFilterInstanceId) {
-		if (!vFilterInstanceId.isEmpty() && vFilterProbability.getInstanceFrequency(vFilterInstanceId) > 0) {
+	protected void calculateLabelProbability(int pIndex, String pTerm,
+			SequenceLabel pSequenceLabelProcessed,
+			FilterProbabilityHandler pFilterProbability,
+			String pFilterInstanceId) {
 
-			int vFilterMostProbablyLabel = vFilterProbability.getMostProbablyLabel(vFilterInstanceId);
+		if (!pFilterInstanceId.isEmpty() && pFilterProbability.getInstanceFrequency(pFilterInstanceId) > 0) {
 
-			if (LabelEncoding.isEntity(vFilterMostProbablyLabel)) {
+			int vFilterMostProbablyLabel = pFilterProbability.getMostProbablyLabel(pFilterInstanceId);
+			Label vLabel = Label.getLabel(vFilterMostProbablyLabel);
+
+			if (Parameters.DataHandler.mLabelEncoding.isEntity(vLabel)) {
 				mLabelProbability[vFilterMostProbablyLabel] += 1;
-				vFilterProbability.addToFilterStatisticForAssignedLabels(vTerm,
-						LabelEncoding.isEntity(vSequenceLabelProcessed.getLabel(pIndex)), true);
+				pFilterProbability.addToFilterStatisticForAssignedLabels(pTerm,
+						Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequenceLabelProcessed.getLabel(pIndex))), true);
 			}
 		}
 	}
@@ -86,7 +90,7 @@ public class LCMOrDiscreteScore extends AbstractLabelFileLabelCalculatorModel {
 	protected int chooseMostProbablyLabel() {
 		int vMostProbablyLabel;
 		double vMaxVote = 0;
-		int vFinalLabel = LabelEncoding.getOutsideLabel();
+		int vFinalLabel = Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal();
 		for(int i = 0; i < mLabelProbability.length; i++) {
 			if(vMaxVote < mLabelProbability[i]) {
 				vMaxVote = mLabelProbability[i];

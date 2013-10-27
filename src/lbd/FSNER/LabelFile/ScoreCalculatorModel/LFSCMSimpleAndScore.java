@@ -5,11 +5,12 @@ import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractLabelFileScoreCalculatorModel;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class LFSCMSimpleAndScore extends AbstractLabelFileScoreCalculatorModel{
 
@@ -26,7 +27,7 @@ public class LFSCMSimpleAndScore extends AbstractLabelFileScoreCalculatorModel{
 
 	@Override
 	public double calculateScore(int index,
-			DataSequence pSequence,
+			ISequence pSequence,
 			Map<String, SequenceLabel> proccessedSequenceMap,
 			ArrayList<AbstractDataPreprocessor> dataProcessorList,
 			ArrayList<AbstractFilter> filterList) {
@@ -73,7 +74,7 @@ public class LFSCMSimpleAndScore extends AbstractLabelFileScoreCalculatorModel{
 						if(filterActiveNumber > FILTER_THRESHOLD) {
 
 							finalScore = 1;
-							addToFilterStatistic(term, filterActiveList, LabelEncoding.isEntity(label));
+							addToFilterStatistic(term, filterActiveList, Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(label)));
 
 							/*System.out.println("FA#" + filterActiveNumber + " sz(" + filterList.size() + ") = " +
 									filterActiveNumber/((double)filterList.size()) +

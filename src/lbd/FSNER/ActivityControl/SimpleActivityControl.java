@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import lbd.FSNER.Component.SequenceLabel;
+import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.DataProcessor.Component.PreprocessData;
@@ -17,27 +18,25 @@ import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilter.FilterState;
 import lbd.FSNER.Utils.EntityUtils;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.SimpleStopWatch;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 import lbd.data.handler.SequenceSet;
-import lbd.data.handler.SequenceSetHandler;
-import lbd.data.handler.SequenceSetHandler.FileType;
+import lbd.fsner.label.encoding.Label;
 
 public class SimpleActivityControl extends AbstractActivityControl {
 	private static final long serialVersionUID = 1L;
 
 	public SimpleActivityControl() {
 		super(new SimpleFilterCombination());
-		// super(new TermFocusFilterCombination());
-		// super(new CapitalizationFocusFilterCombination());
-		//super(new TermComplementaryFocusFilterCombination()); //USE State Filter - Caution [!]
-		//super(new ContextFocusFilterCombination());
-		//super(new CustomFilterCombination());
+		// super(new TermFocusFilterCombination(), pLabelEncoding);
+		// super(new CapitalizationFocusFilterCombination(), pLabelEncoding);
+		//super(new TermComplementaryFocusFilterCombination(), pLabelEncoding); //USE State Filter - Caution [!]
+		//super(new ContextFocusFilterCombination(), pLabelEncoding);
+		//super(new CustomFilterCombination(), pLabelEncoding);
 	}
 
 	@Override
-	protected void startActivityControlSub(String pContextSourceFile) {
+	protected void startActivityControlSub(String pTrainingFilenameAddress) {
 
 		SimpleStopWatch vStopWatch = new SimpleStopWatch();
 
@@ -45,14 +44,14 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		vStopWatch.start();
 		initialize();
 		if (Debug.ActivityControl.showElapsedTime) {
-			vStopWatch.show("Initialize Time:");
+			vStopWatch.show("Initialization Time:");
 		}
 
 		// -- Load (Only for Filters)
 		vStopWatch.start();
-		load(pContextSourceFile);
+		load(pTrainingFilenameAddress);
 		if (Debug.ActivityControl.showElapsedTime) {
-			vStopWatch.show("Load Time:");
+			vStopWatch.show("Loading Time:");
 		}
 
 		// -- Generate Combination of MultiFilters from 2 to 5 filters together
@@ -63,7 +62,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		}
 
 		if (Debug.ActivityControl.showElapsedTime) {
-			vStopWatch.show("Combine Filters Time:");
+			vStopWatch.show("Combination Filters Time:");
 		}
 
 		if (Debug.ActivityControl.showGeneratedFiltersNumber) {
@@ -74,11 +73,8 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		vStopWatch.start();
 		adjust(mSequenceList);
 		if (Debug.ActivityControl.showElapsedTime) {
-			vStopWatch.show("Adjust Time:");
+			vStopWatch.show("Adjusting Time:");
 		}
-
-		// -- Pos Processament
-
 	}
 
 	@Override
@@ -94,20 +90,17 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	public void load(String pContextSourceFilenameAddress) {
+	public void load(String pTrainingFilenameAddress) {
 
-		SequenceSet vInputSequenceSet = SequenceSetHandler
-				.getSequenceSetFromFile(pContextSourceFilenameAddress,
-						FileType.TRAINING, false);
-
-		DataSequence vSequence;
+		SequenceSet vInputSequenceSet = Parameters.DataHandler.mSequenceSetHandler
+				.getSequenceSetFromFile(pTrainingFilenameAddress, Constants.FileType.TRAIN, false);
 
 		// -- Load Action before SequenceSet Iteration
 		loadActionBeforeSequenceSetIteration();
 
 		while (vInputSequenceSet.hasNext()) {
 
-			vSequence = vInputSequenceSet.next();
+			ISequence vSequence = vInputSequenceSet.next();
 
 			//TODO: Create a verification process to check if similar sequences was added
 			mSequenceList.add(vSequence);
@@ -120,7 +113,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	protected void loadSequence(DataSequence pSequence) {
+	protected void loadSequence(ISequence pSequence) {
 
 		if(pSequence == null || pSequence.length() == 0) {
 			return;
@@ -143,8 +136,8 @@ public class SimpleActivityControl extends AbstractActivityControl {
 			}
 
 			synchronized (this) {
-				if (LabelEncoding.isEntity(pSequence.y(i))) {
-					mEntitySet.add((String) pSequence.x(i));
+				if (Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequence.getLabel(i)))) {
+					mEntitySet.add((String) pSequence.getToken(i));
 				}
 			}
 
@@ -154,7 +147,9 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 				int vDataProcessorIndex = cFilter.getFilterPreprocessingTypeIndex();
 
-				cFilter.loadTermSequence(vSequenceLabel, vEntityIndex);
+				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vSequenceLabel.getLabel(vEntityIndex)))) {
+					cFilter.loadTermSequence(vSequenceLabel, vEntityIndex);
+				}
 
 				// -- Calculate term commonness
 				calculateTermCommonness(vSequenceLabelPreprocessedSet, vSequenceLabel, vDataProcessorIndex);
@@ -190,11 +185,10 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	protected void loadActionBeforeSequenceIteration(
-			Map<String, SequenceLabel> processedSequenceMap) {
-		for (AbstractFilter activity : mFilterList) {
-			activity.loadActionBeforeSequenceIteration(processedSequenceMap
-					.get(activity.getPreprocesingTypeName()));
+	protected void loadActionBeforeSequenceIteration(Map<String, SequenceLabel> processedSequenceMap) {
+		for (AbstractFilter cFilter : mFilterList) {
+			cFilter.loadActionBeforeSequenceIteration(processedSequenceMap
+					.get(cFilter.getPreprocesingTypeName()));
 		}
 	}
 
@@ -215,7 +209,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	protected void adjust(List<DataSequence> sequenceList) {
+	protected void adjust(List<ISequence> sequenceList) {
 
 		Iterator<Entry<String, List<AbstractFilter>>> ite = mFilterListPerDataPreprocessor
 				.entrySet().iterator();
@@ -233,7 +227,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 			dataProcessIndex = vEntry.getValue().get(firstFilterIndex).getFilterPreprocessingTypeIndex();
 
-			for (DataSequence sequence : sequenceList) {
+			for (ISequence sequence : sequenceList) {
 				addSequenceToFilters(vFilterList, dataProcessIndex, sequence);
 			}
 		}
@@ -243,7 +237,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	private void addSequenceToFilters(List<AbstractFilter> pFilterList, int pDataProcessIndex,
-			DataSequence pSequence) {
+			ISequence pSequence) {
 
 		SequenceLabel vSequenceLabelPreprocessed;
 		vSequenceLabelPreprocessed = mDataPreprocessorList.get(pDataProcessIndex).preprocessingSequence(pSequence);
@@ -258,7 +252,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	protected void printFilterStatistics() {
-		if (!Parameters.SimpleActivityControl.isItUpdate
+		if (!Parameters.SimpleActivityControl.mIsItUpdate
 				&& Debug.ActivityControl.printFilterStatistics) {
 			System.out.println("\n- Filters TRAINING statistics");
 			for (AbstractFilter filter : mFilterList) {
@@ -275,8 +269,8 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	public void update(List<DataSequence> updateSequenceList) {
-		for (DataSequence sequence : updateSequenceList) {
+	public void update(List<ISequence> updateSequenceList) {
+		for (ISequence sequence : updateSequenceList) {
 
 			// -- Create a verification process to check if similar sequences
 			// was added

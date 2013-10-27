@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.data.handler.DataSequence;
+import lbd.FSNER.Configuration.Parameters;
+import lbd.data.handler.ISequence;
 
 
 public abstract class AbstractLabelFileLabelCalculatorModel implements Serializable {
@@ -29,12 +29,12 @@ public abstract class AbstractLabelFileLabelCalculatorModel implements Serializa
 		mTermRestrictionChecker = pTermRestrictionChecker;
 	}
 
-	public int calculateMostProbablyLabel(int pIndex, DataSequence pSequence,
+	public int calculateMostProbablyLabel(int pIndex, ISequence pSequence,
 			Map<String, SequenceLabel> pProccessedSequenceMap, List<AbstractDataPreprocessor> pDataProcessorList,
 			List<AbstractFilter> pFilterList) {
 
-		mLabelProbability = new double [LabelEncoding.getAlphabetSize()];
-		mNormalizationFactor  = new int[LabelEncoding.getAlphabetSize()];
+		mLabelProbability = new double [Parameters.DataHandler.mLabelEncoding.getAlphabetSize()];
+		mNormalizationFactor  = new int[Parameters.DataHandler.mLabelEncoding.getAlphabetSize()];
 
 		int vAssignedLabel = calculateMostProbablyLabelSub(pIndex, pSequence, pProccessedSequenceMap,
 				pDataProcessorList, pFilterList);
@@ -43,7 +43,7 @@ public abstract class AbstractLabelFileLabelCalculatorModel implements Serializa
 	}
 
 	public abstract int calculateMostProbablyLabelSub(int pIndex,
-			DataSequence pSequence,
+			ISequence pSequence,
 			Map<String, SequenceLabel> pProccessedSequenceMap,
 			List<AbstractDataPreprocessor> pDataProcessorList,
 			List<AbstractFilter> pFilterList);

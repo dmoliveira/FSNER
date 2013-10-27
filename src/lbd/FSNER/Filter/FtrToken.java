@@ -6,9 +6,8 @@ import java.util.Set;
 import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
 import lbd.FSNER.Utils.Symbol;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrToken extends AbstractFilter{
 
@@ -41,9 +40,7 @@ public class FtrToken extends AbstractFilter{
 
 	@Override
 	public void loadTermSequence(SequenceLabel pSequenceLabelProccessed, int pIndex) {
-		if(LabelEncoding.isEntity(pSequenceLabelProccessed.getLabel(pIndex))) {
-			mEntitySet.add(pSequenceLabelProccessed.getTerm(pIndex));
-		}
+		mEntitySet.add(pSequenceLabelProccessed.getTerm(pIndex));
 	}
 
 	@Override
@@ -65,7 +62,7 @@ public class FtrToken extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel pSequenceLabelProcessed,
+	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed,
 			int pIndex) {
 
 		String vId = Symbol.EMPTY;

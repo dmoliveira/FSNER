@@ -1,7 +1,8 @@
 package lbd.FSNER.Component.Statistic;
 
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilterProbability;
-import lbd.FSNER.Utils.LabelEncoding;
+import lbd.fsner.label.encoding.Label;
 
 public class SimpleFilterProbability extends AbstractFilterProbability{
 
@@ -13,7 +14,7 @@ public class SimpleFilterProbability extends AbstractFilterProbability{
 		mTotalAssignedLabel++;
 		mTotalAssignedTermPerLabel[pLabel]++;
 
-		if(LabelEncoding.isEntity(pLabel)) {
+		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pLabel))) {
 			mTotalAssignedEntityLabel++;
 		}
 	}

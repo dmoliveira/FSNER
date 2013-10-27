@@ -6,8 +6,7 @@ import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 
 public class FtrEntity extends AbstractFilter{
 
@@ -43,10 +42,7 @@ public class FtrEntity extends AbstractFilter{
 
 	@Override
 	public void loadTermSequence(SequenceLabel sequenceLabelProccessed, int index) {
-
-		if(LabelEncoding.isEntity(sequenceLabelProccessed.getLabel(index))) {
-			entityList.add(sequenceLabelProccessed.getTerm(index));
-		}
+		entityList.add(sequenceLabelProccessed.getTerm(index));
 	}
 
 	@Override
@@ -66,7 +62,7 @@ public class FtrEntity extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(DataSequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
 
 		return ("id:"+this.mId+"-"+sequenceLabelProcessed.getTerm(index));
 	}

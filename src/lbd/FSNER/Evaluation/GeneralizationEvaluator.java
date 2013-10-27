@@ -56,7 +56,7 @@ public class GeneralizationEvaluator extends SimpleBILOUEvaluator {
 		entityTermsInTestFile = new HashMap<String, Integer>();
 
 		BufferedReader testIn = new BufferedReader(new InputStreamReader(
-				new FileInputStream(testFilenameAddress), Parameters.dataEncoding));
+				new FileInputStream(testFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 		String lineTest;
 		String termLowerCase;
@@ -89,7 +89,7 @@ public class GeneralizationEvaluator extends SimpleBILOUEvaluator {
 			throws UnsupportedEncodingException, FileNotFoundException,
 			IOException {
 		BufferedReader trainingIn = new BufferedReader(new InputStreamReader(
-				new FileInputStream(trainingFilenameAddress), Parameters.dataEncoding));
+				new FileInputStream(trainingFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 		String lineTraining;
 		TermLabeled termTraining;

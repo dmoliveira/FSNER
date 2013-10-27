@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lbd.FSNER.Configuration.Parameters;
-import lbd.FSNER.Utils.LabelEncoding.BILOU;
-import lbd.data.handler.DataSequence;
+import lbd.Utils.StringUtils;
+import lbd.data.handler.ISequence;
+import lbd.fsner.label.encoding.Label;
 
 public class FileUtils {
 
@@ -77,22 +78,23 @@ public class FileUtils {
 	public static BufferedReader createBufferedReader(String pInputFilename)
 			throws FileNotFoundException, UnsupportedEncodingException {
 		return new BufferedReader(new InputStreamReader(
-				new FileInputStream(pInputFilename), Parameters.dataEncoding));
+				new FileInputStream(pInputFilename), Parameters.DataHandler.mDataEncoding));
 	}
 
 	public static BufferedWriter createBufferedWriter(String pOutputFilename, String pFileExtension)
 			throws UnsupportedEncodingException, FileNotFoundException {
 
-		String vFilename = Parameters.generateOutputFilenameAddress(pOutputFilename, pFileExtension);
+		String vFilename = (StringUtils.isNullOrEmpty(pFileExtension))? pOutputFilename
+				: Parameters.generateOutputFilenameAddress(pOutputFilename, pFileExtension);
 		(new File(getFilenameDirectory(vFilename))).mkdirs();
 
 		return new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(vFilename), Parameters.dataEncoding));
+				new FileOutputStream(vFilename), Parameters.DataHandler.mDataEncoding));
 	}
 
 	public static InputStreamReader createInputStreamReader(String pInputFilename)
 			throws FileNotFoundException, UnsupportedEncodingException {
-		return new InputStreamReader(new FileInputStream(pInputFilename), Parameters.dataEncoding);
+		return new InputStreamReader(new FileInputStream(pInputFilename), Parameters.DataHandler.mDataEncoding);
 	}
 
 	public static OutputStreamWriter createOutputStreamWriter(String pOutputFilename, String pFileExtension)
@@ -101,7 +103,7 @@ public class FileUtils {
 		String vFilename = Parameters.generateOutputFilenameAddress(pOutputFilename, pFileExtension);
 		(new File(getFilenameDirectory(vFilename))).mkdirs();
 
-		return new OutputStreamWriter(new FileOutputStream(vFilename), Parameters.dataEncoding);
+		return new OutputStreamWriter(new FileOutputStream(vFilename), Parameters.DataHandler.mDataEncoding);
 	}
 
 	public static ArrayList<String> getListOfAllFiles(String pDirectory) {
@@ -179,14 +181,14 @@ public class FileUtils {
 		return pFilenameAddress.replace(CommonDirectory.Input, CommonDirectory.Output);
 	}
 
-	public static void writeSequenceListInFile(ArrayList<DataSequence> pSequenceList,
+	public static void writeSequenceListInFile(ArrayList<ISequence> pSequenceList,
 			String pFilenameAddress, String pFilenameExtension) {
 		try {
 			Writer vWriter = FileUtils.createOutputStreamWriter(pFilenameAddress, pFilenameExtension);
 
-			for(DataSequence cSequence : pSequenceList) {
+			for(ISequence cSequence : pSequenceList) {
 				for(int i = 0; i < cSequence.length(); i++) {
-					vWriter.write(cSequence.x(i) + Symbol.PIPE + BILOU.values()[cSequence.y(i)].name() + Symbol.NEW_LINE);
+					vWriter.write(cSequence.getToken(i) + Symbol.PIPE + Label.getLabel(cSequence.getLabel(i)).name() + Symbol.NEW_LINE);
 				}
 				vWriter.write(Symbol.NEW_LINE);
 			}
@@ -204,15 +206,15 @@ public class FileUtils {
 	}
 
 	public static List<String> getFileList(String pDirectoryAddress) {
-	
+
 		List<String> vFileList = new ArrayList<String>();
-	
+
 		for(File cFile : new File(pDirectoryAddress).listFiles()) {
 			if (cFile.isFile()) {
 				vFileList.add(cFile.getName());
 			}
 		}
-	
+
 		return vFileList;
 	}
 }

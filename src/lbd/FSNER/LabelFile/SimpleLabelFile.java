@@ -17,13 +17,10 @@ import lbd.FSNER.DataProcessor.Component.PreprocessData;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractLabelFile;
 import lbd.FSNER.Utils.FileUtils;
-import lbd.FSNER.Utils.LabelEncoding;
-import lbd.FSNER.Utils.LabelEncoding.BILOU;
-import lbd.data.handler.DataSequence;
+import lbd.data.handler.ISequence;
 import lbd.data.handler.Sequence;
 import lbd.data.handler.SequenceSet;
-import lbd.data.handler.SequenceSetHandler;
-import lbd.data.handler.SequenceSetHandler.FileType;
+import lbd.fsner.label.encoding.Label;
 
 public class SimpleLabelFile extends AbstractLabelFile {
 
@@ -43,10 +40,10 @@ public class SimpleLabelFile extends AbstractLabelFile {
 			vOutputFile = FileUtils.createOutputStreamWriter(pFilenameAddressToLabel, Constants.FileExtention.Tagged);
 			mTaggedFilenameAddress = Parameters.generateOutputFilenameAddress(pFilenameAddressToLabel, Constants.FileExtention.Tagged);
 
-			SequenceSet vInputSequenceSet =  SequenceSetHandler.getSequenceSetFromFile(pFilenameAddressToLabel,
-					FileType.TOLABEL, false);
+			SequenceSet vInputSequenceSet =  Parameters.DataHandler.mSequenceSetHandler.getSequenceSetFromFile(pFilenameAddressToLabel,
+					Constants.FileType.LABEL, false);
 
-			DataSequence vSequence = null;
+			ISequence vSequence = null;
 
 			while(vInputSequenceSet.hasNext()) {
 
@@ -55,7 +52,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 				vSequence = vInputSequenceSet.next();
 				labelSequence(vSequence);
 
-				SequenceSetHandler.writeSequenceToFile(vOutputFile, vSequence);
+				Parameters.DataHandler.mSequenceSetHandler.writeSequenceToFile(vOutputFile, vSequence);
 
 				if(Debug.LabelFile.printNumberedLabelSequence) {
 					printNumberedSequence(vSequence);
@@ -79,7 +76,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 	}
 
 	@Override
-	public DataSequence labelSequence(DataSequence pSequence) {
+	public ISequence labelSequence(ISequence pSequence) {
 
 		/*HashMap<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, activityControl.getDataPreprocessorList());
@@ -103,7 +100,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 	}
 
 	/** Only for experimental propose **/
-	protected void labelSequenceNoProb(DataSequence sequence) {
+	protected void labelSequenceNoProb(ISequence sequence) {
 
 		Map<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, mActivityControl.getDataPreprocessorList());
@@ -115,7 +112,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		mUpdateControl.addSequence(sequence);
 	}
 
-	protected void labelSequenceNoProbOnlySeqEntities(DataSequence sequence) {
+	protected void labelSequenceNoProbOnlySeqEntities(ISequence sequence) {
 
 		Map<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, mActivityControl.getDataPreprocessorList());
@@ -126,7 +123,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		for(int i = 0; i < sequence.length(); i++) {
 			label = getLabel(sequence, proccessedSequenceMap, i);
 
-			if(LabelEncoding.isEntity(label)) {
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(label))) {
 				hasEntity = true;
 			}
 		}
@@ -136,7 +133,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		}
 	}
 
-	protected void labelSequenceAvgProbEntityConsiderAllTweet(DataSequence pSequence) {
+	protected void labelSequenceAvgProbEntityConsiderAllTweet(ISequence pSequence) {
 
 		Map<String, SequenceLabel> vProccessedSequenceMap = PreprocessData.preprocessSequence(
 				pSequence, mActivityControl.getDataPreprocessorList());
@@ -149,22 +146,22 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		int vNormalization = 0;
 
 		for(int i = 0; i < pSequence.length(); i++) {
-			vOriginalLabel = pSequence.y(i);
+			vOriginalLabel = pSequence.getLabel(i);
 			vLabel = getLabel(pSequence, vProccessedSequenceMap, i);
 
 			//-- Used the original term label only for statistics.
-			if(LabelEncoding.isEntity(vLabel)) {
-				if(!LabelEncoding.isEntity(vOriginalLabel)) {
-					mTermLevelStatisticsAnalysis.addWrongTermsLabeledAsEntities(pSequence.x(i) + "(" + mSequenceNumber + ")");
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vLabel))) {
+				if(!Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vOriginalLabel))) {
+					mTermLevelStatisticsAnalysis.addWrongTermsLabeledAsEntities(pSequence.getToken(i) + "(" + mSequenceNumber + ")");
 				} else {
-					mTermLevelStatisticsAnalysis.addTermLabeledAsEntity((String) pSequence.x(i) + "(" + mSequenceNumber + ")");
+					mTermLevelStatisticsAnalysis.addTermLabeledAsEntity((String) pSequence.getToken(i) + "(" + mSequenceNumber + ")");
 				}
 
 				vHasEntity |= true;
 				vAverageEntityProbability += mLabelCalculator.getLabelProbabilities()[vLabel]/mLabelCalculator.getNormalizationFactor()[vLabel];
 				vNormalization++;
-			} else if(LabelEncoding.isEntity(vOriginalLabel)) {
-				mTermLevelStatisticsAnalysis.addMissedEntityTerms((String) pSequence.x(i) + "(" + mSequenceNumber + ")");
+			} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vOriginalLabel))) {
+				mTermLevelStatisticsAnalysis.addMissedEntityTerms((String) pSequence.getToken(i) + "(" + mSequenceNumber + ")");
 			}
 		}
 
@@ -173,7 +170,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		}
 	}
 
-	protected void labelSequenceAvgProbEntityConsiderAllPartialTweet(DataSequence sequence) {
+	protected void labelSequenceAvgProbEntityConsiderAllPartialTweet(ISequence sequence) {
 
 		Map<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, mActivityControl.getDataPreprocessorList());
@@ -191,10 +188,10 @@ public class SimpleLabelFile extends AbstractLabelFile {
 			probability = mLabelCalculator.getLabelProbabilities()[label]/mLabelCalculator.getNormalizationFactor()[label];
 
 			if(probability > mUpdateControl.getThreshouldConfidenceSequence()) {
-				newSequence.addElement((String)sequence.x(i), label);
+				newSequence.add((String)sequence.getToken(i), label);
 			}
 
-			if(LabelEncoding.isEntity(label)) {
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(label))) {
 				hasEntity = true;
 				averageEntityProbability += probability;
 				normalization++;
@@ -206,7 +203,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		}
 	}
 
-	protected void labelSequenceAvgProbConsiderAllTweet(DataSequence sequence) {
+	protected void labelSequenceAvgProbConsiderAllTweet(ISequence sequence) {
 
 		Map<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, mActivityControl.getDataPreprocessorList());
@@ -229,7 +226,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		}
 	}
 
-	protected void labelSequenceAvgProbConsiderAllPartialTweet(DataSequence sequence) {
+	protected void labelSequenceAvgProbConsiderAllPartialTweet(ISequence sequence) {
 
 		Map<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, mActivityControl.getDataPreprocessorList());
@@ -244,11 +241,11 @@ public class SimpleLabelFile extends AbstractLabelFile {
 			probability = mLabelCalculator.getLabelProbabilities()[label]/mLabelCalculator.getNormalizationFactor()[label];
 
 			if(probability > mUpdateControl.getThreshouldConfidenceSequence()) {
-				newSequence.addElement((String)sequence.x(i), label);
+				newSequence.add((String)sequence.getToken(i), label);
 			}
 		}
 
-		if(newSequence.size() > 1) {
+		if(newSequence.length() > 1) {
 			mUpdateControl.addSequence(newSequence);
 		}
 	}
@@ -258,25 +255,25 @@ public class SimpleLabelFile extends AbstractLabelFile {
 
 	@SuppressWarnings("unused")
 	@Override
-	protected int getLabel(DataSequence pSequence, Map<String, SequenceLabel> pProccessedSequenceMap, int pIndex) {
+	protected int getLabel(ISequence pSequence, Map<String, SequenceLabel> pProccessedSequenceMap, int pIndex) {
 
 		//-- Force Y(i) To be equals an outside label
-		pSequence.set_y(pIndex, LabelEncoding.getOutsideLabel());
+		pSequence.setLabel(pIndex, Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal());
 
 		int vMostProbablyLabel = mLabelCalculator.calculateMostProbablyLabel(pIndex, pSequence, pProccessedSequenceMap,
 				mActivityControl.getDataPreprocessorList(), mActivityControl.getFilterList());
 
-		if(Debug.LabelFile.printTermIdentifiedAsEntity && LabelEncoding.BILOU.isEntity(
-				BILOU.values()[vMostProbablyLabel].name())){
-			System.out.println(pSequence.x(pIndex) + "(" + LabelEncoding.BILOU.
-					isEntity(BILOU.values()[pSequence.y(pIndex)].name()) + ")");
+		if(Debug.LabelFile.printTermIdentifiedAsEntity && Parameters.DataHandler.mLabelEncoding.isEntity(
+				Label.getLabel(vMostProbablyLabel))){
+			System.out.println(pSequence.getToken(pIndex) + "(" +
+					Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequence.getLabel(pIndex))) + ")");
 		}
 
 		//-- Force set Y(i) equals most probably label
-		pSequence.set_y(pIndex, vMostProbablyLabel);
+		pSequence.setLabel(pIndex, vMostProbablyLabel);
 
-		if(LabelEncoding.isEntity(vMostProbablyLabel)) {
-			mEntityList.add((String)pSequence.x(pIndex));
+		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vMostProbablyLabel))) {
+			mEntityList.add((String)pSequence.getToken(pIndex));
 		}
 
 		return(vMostProbablyLabel);
@@ -285,10 +282,10 @@ public class SimpleLabelFile extends AbstractLabelFile {
 	@Override
 	protected void labelStreamSub(List<List<String>> streamList) {
 
-		SequenceSet inputSequenceSet =  SequenceSetHandler.
-				getSequenceSetFromStream(streamList, BILOU.Outside.ordinal());
+		SequenceSet inputSequenceSet =  Parameters.DataHandler.mSequenceSetHandler.
+				getSequenceSetFromStream(streamList, Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal());
 
-		DataSequence sequence;
+		ISequence sequence;
 
 		while(inputSequenceSet.hasNext()) {
 
