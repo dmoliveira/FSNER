@@ -1,20 +1,20 @@
 package lbd.FSNER.Filter.ScoreCalculatorModel;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
+import lbd.data.handler.ISequence;
 
 public class FSCMEntityless extends FSCMEntity{
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public double calculateScoreInLabel(SequenceLabel sequenceLabel, int index) {
+	public double calculateScoreLabeling(ISequence sequenceLabel, int index) {
 
 		return(calculateScoreEntityLess(sequenceLabel, index));
 	}
 
-	public double calculateScoreEntityLess(SequenceLabel sequenceLabel, int index) {
+	public double calculateScoreEntityLess(ISequence sequenceLabel, int index) {
 
 		double termsTotalScore = 0;
 
@@ -32,15 +32,15 @@ public class FSCMEntityless extends FSCMEntity{
 		return(termsTotalScore);
 	}
 
-	public double calculateScoreEntityLessForEntity(Entity entity, SequenceLabel sequenceLabel, int index) {
+	public double calculateScoreEntityLessForEntity(Entity entity, ISequence sequenceLabel, int index) {
 
 		double termsTotalScore = 0;
 
 		Term term;
 
-		for(int i = 0; i < sequenceLabel.size(); i++){
+		for(int i = 0; i < sequenceLabel.length(); i++){
 
-			term = entity.getTerm(sequenceLabel.getTerm(i));
+			term = entity.getTerm(sequenceLabel.getToken(i));
 
 			if(term != null && !term.getId().equals(entity.getId())) {
 				termsTotalScore += term.getScore();

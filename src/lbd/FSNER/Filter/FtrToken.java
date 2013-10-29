@@ -3,7 +3,6 @@ package lbd.FSNER.Filter;
 import java.util.HashSet;
 import java.util.Set;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
@@ -33,18 +32,18 @@ public class FtrToken extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel pSequenceLabelProccessed, int pIndex) {
-		mEntitySet.add(pSequenceLabelProccessed.getTerm(pIndex));
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
+		mEntitySet.add(pPreprocessedSequence.getToken(pIndex));
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -56,19 +55,19 @@ public class FtrToken extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel pSequenceLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed,
+	public String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence,
 			int pIndex) {
 
 		String vId = Symbol.EMPTY;
 
-		if(mEntitySet.contains(pSequenceLabelProcessed.getTerm(pIndex))) {
-			vId = "id:" + mId + Symbol.HYPHEN + pSequenceLabelProcessed.getTerm(pIndex);
+		if(mEntitySet.contains(pPreprocessedSequence.getToken(pIndex))) {
+			vId = "id:" + mId + Symbol.HYPHEN + pPreprocessedSequence.getToken(pIndex);
 		}
 
 		return (vId);

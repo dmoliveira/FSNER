@@ -1,10 +1,9 @@
 package lbd.FSNER.Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.data.handler.ISequence;
 
 
@@ -13,17 +12,9 @@ public abstract class AbstractLabelFileScoreCalculatorModel implements Serializa
 	private static final long serialVersionUID = 1L;
 	protected boolean isUnrealibleSituation;
 
-	public abstract double calculateScore(int index,
+	public abstract double calculateScore(int pIndex,
 			ISequence pSequence,
-			Map<String, SequenceLabel> proccessedSequenceMap,
-			ArrayList<AbstractDataPreprocessor> dataProcessorList,
-			ArrayList<AbstractFilter> filterList);
-
-	public void setIsUnrealibleSituation(boolean isUnrealibleSituation) {
-		this.isUnrealibleSituation = isUnrealibleSituation;
-	}
-
-	public boolean isUnrealibleSituation() {
-		return(isUnrealibleSituation);
-	}
+			Map<String, ISequence> pPreprocessedSequenceMap,
+			List<AbstractDataPreprocessor> pDataProcessorList,
+			List<AbstractFilter> pFilterList);
 }

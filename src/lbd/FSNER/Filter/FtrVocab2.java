@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -53,33 +52,32 @@ public class FtrVocab2 extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 
-		int startIndex;
-		int endIndex;
+		int vStartIndex;
+		int vEndIndex;
 
-		String term;
+		String vTerm;
 
-		startIndex = (index > windowSideSize)? index - windowSideSize : 0;
-		endIndex = (index + windowSideSize < sequenceLabelProcessed.size())?
-				index + windowSideSize : sequenceLabelProcessed.size();
+		vStartIndex = (pIndex > windowSideSize)? pIndex - windowSideSize : 0;
+		vEndIndex = (pIndex + windowSideSize < pPreprocessedSequence.length())?
+				pIndex + windowSideSize : pPreprocessedSequence.length();
 
-		for(int i = startIndex; i < endIndex; i++) {
+		for(int i = vStartIndex; i < vEndIndex; i++) {
 
-			term = sequenceLabelProcessed.getTerm(i);
+			vTerm = pPreprocessedSequence.getToken(i);
 
-			if(i != index && !term.isEmpty() && term.length() >= TERM_MIN_SIZE) {
-				if(vocabMap.containsKey(term)) {
-					vocabMap.put(term, vocabMap.get(term) + 1);
+			if(i != pIndex && !vTerm.isEmpty() && vTerm.length() >= TERM_MIN_SIZE) {
+				if(vocabMap.containsKey(vTerm)) {
+					vocabMap.put(vTerm, vocabMap.get(vTerm) + 1);
 				} else {
-					vocabMap.put(term, 1);
+					vocabMap.put(vTerm, 1);
 				}
 			}
 		}
@@ -87,8 +85,7 @@ public class FtrVocab2 extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -159,17 +156,17 @@ public class FtrVocab2 extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		//TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int index) {
 
-		return ((selectedVocabMap.containsKey(sequenceLabelProcessed.getTerm(index)))?
-				"id:" + this.mId + "." + sequenceLabelProcessed.getTerm(index) : Symbol.EMPTY);
+		return ((selectedVocabMap.containsKey(pPreprocessedSequence.getToken(index)))?
+				"id:" + this.mId + "." + pPreprocessedSequence.getToken(index) : Symbol.EMPTY);
 	}
 
 }

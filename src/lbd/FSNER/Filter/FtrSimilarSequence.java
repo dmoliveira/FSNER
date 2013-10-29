@@ -3,7 +3,6 @@ package lbd.FSNER.Filter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -41,29 +40,27 @@ public class FtrSimilarSequence extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 
 		sequenceList.add(new HashMap<String, Object>());
 		HashMap<String, Object> termSequenceMap = sequenceList.get(sequenceList.size()-1);
 
-		for(int i = 0; i < sequenceLabelProcessed.size(); i++) {
-			if(i != index) {
-				termSequenceMap.put(sequenceLabelProcessed.getTerm(i), null);
+		for(int i = 0; i < pPreprocessedSequence.length(); i++) {
+			if(i != pIndex) {
+				termSequenceMap.put(pPreprocessedSequence.getToken(i), null);
 			}
 		}
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -75,13 +72,13 @@ public class FtrSimilarSequence extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex) {
 
 		String id = "";
 
@@ -90,7 +87,7 @@ public class FtrSimilarSequence extends AbstractFilter{
 
 		for(HashMap<String, Object> termSequenceMap : sequenceList) {
 
-			sequenceSimilarity = calculateSequenceSimilarity(sequenceLabelProcessed, index, termSequenceMap)/((double) sequenceLabelProcessed.size()-1);
+			sequenceSimilarity = calculateSequenceSimilarity(pPreprocessedSequence, pIndex, termSequenceMap)/((double) pPreprocessedSequence.length()-1);
 			indexId++;
 
 			if(sequenceSimilarity > similarSequenceThreshold) {
@@ -99,20 +96,20 @@ public class FtrSimilarSequence extends AbstractFilter{
 			}
 		}
 
-		return (id);
+		return id;
 	}
 
-	protected int calculateSequenceSimilarity(SequenceLabel sequenceLabelProcessed, int index, HashMap<String, Object> termSequenceMap) {
+	protected int calculateSequenceSimilarity(ISequence pPreprocessedSequence, int pIndex, HashMap<String, Object> pTermSequenceMap) {
 
-		int numberTermSequenceSimilar = 0;
+		int vNumberTermSequenceSimilar = 0;
 
-		for(int i = 0; i < sequenceLabelProcessed.size(); i++) {
-			if(i != index && termSequenceMap.containsKey(sequenceLabelProcessed.getTerm(i))) {
-				numberTermSequenceSimilar++;
+		for(int i = 0; i < pPreprocessedSequence.length(); i++) {
+			if(i != pIndex && pTermSequenceMap.containsKey(pPreprocessedSequence.getToken(i))) {
+				vNumberTermSequenceSimilar++;
 			}
 		}
 
-		return(numberTermSequenceSimilar);
+		return vNumberTermSequenceSimilar;
 	}
 
 }

@@ -3,7 +3,6 @@ package lbd.FSNER.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.SimpleFilterProbability;
 import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMMultiFilter;
 import lbd.FSNER.Utils.Symbol;
@@ -82,28 +81,28 @@ public abstract class AbstractMetaFilter extends AbstractFilter {
 
 	@Override
 	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+			ISequence pPreProcessedSequence) {
 		if(mIsToLoadAsSimpleFilter) {
 			for(AbstractFilter filter : mFilterList) {
-				filter.loadActionBeforeSequenceIteration(sequenceLabelProcessed);
+				filter.loadActionBeforeSequenceIteration(pPreProcessedSequence);
 			}
 		}
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreProcessedSequence, int index) {
 		if(mIsToLoadAsSimpleFilter) {
 			for(AbstractFilter filter : mFilterList) {
-				filter.loadTermSequence(sequenceLabelProcessed, index);
+				filter.loadTermSequence(pPreProcessedSequence, index);
 			}
 		}
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreProcessedSequence) {
 		if(mIsToLoadAsSimpleFilter) {
 			for(AbstractFilter filter : mFilterList) {
-				filter.loadActionAfterSequenceIteration(sequenceLabelProcessed);
+				filter.loadActionAfterSequenceIteration(pPreProcessedSequence);
 			}
 		}
 
@@ -120,16 +119,16 @@ public abstract class AbstractMetaFilter extends AbstractFilter {
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreProcessedSequence) {
 		if(mIsToLoadAsSimpleFilter) {
 			for(AbstractFilter filter : mFilterList) {
-				filter.adjust(sequenceProcessedLabel);
+				filter.adjust(pPreProcessedSequence);
 			}
 		}
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreProcessedSequence, int pIndex) {
 
 		int vNumberFilterActivated = 0;
 
@@ -139,7 +138,7 @@ public abstract class AbstractMetaFilter extends AbstractFilter {
 
 		for(AbstractFilter cFilter : mFilterList) {
 
-			vInstanceId = cFilter.getSequenceInstanceId(pSequence, pSequenceLabelProcessed, pIndex);
+			vInstanceId = cFilter.getSequenceInstanceId(pSequence, pPreProcessedSequence, pIndex);
 
 			if(!vInstanceId.isEmpty()) {
 				vIntermediaryId += vInstanceId + Symbol.PLUS;

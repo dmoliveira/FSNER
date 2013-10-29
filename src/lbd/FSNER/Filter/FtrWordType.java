@@ -2,7 +2,6 @@ package lbd.FSNER.Filter;
 
 import java.text.MessageFormat;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -31,22 +30,19 @@ public class FtrWordType extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel pSequenceLabelProcessed,
-			int pIndex) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -58,16 +54,16 @@ public class FtrWordType extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel pSequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel pSequenceLabelProcessed, int pIndex) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
-		String vToken = (String) pSequence.getToken(pIndex);
+		String vToken = pSequence.getToken(pIndex);
 		String vWordType = WordType.Common.name();
 
 		if(!vToken.isEmpty()) {

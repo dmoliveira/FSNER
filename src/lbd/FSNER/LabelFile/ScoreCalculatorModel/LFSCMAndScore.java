@@ -1,12 +1,11 @@
 package lbd.FSNER.LabelFile.ScoreCalculatorModel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
@@ -30,11 +29,11 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 	protected final double COMMON_TERM_PERCENTAGE_THRESHOLD = 1.0;//0.5
 
 	@Override
-	public double calculateScore(int index,
+	public double calculateScore(int pIndex,
 			ISequence pSequence,
-			Map<String, SequenceLabel> proccessedSequenceMap,
-			ArrayList<AbstractDataPreprocessor> dataProcessorList,
-			ArrayList<AbstractFilter> filterList) {
+			Map<String, ISequence> pPreprocessedSequenceMap,
+			List<AbstractDataPreprocessor> pDataProcessorList,
+			List<AbstractFilter> pFilterList) {
 
 		double filterScore = SCORE_THRESHOLD;
 		double finalScore = SCORE_THRESHOLD;
@@ -43,13 +42,13 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 		String term;
 		int label = -1;
 
-		SequenceLabel sequenceLabelProcessed;
+		ISequence sequenceLabelProcessed;
 		FilterProbabilityHandler filterProbability;
 		AbstractDataPreprocessor dataPreprocessor;
 
 		HashMap<Integer, HashMap<String, FilterProbabilityHandler>> filterClassNameMap = new HashMap<Integer, HashMap<String, FilterProbabilityHandler>>();
 
-		for(AbstractFilter filter : filterList) {
+		for(AbstractFilter filter : pFilterList) {
 
 			if(filterClassNameMap.containsKey(filter.getFilterPreprocessingTypeIndex()) &&
 					filterClassNameMap.get(filter.getFilterPreprocessingTypeIndex()).containsKey(filter.getFilterClassName())) {
@@ -57,22 +56,22 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 			}
 
 			//-- Get common term percentage
-			dataPreprocessor = dataProcessorList.get(filter.getFilterPreprocessingTypeIndex());
-			sequenceLabelProcessed = proccessedSequenceMap.get(filter.getPreprocesingTypeName());
+			dataPreprocessor = pDataProcessorList.get(filter.getFilterPreprocessingTypeIndex());
+			sequenceLabelProcessed = pPreprocessedSequenceMap.get(filter.getPreprocesingTypeName());
 
-			term = sequenceLabelProcessed.getTerm(index);
-			label = sequenceLabelProcessed.getLabel(index);
+			term = sequenceLabelProcessed.getToken(pIndex);
+			label = sequenceLabelProcessed.getLabel(pIndex);
 
 			if(filter.getFilterState() == FilterState.Active && !isUnrealibleSituation &&
-					dataPreprocessor.getCommonTermProbability(term) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
+					dataPreprocessor.getCommonTokenProbability(term) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
 
 				//-- Get filter instance id determined by the index
 				filterProbability = filter.getFilterProbability();
-				filterInstanceIndexId = filter.getSequenceInstanceId(pSequence, sequenceLabelProcessed, index);
+				filterInstanceIndexId = filter.getSequenceInstanceId(pSequence, sequenceLabelProcessed, pIndex);
 
 				if(!filterInstanceIndexId.isEmpty() && filterProbability.getProbability(filterInstanceIndexId) >= FILTER_PROBABILITY) {
 
-					filterScore = filter.calculateScore(sequenceLabelProcessed, index);
+					filterScore = filter.calculateScore(sequenceLabelProcessed, pIndex);
 
 					if(filterScore > SCORE_THRESHOLD) {
 
@@ -87,7 +86,7 @@ public class LFSCMAndScore extends AbstractLabelFileScoreCalculatorModel{
 							finalScore = 1;
 
 							addToFilterStatistic(term, filterClassNameMap.get(filter.getFilterPreprocessingTypeIndex()),
-									Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(label)));
+									Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(label)));
 							break;
 						}
 					}

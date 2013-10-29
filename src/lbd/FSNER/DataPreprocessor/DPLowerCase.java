@@ -1,6 +1,5 @@
 package lbd.FSNER.DataPreprocessor;
 
-import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Utils.ClassName;
 
@@ -15,12 +14,12 @@ public class DPLowerCase extends AbstractDataPreprocessor{
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public SequenceLabelElement preprocessingTerm(String term, int label) {
-		return (new SequenceLabelElement(term.toLowerCase(), label));
+	public String preprocessingToken(String pTerm, int pLabel) {
+		return pTerm.toLowerCase();
 	}
 
 }

@@ -2,19 +2,19 @@ package lbd.FSNER.Model;
 
 import java.io.Serializable;
 
-import lbd.FSNER.Component.SequenceLabel;
+import lbd.data.handler.ISequence;
 
 public abstract class AbstractFilterScoreCalculatorModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public double calculateScoreInLoad(SequenceLabel sequenceLabel, int index) {
-		return(calculateScore(sequenceLabel, index));
+	public double calculateScoreTraining(ISequence pSequence, int pIndex) {
+		return(calculateScore(pSequence, pIndex));
 	}
 
-	public double calculateScoreInLabel(SequenceLabel sequenceLabel, int index) {
-		return(calculateScore(sequenceLabel, index));
+	public double calculateScoreLabeling(ISequence pSequence, int pIndex) {
+		return(calculateScore(pSequence, pIndex));
 	}
 
-	protected abstract double calculateScore(SequenceLabel sequenceLabel, int index);
+	protected abstract double calculateScore(ISequence pSequence, int pIndex);
 }

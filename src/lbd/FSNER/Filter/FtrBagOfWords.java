@@ -2,7 +2,6 @@ package lbd.FSNER.Filter;
 
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.BagOfWords;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
@@ -58,24 +57,24 @@ public class FtrBagOfWords extends AbstractFilter{
 
 	@Override
 	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+			ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
 
 		BagOfWords bagOfWords = bagOfWordsMap.get(mId);
 
 		if(bagOfWords != null) {
-			bagOfWords.addSequence(sequenceLabelProcessed, index);
+			bagOfWords.addSequence(pPreprocessedSequence, index);
 		}
 	}
 
 	@Override
 	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+			ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -87,19 +86,19 @@ public class FtrBagOfWords extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		String id = Symbol.EMPTY;
 		int idNumber = bagOfWordsMap.get(bagOfWordsIdMap.get(
 				mPreprocessingTypeIndex)).getBagOfWordsId(
-						sequenceLabelProcessed, index, flexibility, isGeneralUse, threshold);
+						pPreprocessedSequence, pIndex, flexibility, isGeneralUse, threshold);
 
 		if(idNumber > -1) {
 			id = "id:" + this.mId + Symbol.DOT + idNumber + ".flx:" + flexibility.name() +

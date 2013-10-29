@@ -3,7 +3,6 @@ package lbd.FSNER.Filter;
 import java.util.HashSet;
 import java.util.Set;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.EntityUtils;
@@ -44,17 +43,17 @@ public class FtrEntityContext extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		mEndEntityIndex = -1;
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		if(mEndEntityIndex == -1) {
-			mEndEntityIndex = EntityUtils.getEntityEndIndex(pSequenceLabelProcessed, pIndex);
+			mEndEntityIndex = EntityUtils.getEntityEndIndex(pPreprocessedSequence, pIndex);
 
 			if(mEndEntityIndex != -1) {
-				mContextSet.add(getContext(pSequenceLabelProcessed, pIndex, (mEndEntityIndex - pIndex + 1)));
+				mContextSet.add(getContext(pPreprocessedSequence, pIndex, (mEndEntityIndex - pIndex + 1)));
 			}
 		}
 
@@ -63,20 +62,20 @@ public class FtrEntityContext extends AbstractFilter{
 		}
 	}
 
-	protected String getContext(SequenceLabel pSequenceLabelProcessed, int pIndex, int pEntitySize) {
+	protected String getContext(ISequence pPreprocessedSequence, int pIndex, int pEntitySize) {
 
 		if(pEntitySize < 1) {
 			pEntitySize = 1;
 		}
 
 		int vLowerBound = Math.max(0, pIndex - mContextSizeUsed);
-		int vUpperBound = Math.min(pSequenceLabelProcessed.size(), (pIndex + pEntitySize) + mContextSizeUsed - 1);
+		int vUpperBound = Math.min(pPreprocessedSequence.length(), (pIndex + pEntitySize) + mContextSizeUsed - 1);
 
 		String vContextText = Symbol.EMPTY;
 
 		for(int cContextIndex = vLowerBound; cContextIndex < vUpperBound; cContextIndex++) {
 			if(cContextIndex != pIndex) {
-				vContextText += pSequenceLabelProcessed.getTerm(cContextIndex) + DELIMITER_TOKEN_CONTEXT;
+				vContextText += pPreprocessedSequence.getToken(cContextIndex) + DELIMITER_TOKEN_CONTEXT;
 			} else {
 				if(vContextText.endsWith(DELIMITER_TOKEN_CONTEXT)) {
 					vContextText = vContextText.substring(0, vContextText.length() - 1);
@@ -93,8 +92,7 @@ public class FtrEntityContext extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -105,13 +103,13 @@ public class FtrEntityContext extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel pSequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex) {
 
 		boolean vWasContextFound =false;
 		String vContextText = Symbol.EMPTY;
@@ -119,7 +117,7 @@ public class FtrEntityContext extends AbstractFilter{
 
 		//-- Search for prefix & suffix
 		do {
-			vContextText = getContext(pSequenceLabelProcessed, pIndex, vEntitySizeContext);
+			vContextText = getContext(pPreprocessedSequence, pIndex, vEntitySizeContext);
 			vWasContextFound = mContextSet.contains(vContextText);
 		} while(!vWasContextFound && --vEntitySizeContext > 0);
 

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import lbd.FSNER.Component.Cluster;
 import lbd.FSNER.Component.ClusterHandler;
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.EntityUtils;
+import lbd.data.handler.ISequence;
 
 public class FSCMClusterHandler extends AbstractFilterScoreCalculatorModel{
 
@@ -17,13 +17,13 @@ public class FSCMClusterHandler extends AbstractFilterScoreCalculatorModel{
 	protected ArrayList<Entity> entityList;
 
 	@Override
-	public double calculateScore(SequenceLabel sequenceLabelProcessed,
+	public double calculateScore(ISequence sequenceLabelProcessed,
 			int index) {
 
 		double score = 0;
-		Entity entity = EntityUtils.getEntity(sequenceLabelProcessed.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(sequenceLabelProcessed.getToken(index), entityList);
 
-		ArrayList<Cluster> clusterList = clusterHandler.getClusterMap().get(sequenceLabelProcessed.getTerm(index));
+		ArrayList<Cluster> clusterList = clusterHandler.getClusterMap().get(sequenceLabelProcessed.getToken(index));
 
 		if(entity != null) {
 			score = getClusterScore(clusterList, entity, sequenceLabelProcessed.toArraySequence());

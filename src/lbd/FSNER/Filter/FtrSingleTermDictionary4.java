@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Filter.Component.DictionaryFtr4;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
@@ -35,7 +34,7 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 
 	protected ArrayList<String> sDictionaryNameList;
 	protected HashMap<String, Boolean> sDictionaryLoadMap;
-	protected SequenceLabel mSequenceLabelProcessed;
+	protected ISequence mSequenceLabelProcessed;
 
 	//To utilize entity terms in training set in dictionary
 	@DefaultValue(value="false")
@@ -163,7 +162,7 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 		String vPreprocessedEntry = Symbol.EMPTY;
 
 		for(String cTerm : pEntryElement) {
-			cTerm = mDataProcessor.preprocessingTerm(cTerm.trim(), -1).getTerm();
+			cTerm = mDataProcessor.preprocessingToken(cTerm.trim(), -1);
 			vPreprocessedEntry +=  cTerm + Symbol.SPACE;
 		}
 
@@ -180,26 +179,24 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		if(sIsToUseTrainingEntityTermAsDictionary) {
 			DictionaryFtr4 vDictionary = sDictionaryList.get(mTrainingFileDictionary);
 
-			for(String cEntity : getEntityListInSequence(sequenceLabelProcessed)) {
+			for(String cEntity : getEntityListInSequence(pPreprocessedSequence)) {
 				vDictionary.addEntry(cEntity);
 			}
 		}
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -211,23 +208,23 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel pSequenceLabelProcessed, int pIndex) {
+			ISequence pPreprocessedSequence, int pIndex) {
 		String vId = Symbol.EMPTY;
 
-		if(pSequenceLabelProcessed != mSequenceLabelProcessed) {
-			mSequenceLabelProcessed = pSequenceLabelProcessed;
+		if(pPreprocessedSequence != mSequenceLabelProcessed) {
+			mSequenceLabelProcessed = pPreprocessedSequence;
 			mNextIndexToSearchInDictionary = 0;
 		}
 
 		if(mNextIndexToSearchInDictionary <= pIndex) {
-			String [] vCandidateEntryList = generateEntryPossibilities(pSequenceLabelProcessed, pIndex);
+			String [] vCandidateEntryList = generateEntryPossibilities(pPreprocessedSequence, pIndex);
 			int vEntrySize = existEntryInDictionary(vCandidateEntryList);
 
 			if(vEntrySize > 0) {
@@ -245,8 +242,8 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 		return "id:" + this.mId + ".dic:" + mDictionaryNameIndex;
 	}
 
-	protected String [] generateEntryPossibilities(SequenceLabel pSequenceLabelProcessed, int pIndex) {
-		int vLength = Math.min(pSequenceLabelProcessed.size(), pIndex + MAX_ENTRY_WINDOW);
+	protected String [] generateEntryPossibilities(ISequence pPreprocessedSequence, int pIndex) {
+		int vLength = Math.min(pPreprocessedSequence.length(), pIndex + MAX_ENTRY_WINDOW);
 		int vEntryPossibilitiesNumber = vLength - pIndex;
 		String [] vEntryVariationsList = new String[vEntryPossibilitiesNumber];
 
@@ -257,8 +254,8 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 				}
 
 				if(cEntry >= cStartPosition - pIndex) {
-					vEntryVariationsList[cEntry] +=  mDataProcessor.preprocessingTerm(
-							pSequenceLabelProcessed.getTerm(cStartPosition).trim(), -1).getTerm()
+					vEntryVariationsList[cEntry] +=  mDataProcessor.preprocessingToken(
+							pPreprocessedSequence.getToken(cStartPosition).trim(), -1)
 							+ ((cEntry > cStartPosition - pIndex)? Symbol.SPACE : Symbol.EMPTY);
 				}
 			}
@@ -293,20 +290,20 @@ public class FtrSingleTermDictionary4 extends AbstractFilter{
 		return(vDictionaryFileNumbers);
 	}
 
-	public ArrayList<String> getEntityListInSequence(SequenceLabel pSequence) {
+	public ArrayList<String> getEntityListInSequence(ISequence pPreprocessedSequence) {
 		ArrayList<String> pEntityList = new ArrayList<String>();
 		int cEntity = 0;
 
-		for(int i = 0; i < pSequence.size(); i++) {
-			if(Label.getLabel(pSequence.getLabel(i)) == Label.Beginning) {
-				pEntityList.add(pSequence.getTerm(i));
-			} else if(Label.getLabel(pSequence.getLabel(i)) == Label.Inside) {
-				pEntityList.add(cEntity, pEntityList.get(cEntity) + Symbol.SPACE + pSequence.getTerm(i));
-			} else if(Label.getLabel(pSequence.getLabel(i)) == Label.Last) {
-				pEntityList.add(cEntity, pEntityList.get(cEntity) + Symbol.SPACE + pSequence.getTerm(i));
+		for(int i = 0; i < pPreprocessedSequence.length(); i++) {
+			if(Label.getCanonicalLabel(pPreprocessedSequence.getLabel(i)) == Label.Beginning) {
+				pEntityList.add(pPreprocessedSequence.getToken(i));
+			} else if(Label.getCanonicalLabel(pPreprocessedSequence.getLabel(i)) == Label.Inside) {
+				pEntityList.add(cEntity, pEntityList.get(cEntity) + Symbol.SPACE + pPreprocessedSequence.getToken(i));
+			} else if(Label.getCanonicalLabel(pPreprocessedSequence.getLabel(i)) == Label.Last) {
+				pEntityList.add(cEntity, pEntityList.get(cEntity) + Symbol.SPACE + pPreprocessedSequence.getToken(i));
 				cEntity++;
-			} else if(Label.getLabel(pSequence.getLabel(i)) == Label.UnitToken) {
-				pEntityList.add(pSequence.getTerm(i));
+			} else if(Label.getCanonicalLabel(pPreprocessedSequence.getLabel(i)) == Label.UnitToken) {
+				pEntityList.add(pPreprocessedSequence.getToken(i));
 				cEntity++;
 			}
 		}

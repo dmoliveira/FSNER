@@ -2,7 +2,6 @@ package lbd.FSNER.Model;
 
 import java.text.MessageFormat;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMNoScore;
@@ -44,32 +43,32 @@ public abstract class AbstractFilter extends AbstractActivity {
 
 	public abstract void loadActionBeforeSequenceSetIteration();
 
-	public abstract void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed);
+	public abstract void loadActionBeforeSequenceIteration(ISequence pSequenceLabelProcessed);
 
-	public abstract void loadTermSequence(SequenceLabel pSequenceLabelProcessed, int pIndex);
+	public abstract void loadTermSequence(ISequence pSequenceLabelProcessed, int pIndex);
 
-	public abstract void loadActionAfterSequenceIteration(SequenceLabel pSequenceLabelProcessed);
+	public abstract void loadActionAfterSequenceIteration(ISequence pSequenceLabelProcessed);
 
 	public abstract void loadActionAfterSequenceSetIteration();
 
-	public abstract void adjust(SequenceLabel pSequenceProcessedLabel);
+	public abstract void adjust(ISequence pProcessedSequence);
 
-	protected abstract String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex);
+	protected abstract String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex);
 
 	// pSequence contains original sequence with labels produced by FS-NER until state i - 1
-	public String getSequenceInstanceId(ISequence pOriginalSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	public String getSequenceInstanceId(ISequence pOriginalSequence, ISequence pPreprocessedSequence, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 
-		if(!pSequenceLabelProcessed.getTerm(pIndex).isEmpty()) {
-			vId = getSequenceInstanceIdSub(pOriginalSequence, pSequenceLabelProcessed, pIndex);
+		if(!((String)pPreprocessedSequence.getToken(pIndex)).isEmpty()) {
+			vId = getSequenceInstanceIdSub(pOriginalSequence, pPreprocessedSequence, pIndex);
 		}
 
 		return(vId);
 	}
 
-	public double calculateScore(SequenceLabel pSequenceLabelProcessed, int pIndex) {
-		return(mScoreCalculator.calculateScoreInLabel(pSequenceLabelProcessed, pIndex));
+	public double calculateScore(ISequence pSequenceLabelProcessed, int pIndex) {
+		return(mScoreCalculator.calculateScoreLabeling(pSequenceLabelProcessed, pIndex));
 	}
 
 	public FilterProbabilityHandler getFilterProbability() {

@@ -68,13 +68,13 @@ public class SimpleEvaluator {
 
 	protected void evaluateSequencesLevel1(ISequence pTaggedSequence, ISequence pGoldStandardSequence) {
 		for(int i = 0; i < pTaggedSequence.length(); i++) {
-			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pGoldStandardSequence.getLabel(i)))) {
-				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pTaggedSequence.getLabel(i)))) {
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pGoldStandardSequence.getLabel(i)))) {
+				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pTaggedSequence.getLabel(i)))) {
 					calculateTP(EntityType.getEntityType(pTaggedSequence.getLabel(i)));
 				} else {
 					calculateFN(EntityType.getEntityType(pGoldStandardSequence.getLabel(i)));
 				}
-			} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pTaggedSequence.getLabel(i)))) {
+			} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pTaggedSequence.getLabel(i)))) {
 				calculateFP(EntityType.getEntityType(pTaggedSequence.getLabel(i)));
 			}
 		}
@@ -82,17 +82,17 @@ public class SimpleEvaluator {
 
 	protected void evaluateSequencesLevel2(ISequence pTaggedSequence, ISequence pGoldStandardSequence)  {
 		for(int i = 0; i < pTaggedSequence.length(); i++) {
-			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pGoldStandardSequence.getLabel(i)))) {
-				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pTaggedSequence.getLabel(i))) &&
-						Label.getLabel(pTaggedSequence.getLabel(i)) == Label.getLabel(pGoldStandardSequence.getLabel(i))) {
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pGoldStandardSequence.getLabel(i)))) {
+				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pTaggedSequence.getLabel(i))) &&
+						Label.getCanonicalLabel(pTaggedSequence.getLabel(i)) == Label.getCanonicalLabel(pGoldStandardSequence.getLabel(i))) {
 					calculateTP(EntityType.getEntityType(pTaggedSequence.getLabel(i)));
-				} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pTaggedSequence.getLabel(i)))){
+				} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pTaggedSequence.getLabel(i)))){
 					calculateFN(EntityType.getEntityType(pGoldStandardSequence.getLabel(i)));
 					calculateFP(EntityType.getEntityType(pTaggedSequence.getLabel(i)));
 				} else {
 					calculateFN(EntityType.getEntityType(pGoldStandardSequence.getLabel(i)));
 				}
-			} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pTaggedSequence.getLabel(i)))) {
+			} else if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pTaggedSequence.getLabel(i)))) {
 				calculateFP(EntityType.getEntityType(pTaggedSequence.getLabel(i)));
 			}
 		}

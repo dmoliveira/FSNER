@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
@@ -17,7 +16,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 
 	protected final static int MAX_THREADS = 4;
 
-	protected HashMap<String, SequenceLabel> processedSequenceMap;
+	protected HashMap<String, ISequence> processedSequenceMap;
 
 	protected ISequence sequence;
 	protected static enum Phase{LoadSequence, Adjust};
@@ -153,7 +152,7 @@ public class ParallelActivityControl extends SimpleActivityControl implements Ru
 
 			for(AbstractFilter filter : mFilterList)  {
 
-				SequenceLabel sequenceLabel = processedSequenceMap.get(filter.getPreprocesingTypeName());
+				ISequence sequenceLabel = processedSequenceMap.get(filter.getPreprocesingTypeName());
 				filter.adjust(sequenceLabel);
 
 				//-- Add General Statistics

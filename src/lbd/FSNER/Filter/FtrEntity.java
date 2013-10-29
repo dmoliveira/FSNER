@@ -2,7 +2,6 @@ package lbd.FSNER.Filter;
 
 import java.util.ArrayList;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -35,18 +34,18 @@ public class FtrEntity extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProccessed, int index) {
-		entityList.add(sequenceLabelProccessed.getTerm(index));
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
+		entityList.add(pPreprocessedSequence.getToken(pIndex));
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 	}
 
@@ -57,14 +56,13 @@ public class FtrEntity extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
-
-		return ("id:"+this.mId+"-"+sequenceLabelProcessed.getTerm(index));
+	public String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex) {
+		return ("id:" + mId + "-" + pPreprocessedSequence.getToken(pIndex));
 	}
 
 	public ArrayList<String> getEntityList() {

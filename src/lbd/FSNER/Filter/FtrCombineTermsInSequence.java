@@ -3,7 +3,6 @@ package lbd.FSNER.Filter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -47,14 +46,13 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
 
 		String combinedTerm = Symbol.EMPTY;
 		HashMap<String, Object> combinedTermsMap;
@@ -63,9 +61,9 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 		combinedSequenceList.add(new HashMap<String, Object> ());
 		combinedTermsMap = combinedSequenceList.get(combinedSequenceList.size() - 1);
 
-		for(int i = 0; i < sequenceLabelProcessed.size(); i += blockSize) {
+		for(int i = 0; i < pPreprocessedSequence.length(); i += blockSize) {
 
-			combinedTerm = generateCombinedTerm(sequenceLabelProcessed, i);
+			combinedTerm = generateCombinedTerm(pPreprocessedSequence, i);
 
 			if(!combinedTerm.isEmpty()) {
 				combinedTermsMap.put(combinedTerm, null);
@@ -74,8 +72,7 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -87,13 +84,13 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int index) {
 
 		String id = Symbol.EMPTY;
 		String combinedTerm;
@@ -106,16 +103,16 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 			sequenceCombinedTermNumber = 0;
 			combinedSequenceNumber++;
 
-			for(int i = 0; i < sequenceLabelProcessed.size(); i += blockSize) {
+			for(int i = 0; i < pPreprocessedSequence.length(); i += blockSize) {
 
-				combinedTerm = generateCombinedTerm(sequenceLabelProcessed, i);
+				combinedTerm = generateCombinedTerm(pPreprocessedSequence, i);
 
 				if(combinedSequenceMap.containsKey(combinedTerm)) {
 					sequenceCombinedTermNumber++;
 				}
 			}
 
-			id = generateFilterId(sequenceCombinedTermNumber, sequenceLabelProcessed.size()/blockSize, combinedSequenceNumber);
+			id = generateFilterId(sequenceCombinedTermNumber, pPreprocessedSequence.length()/blockSize, combinedSequenceNumber);
 
 			if(!id.isEmpty()) {
 				break;
@@ -136,13 +133,13 @@ public class FtrCombineTermsInSequence extends AbstractFilter{
 		return(id);
 	}
 
-	protected String generateCombinedTerm(SequenceLabel sequenceLabelProcessed, int index) {
+	protected String generateCombinedTerm(ISequence pPreprocessedSequence, int index) {
 
 		String termCombined = Symbol.EMPTY;
 
-		for(int i = index; i < index + blockSize && i < sequenceLabelProcessed.size(); i++) {
-			if(!sequenceLabelProcessed.getTerm(i).isEmpty()) {
-				termCombined += sequenceLabelProcessed.getTerm(i) + DELIMITER_TERM;
+		for(int i = index; i < index + blockSize && i < pPreprocessedSequence.length(); i++) {
+			if(!pPreprocessedSequence.getToken(i).isEmpty()) {
+				termCombined += pPreprocessedSequence.getToken(i) + DELIMITER_TERM;
 			}
 		}
 

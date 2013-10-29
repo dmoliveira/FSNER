@@ -2,13 +2,10 @@ package lbd.FSNER.ActivityControl;
 
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.Parameters;
@@ -119,8 +116,8 @@ public class SimpleActivityControl extends AbstractActivityControl {
 			return;
 		}
 
-		Map<String, SequenceLabel> vProcessedSequenceMap = PreprocessData.preprocessSequence(pSequence, mDataPreprocessorList);
-		Set<SequenceLabel> vSequenceLabelPreprocessedSet = new HashSet<SequenceLabel>();
+		Map<String, ISequence> vProcessedSequenceMap = PreprocessData.preprocessSequence(pSequence, mDataPreprocessorList);
+		Set<ISequence> vSequenceLabelPreprocessedSet = new HashSet<ISequence>();
 
 		int vEntityIndex;
 
@@ -136,18 +133,18 @@ public class SimpleActivityControl extends AbstractActivityControl {
 			}
 
 			synchronized (this) {
-				if (Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequence.getLabel(i)))) {
-					mEntitySet.add((String) pSequence.getToken(i));
+				if (Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pSequence.getLabel(i)))) {
+					mEntitySet.add(pSequence.getToken(i));
 				}
 			}
 
 			for (AbstractFilter cFilter : mFilterList) {
 
-				SequenceLabel vSequenceLabel = vProcessedSequenceMap.get(cFilter.getPreprocesingTypeName());
+				ISequence vSequenceLabel = vProcessedSequenceMap.get(cFilter.getPreprocesingTypeName());
 
 				int vDataProcessorIndex = cFilter.getFilterPreprocessingTypeIndex();
 
-				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vSequenceLabel.getLabel(vEntityIndex)))) {
+				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(vSequenceLabel.getLabel(vEntityIndex)))) {
 					cFilter.loadTermSequence(vSequenceLabel, vEntityIndex);
 				}
 
@@ -163,8 +160,8 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		loadActionAfterSequenceIteration(vProcessedSequenceMap);
 	}
 
-	private void calculateTermCommonness(Set<SequenceLabel> vSequenceLabelPreprocessedSet,
-			SequenceLabel vSequenceLabel, int vDataProcessorIndex) {
+	private void calculateTermCommonness(Set<ISequence> vSequenceLabelPreprocessedSet,
+			ISequence vSequenceLabel, int vDataProcessorIndex) {
 
 		if (!vSequenceLabelPreprocessedSet.contains(vSequenceLabel)) {
 
@@ -185,7 +182,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	protected void loadActionBeforeSequenceIteration(Map<String, SequenceLabel> processedSequenceMap) {
+	protected void loadActionBeforeSequenceIteration(Map<String, ISequence> processedSequenceMap) {
 		for (AbstractFilter cFilter : mFilterList) {
 			cFilter.loadActionBeforeSequenceIteration(processedSequenceMap
 					.get(cFilter.getPreprocesingTypeName()));
@@ -194,7 +191,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 	@Override
 	protected void loadActionAfterSequenceIteration(
-			Map<String, SequenceLabel> processedSequenceMap) {
+			Map<String, ISequence> processedSequenceMap) {
 		for (AbstractFilter activity : mFilterList) {
 			activity.loadActionAfterSequenceIteration(processedSequenceMap
 					.get(activity.getPreprocesingTypeName()));
@@ -209,26 +206,16 @@ public class SimpleActivityControl extends AbstractActivityControl {
 	}
 
 	@Override
-	protected void adjust(List<ISequence> sequenceList) {
+	protected void adjust(List<ISequence> pSequenceList) {
 
-		Iterator<Entry<String, List<AbstractFilter>>> ite = mFilterListPerDataPreprocessor
-				.entrySet().iterator();
+		final int FIRST_FILTER_INDEX = 0;
 
-		Entry<String, List<AbstractFilter>> vEntry;
-		List<AbstractFilter> vFilterList;
+		for(List<AbstractFilter> cFilterList : mFilterListPerDataPreprocessor.values()) {
 
-		int dataProcessIndex;
-		int firstFilterIndex = 0;
+			int vDataProcessIndex = cFilterList.get(FIRST_FILTER_INDEX).getFilterPreprocessingTypeIndex();
 
-		while (ite.hasNext()) {
-
-			vEntry = ite.next();
-			vFilterList = vEntry.getValue();
-
-			dataProcessIndex = vEntry.getValue().get(firstFilterIndex).getFilterPreprocessingTypeIndex();
-
-			for (ISequence sequence : sequenceList) {
-				addSequenceToFilters(vFilterList, dataProcessIndex, sequence);
+			for (ISequence cSequence : pSequenceList) {
+				addSequenceToFilters(cFilterList, vDataProcessIndex, cSequence);
 			}
 		}
 
@@ -236,11 +223,9 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		printFilterStatistics();
 	}
 
-	private void addSequenceToFilters(List<AbstractFilter> pFilterList, int pDataProcessIndex,
-			ISequence pSequence) {
+	private void addSequenceToFilters(List<AbstractFilter> pFilterList, int pDataProcessIndex, ISequence pSequence) {
 
-		SequenceLabel vSequenceLabelPreprocessed;
-		vSequenceLabelPreprocessed = mDataPreprocessorList.get(pDataProcessIndex).preprocessingSequence(pSequence);
+		ISequence vSequenceLabelPreprocessed = mDataPreprocessorList.get(pDataProcessIndex).preprocessingSequence(pSequence);
 
 		for (AbstractFilter cFilter : pFilterList) {
 

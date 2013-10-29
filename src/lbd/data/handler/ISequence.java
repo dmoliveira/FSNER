@@ -3,8 +3,10 @@ package lbd.data.handler;
 import java.io.Serializable;
 
 public interface ISequence extends Serializable {
-	public Object getToken(int pIndex);
+	public String getToken(int pIndex);
 	public int getLabel(int pIndex);
 	public void setLabel(int pIndex, int pLabel);
 	public int length();
+	public void add(String pToken, int pLabel);
+	public String[] toArraySequence();
 }

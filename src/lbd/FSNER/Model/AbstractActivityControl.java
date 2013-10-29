@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter.FilterStage;
 import lbd.data.handler.ISequence;
 
@@ -110,9 +109,9 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	protected abstract void loadActionBeforeSequenceSetIteration();
 
-	protected abstract void loadActionBeforeSequenceIteration(Map<String, SequenceLabel> pProcessedSequenceMap);
+	protected abstract void loadActionBeforeSequenceIteration(Map<String, ISequence> pProcessedSequenceMap);
 
-	protected abstract void loadActionAfterSequenceIteration(Map<String, SequenceLabel> pProcessedSequenceMap);
+	protected abstract void loadActionAfterSequenceIteration(Map<String, ISequence> pProcessedSequenceMap);
 
 	protected abstract void loadActionAfterSequenceSetIteration();
 
@@ -120,17 +119,17 @@ public abstract class AbstractActivityControl implements Serializable {
 
 	public abstract void update(List<ISequence> pSequenceList);
 
-	protected void addFilterStatistic(AbstractFilter pFilter, ISequence pSequence, SequenceLabel pSequenceLabelProcessed) {
+	protected void addFilterStatistic(AbstractFilter pFilter, ISequence pSequence, ISequence pPreprocessedSequence) {
 
-		for(int i = 0; i < pSequenceLabelProcessed.size(); i++) {
+		for(int i = 0; i < pPreprocessedSequence.length(); i++) {
 
-			String vSequenceInstanceId = pFilter.getSequenceInstanceId(pSequence, pSequenceLabelProcessed, i);
+			String vSequenceInstanceId = pFilter.getSequenceInstanceId(pSequence, pPreprocessedSequence, i);
 
 			if(!vSequenceInstanceId.isEmpty()) {
 				synchronized (this) {
 					pFilter.getFilterProbability().addStatistic(vSequenceInstanceId,
-							pSequenceLabelProcessed.getTerm(i),
-							pSequenceLabelProcessed.getLabel(i));
+							((String)pPreprocessedSequence.getToken(i)),
+							pPreprocessedSequence.getLabel(i));
 				}
 			}
 		}

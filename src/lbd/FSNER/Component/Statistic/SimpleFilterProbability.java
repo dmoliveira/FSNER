@@ -14,7 +14,7 @@ public class SimpleFilterProbability extends AbstractFilterProbability{
 		mTotalAssignedLabel++;
 		mTotalAssignedTermPerLabel[pLabel]++;
 
-		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pLabel))) {
+		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pLabel))) {
 			mTotalAssignedEntityLabel++;
 		}
 	}

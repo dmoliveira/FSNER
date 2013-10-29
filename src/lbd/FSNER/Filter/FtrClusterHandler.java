@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import lbd.FSNER.Component.Cluster;
 import lbd.FSNER.Component.ClusterHandler;
 import lbd.FSNER.Component.Sequence;
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.ScoreCalculatorModel.FSCMClusterHandler;
 import lbd.FSNER.Model.AbstractFilter;
@@ -57,18 +56,17 @@ public class FtrClusterHandler extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		entityValueListInSequence = new ArrayList<String>();
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed,
-			int index) {
-		entityValueListInSequence.add(sequenceLabelProcessed.getTerm(index));
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
+		entityValueListInSequence.add(pPreprocessedSequence.getToken(index));
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 
 		ArrayList<Entity> entityListInSequence = new ArrayList<Entity>();
 		Entity entity;
@@ -81,7 +79,7 @@ public class FtrClusterHandler extends AbstractFilter{
 		}
 
 
-		clusterHandler.addSequence(entityListInSequence, sequenceLabelProcessed.toArraySequence());
+		clusterHandler.addSequence(entityListInSequence, pPreprocessedSequence.toArraySequence());
 	}
 
 	@Override
@@ -91,7 +89,7 @@ public class FtrClusterHandler extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 
 		Entity entity;
 		double clusterScore;
@@ -155,10 +153,9 @@ public class FtrClusterHandler extends AbstractFilter{
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed,
-			int index) {
+	public String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex) {
 
-		Entity entity = EntityUtils.getEntity(sequenceLabelProcessed.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(pPreprocessedSequence.getToken(pIndex), entityList);
 
 		double threshold;
 		double maximumSequenceScore;
@@ -166,12 +163,12 @@ public class FtrClusterHandler extends AbstractFilter{
 		String id = "";
 
 		if(entity != null) {
-			ArrayList<Cluster> clusterList = clusterHandler.getSimilarClusterList(entity, sequenceLabelProcessed.toArraySequence());
+			ArrayList<Cluster> clusterList = clusterHandler.getSimilarClusterList(entity, pPreprocessedSequence.toArraySequence());
 
 			if(clusterList != null) {
 				for(Cluster cluster : clusterList) {
 					threshold = cluster.getAverageScore();
-					maximumSequenceScore = ((FSCMClusterHandler)mScoreCalculator).calculateClusterScore(cluster, entity, sequenceLabelProcessed.toArraySequence());
+					maximumSequenceScore = ((FSCMClusterHandler)mScoreCalculator).calculateClusterScore(cluster, entity, pPreprocessedSequence.toArraySequence());
 
 					if(maximumSequenceScore > threshold) {
 						id = "id:"+id+"-clusterId:"+cluster.getId();

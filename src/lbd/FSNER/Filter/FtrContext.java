@@ -2,7 +2,6 @@ package lbd.FSNER.Filter;
 
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Context;
 import lbd.FSNER.Filter.Component.Context.ContextType;
 import lbd.FSNER.Model.AbstractFilter;
@@ -63,24 +62,22 @@ public class FtrContext extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
 
 		//-- Add only one time for the context filter created with the specific affixType.
 		if(contextDataMapForId.get(getContextKey()) == mId) {
-			contextMap.get(getContextKey()).addAsContext(sequenceLabelProcessed, index);
+			contextMap.get(getContextKey()).addAsContext(pPreprocessedSequence, index);
 		}
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -92,18 +89,18 @@ public class FtrContext extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	public String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int index) {
 
 		String id = Symbol.EMPTY;
 
 		Context context = contextMap.get(getContextKey());
-		int contextId = context.getContextId(sequenceLabelProcessed, index,
+		int contextId = context.getContextId(pPreprocessedSequence, index,
 				contextType, windowSize, contextFlexibility);
 
 		if(contextId > -1) {

@@ -2,11 +2,11 @@ package lbd.FSNER.Filter.ScoreCalculatorModel;
 
 import java.util.ArrayList;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.FSNER.Filter.Component.Term;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.EntityUtils;
+import lbd.data.handler.ISequence;
 
 public class FSCMEntity extends AbstractFilterScoreCalculatorModel{
 
@@ -14,11 +14,11 @@ public class FSCMEntity extends AbstractFilterScoreCalculatorModel{
 	protected ArrayList<Entity> entityList;
 
 	@Override
-	public double calculateScoreInLabel(SequenceLabel sequenceLabel, int index) {
+	public double calculateScoreLabeling(ISequence pSequenceLabel, int pIndex) {
 
-		double sequenceScore = calculateScore(sequenceLabel, index);
+		double sequenceScore = calculateScore(pSequenceLabel, pIndex);
 
-		Entity entity = EntityUtils.getEntity(sequenceLabel.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(pSequenceLabel.getToken(pIndex), entityList);
 
 		sequenceScore = (entity != null && sequenceScore > entity.getMinScore())? sequenceScore : 0;
 
@@ -26,18 +26,18 @@ public class FSCMEntity extends AbstractFilterScoreCalculatorModel{
 	}
 
 	@Override
-	public double calculateScore(SequenceLabel sequenceLabel, int index) {
+	public double calculateScore(ISequence sequenceLabel, int index) {
 
 		double termsTotalScore = 0;
 
-		Entity entity = EntityUtils.getEntity(sequenceLabel.getTerm(index), entityList);
+		Entity entity = EntityUtils.getEntity(sequenceLabel.getToken(index), entityList);
 
 		Term term;
 
 		if(entity != null) {
-			for(int i = 0; i < sequenceLabel.size(); i++){
+			for(int i = 0; i < sequenceLabel.length(); i++){
 
-				term = entity.getTerm(sequenceLabel.getTerm(i));
+				term = entity.getTerm(sequenceLabel.getToken(i));
 
 				if(term != null && !term.getId().equals(entity.getId())) {
 					termsTotalScore += term.getScore();

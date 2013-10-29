@@ -50,6 +50,8 @@ import lbd.Utils.SoundToClass;
 import lbd.Utils.songStorms;
 import lbd.data.handler.ISequence;
 import lbd.fsner.entity.Entity;
+import lbd.fsner.labelFile.level2.AbstractLabelFileLevel2;
+import lbd.fsner.labelFile.level2.SimpleLabelFileLevel2;
 
 public class FSNER implements Serializable {
 
@@ -205,6 +207,8 @@ public class FSNER implements Serializable {
 		AbstractLabelFileLabelCalculatorModel orContinuosScoreModel = new LCMOrContinuosScore(termRestrictionChecker);
 		AbstractLabelFileLabelCalculatorModel sumScoreModel = new LCMSumScore(termRestrictionChecker); //Default [!]
 
+		AbstractLabelFileLevel2 mSimpleLabelFileLevel2 = new SimpleLabelFileLevel2(simpleActivityControl);
+
 		//-- Joint Components to NERModel
 		mNERModel.addModelActivityControl(simpleActivityControl);
 		mNERModel.addModelLabelFile(simpleLabelFile);
@@ -214,6 +218,7 @@ public class FSNER implements Serializable {
 
 		//-- Joint Subcomponents
 		simpleLabelFile.addSequenceScoreCalculatorModel(orDiscreteScoreModel);
+		simpleLabelFile.addLabelFileLevel2(mSimpleLabelFileLevel2);
 
 		//-- Execute FS-NER
 		mNERModel.allocModel(new String [] {vTermListRestrictionName});

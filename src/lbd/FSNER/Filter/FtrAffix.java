@@ -3,7 +3,6 @@ package lbd.FSNER.Filter;
 import java.util.HashMap;
 import java.util.Map;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
@@ -47,14 +46,14 @@ public class FtrAffix extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pSequenceLabelProcessed) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel pSequenceLabelProcessed, int pIndex) {
-		generateAffixes(pSequenceLabelProcessed.getTerm(pIndex));
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
+		generateAffixes(pPreprocessedSequence.getToken(pIndex));
 	}
 
 	public void generateAffixes(String pTerm) {
@@ -97,7 +96,7 @@ public class FtrAffix extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -109,17 +108,17 @@ public class FtrAffix extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel pSequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel pSequenceLabelProcessed, int pIndex) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		String vId = Symbol.EMPTY;
-		String vTerm = pSequenceLabelProcessed.getTerm(pIndex);
+		String vTerm = pPreprocessedSequence.getToken(pIndex);
 		String vTermAffix = generateAffix(mAffixType, vTerm, mAffixSize);
 
 		if(mAffixMap.containsKey(vTermAffix)) {

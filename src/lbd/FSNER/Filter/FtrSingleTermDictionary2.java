@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
@@ -25,8 +24,8 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 
 	protected static final String DICTIONARY_UNIVERSAL_DIRECTORY = "./samples/data/bcs2010/AutoTagger/Dictionary/";
 
-	protected static ArrayList<HashMap<String, Object>> dictionaryList;
-	protected static ArrayList<String> dictionaryNameList;
+	protected static ArrayList<HashMap<String, Object>> mDictionaryList;
+	protected static ArrayList<String> mDictionaryNameList;
 	protected static HashMap<String, Boolean> dictionaryLoadMap;
 	protected int dictionaryNameIndex;
 
@@ -38,9 +37,9 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 		super(ClassName.getSingleName(FtrSingleTermDictionary2.class.getName()),
 				preprocessingTypeNameIndex, scoreCalculator);
 
-		if(dictionaryList == null) {
-			dictionaryList = new ArrayList<HashMap<String,Object>>();
-			dictionaryNameList = new ArrayList<String>();
+		if(mDictionaryList == null) {
+			mDictionaryList = new ArrayList<HashMap<String,Object>>();
+			mDictionaryNameList = new ArrayList<String>();
 			dictionaryLoadMap = new HashMap<String, Boolean>();
 		}
 
@@ -50,7 +49,7 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 
 	@Override
 	public void initialize() {
-		if(dictionaryList.size() == 0) {
+		if(mDictionaryList.size() == 0) {
 			//-- Load Dictionary Name List
 			loadDictionaryNameList();
 
@@ -58,8 +57,8 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 			loadAllDictionary();
 		}
 
-		mActivityName += Symbol.SQUARE_BRACKET_LEFT + dictionaryNameList.get(dictionaryNameIndex).substring(
-				dictionaryNameList.get(dictionaryNameIndex).lastIndexOf(Symbol.SLASH) + 1) + Symbol.SQUARE_BRACKET_RIGHT;
+		mActivityName += Symbol.SQUARE_BRACKET_LEFT + mDictionaryNameList.get(dictionaryNameIndex).substring(
+				mDictionaryNameList.get(dictionaryNameIndex).lastIndexOf(Symbol.SLASH) + 1) + Symbol.SQUARE_BRACKET_RIGHT;
 	}
 
 	protected void loadDictionaryNameList() {
@@ -74,7 +73,7 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 			dictionaryFilenameAddress = DICTIONARY_UNIVERSAL_DIRECTORY + listOfFiles[i].getName();
 
 			if (listOfFiles[i].isFile() && !dictionaryLoadMap.containsKey(dictionaryFilenameAddress)) {
-				dictionaryNameList.add(dictionaryFilenameAddress);
+				mDictionaryNameList.add(dictionaryFilenameAddress);
 				dictionaryLoadMap.put(dictionaryFilenameAddress, false);
 				//System.out.println("--" + listOfFiles[i].getName());
 			}
@@ -83,7 +82,7 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 
 	protected void loadAllDictionary() {
 
-		for(String dictionaryFilenameAddress : dictionaryNameList) {
+		for(String dictionaryFilenameAddress : mDictionaryNameList) {
 			if(!dictionaryLoadMap.get(dictionaryFilenameAddress)) {
 				loadDictionary(dictionaryFilenameAddress);
 				dictionaryLoadMap.put(dictionaryFilenameAddress, true);
@@ -98,13 +97,13 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					new FileInputStream(dictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
-			dictionaryList.add(new HashMap<String, Object> ());
+			mDictionaryList.add(new HashMap<String, Object> ());
 
 			String entry;
 			String [] entryElement;
 			String entryPreprocessed;
 
-			HashMap<String, Object> dictionaryMap = dictionaryList.get(dictionaryList.size() - 1);
+			HashMap<String, Object> dictionaryMap = mDictionaryList.get(mDictionaryList.size() - 1);
 
 			while((entry = in.readLine()) != null) {
 
@@ -112,7 +111,7 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 
 				for(int i = 0; i < entryElement.length; i++) {
 
-					entryPreprocessed = dataProcessor.preprocessingTerm(entryElement[i], -1).getTerm();
+					entryPreprocessed = dataProcessor.preprocessingToken(entryElement[i], -1);
 					dictionaryMap.put(entryPreprocessed, null);
 					//System.out.println(entryPreprocessed);
 				}
@@ -137,21 +136,19 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -163,45 +160,45 @@ public class FtrSingleTermDictionary2 extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
-		String id = Symbol.EMPTY;
-		HashMap<String, Object> dictionaryMap;
+		String vId = Symbol.EMPTY;
+		HashMap<String, Object> vDictionaryMap;
 
-		for(int i = 0; i < dictionaryNameList.size(); i++) {
+		for(int i = 0; i < mDictionaryNameList.size(); i++) {
 
-			dictionaryMap = dictionaryList.get(i);
+			vDictionaryMap = mDictionaryList.get(i);
 
-			if(dictionaryMap.containsKey(sequenceLabelProcessed.getTerm(index))) {
-				id = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
+			if(vDictionaryMap.containsKey(pPreprocessedSequence.getToken(pIndex))) {
+				vId = "id:" + this.mId + ".dic:" + mDictionaryNameList.get(i);
 				break;
 			}
 		}
 
-		return (id);
+		return (vId);
 	}
 
 	public static int getDictionaryListNumber() {
 
-		File folder = new File(DICTIONARY_UNIVERSAL_DIRECTORY);
-		File[] listOfFiles = folder.listFiles();
+		File vFolder = new File(DICTIONARY_UNIVERSAL_DIRECTORY);
+		File[] vListOfFiles = vFolder.listFiles();
 
-		int dictionaryNumberList = 0;
+		int vDictionaryNumberList = 0;
 
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				dictionaryNumberList++;
+		for (int i = 0; i < vListOfFiles.length; i++) {
+			if (vListOfFiles[i].isFile()) {
+				vDictionaryNumberList++;
 			}
 		}
 
-		return(dictionaryNumberList);
+		return(vDictionaryNumberList);
 	}
 
 }

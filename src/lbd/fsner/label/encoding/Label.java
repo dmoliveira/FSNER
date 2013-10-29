@@ -1,6 +1,7 @@
 package lbd.fsner.label.encoding;
 
 import lbd.FSNER.Configuration.Parameters;
+import lbd.fsner.entity.EntityType;
 
 public enum Label {
 	Beginning("B"),
@@ -19,11 +20,15 @@ public enum Label {
 		return mValue;
 	}
 
-	public static Label getLabel(int pIndex) {
+	public static int getOrdinalLabel(EntityType pEntityType, Label pCanonicalLabel) {
+		return (pEntityType.ordinal() * EntityType.values().length) + pCanonicalLabel.ordinal();
+	}
+
+	public static Label getCanonicalLabel(int pIndex) {
 		return Label.values()[pIndex % Parameters.DataHandler.mLabelEncoding.getLabels().size()];
 	}
 
-	public static Label getLabel(String pName) {
+	public static Label getCanonicalLabel(String pName) {
 		return Label.valueOf(pName);
 	}
 }

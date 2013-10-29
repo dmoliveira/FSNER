@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Filter.Component.Dictionary;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
@@ -105,7 +104,7 @@ public class FtrFullTermDictionary extends AbstractFilter{
 				entryElement = entry.split(Symbol.SPACE);
 
 				for(int i = 0; i < entryElement.length; i++) {
-					entryElement[i] = dataProcessor.preprocessingTerm(entryElement[i], -1).getTerm();
+					entryElement[i] = dataProcessor.preprocessingToken(entryElement[i], -1);
 				}
 
 				dictionary.addEntry(entryElement);
@@ -130,21 +129,19 @@ public class FtrFullTermDictionary extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -156,14 +153,14 @@ public class FtrFullTermDictionary extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		String id = Symbol.EMPTY;
 		Dictionary dictionary;
@@ -172,7 +169,7 @@ public class FtrFullTermDictionary extends AbstractFilter{
 
 			dictionary = dictionaryList.get(i);
 
-			if(dictionary.isTermPartFromEntityEntryInDictionary(sequenceLabelProcessed, index)) {
+			if(dictionary.isTermPartFromEntityEntryInDictionary(pPreprocessedSequence, pIndex)) {
 				id = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
 				break;
 			}

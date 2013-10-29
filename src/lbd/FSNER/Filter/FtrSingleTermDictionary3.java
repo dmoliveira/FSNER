@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
@@ -37,7 +36,7 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 	protected AbstractDataPreprocessor mDataProcessor;
 
 	//-- To optimize generateTermWindowSize
-	protected static SequenceLabel sCurrentSequence;
+	protected static ISequence sCurrentSequence;
 	protected static int sCurrentIndex;
 	protected static String [] sTermsWindowSizeList;
 
@@ -128,8 +127,8 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 				//-- Preprocess entry
 				for(int i = 0; i < entryElement.length; i++) {
 
-					entryElement[i] = mDataProcessor.preprocessingTerm(
-							entryElement[i], -1).getTerm();
+					entryElement[i] = mDataProcessor.preprocessingToken(
+							entryElement[i], -1);
 
 					entryPreprocessed +=  entryElement[i] + Symbol.SPACE;
 				}
@@ -165,21 +164,19 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -191,26 +188,26 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		String id = Symbol.EMPTY;
 
-		if(sCurrentSequence != sequenceLabelProcessed || sCurrentIndex != index) {
-			sTermsWindowSizeList = generateTermsWindowSize(sequenceLabelProcessed, index);
+		if(sCurrentSequence != pPreprocessedSequence || sCurrentIndex != pIndex) {
+			sTermsWindowSizeList = generateTermsWindowSize(pPreprocessedSequence, pIndex);
 
-			sCurrentSequence = sequenceLabelProcessed;
-			sCurrentIndex = index;
+			sCurrentSequence = pPreprocessedSequence;
+			sCurrentIndex = pIndex;
 		}
 
 		HashMap<String, Object> entryDictionaryMap = sDictionaryList.get(
-				mDictionaryNameIndex).get(sequenceLabelProcessed.getTerm(index));
+				mDictionaryNameIndex).get(pPreprocessedSequence.getToken(pIndex));
 
 		if(entryDictionaryMap != null) {
 			for(int j = sTermsWindowSizeList.length - 1; j >= 0; j--) {
@@ -237,7 +234,7 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 		return (id);
 	}
 
-	protected String[] generateTermsWindowSize(SequenceLabel sequenceLabelProcessed, int index) {
+	protected String[] generateTermsWindowSize(ISequence pPreprocessedSequence, int pIndex) {
 
 		String term;
 		String [] termsWindowSizeList = new String[WINDOW_SIZE + 1];
@@ -246,13 +243,13 @@ public class FtrSingleTermDictionary3 extends AbstractFilter{
 
 			termsWindowSizeList[i] = Symbol.EMPTY;
 
-			for(int j = index; j < index + i + 1 && j < index + termsWindowSizeList.length && j < sequenceLabelProcessed.size(); j++) {
+			for(int j = pIndex; j < pIndex + i + 1 && j < pIndex + termsWindowSizeList.length && j < pPreprocessedSequence.length(); j++) {
 
-				term = sequenceLabelProcessed.getTerm(j);
+				term = pPreprocessedSequence.getToken(j);
 
 				if(term.length() > 0) {
-					termsWindowSizeList[i] += ((j != index && !sequenceLabelProcessed.getTerm(j).isEmpty())?
-							Symbol.SPACE : Symbol.EMPTY) + sequenceLabelProcessed.getTerm(j);
+					termsWindowSizeList[i] += ((j != pIndex && !pPreprocessedSequence.getToken(j).isEmpty())?
+							Symbol.SPACE : Symbol.EMPTY) + pPreprocessedSequence.getToken(j);
 				}
 			}
 

@@ -1,9 +1,9 @@
 package lbd.FSNER.LabelFile.LabelCalculatorModel;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractTermRestrictionChecker;
+import lbd.data.handler.ISequence;
 import lbd.fsner.label.encoding.Label;
 
 public class LCMOrContinuosScore extends LCMOrDiscreteScore{
@@ -17,7 +17,7 @@ public class LCMOrContinuosScore extends LCMOrDiscreteScore{
 
 	@Override
 	protected void calculateLabelProbability(int pIndex, String pTerm,
-			SequenceLabel pSequenceLabelProcessed,
+			ISequence pPreprocessedSequence,
 			FilterProbabilityHandler pFilterProbability,
 			String pFilterInstanceId) {
 
@@ -26,7 +26,7 @@ public class LCMOrContinuosScore extends LCMOrDiscreteScore{
 				double vLabelProbability = pFilterProbability.getProbability(pFilterInstanceId, cLabel);
 				mLabelProbability[cLabel] += vLabelProbability;
 				pFilterProbability.addToFilterStatisticForAssignedLabels(pTerm,
-						Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequenceLabelProcessed.getLabel(pIndex))), true);
+						Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pPreprocessedSequence.getLabel(pIndex))), true);
 			}
 		}
 	}

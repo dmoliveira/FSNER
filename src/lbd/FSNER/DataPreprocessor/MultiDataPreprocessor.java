@@ -2,41 +2,36 @@ package lbd.FSNER.DataPreprocessor;
 
 import java.util.ArrayList;
 
-import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.DataProcessor.Component.PreprocessData;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
+import lbd.data.handler.SequenceSegment;
 
 public class MultiDataPreprocessor extends AbstractDataPreprocessor{
 
 	private static final long serialVersionUID = 1L;
 
-	protected ArrayList<AbstractDataPreprocessor> dataPreproccessorList;
+	protected ArrayList<AbstractDataPreprocessor> mDataPreproccessorList;
 
 	public MultiDataPreprocessor(ArrayList<AbstractDataPreprocessor> dataPreproccessorList) {
 
 		super(getActivityName(dataPreproccessorList), null);
 
-		this.dataPreproccessorList = dataPreproccessorList;
+		this.mDataPreproccessorList = dataPreproccessorList;
 	}
 
 	@Override
-	public SequenceLabel preprocessingSequence(ISequence sequence) {
+	public ISequence preprocessingSequence(ISequence pSequence) {
 
-		SequenceLabel sequenceLabel = new SequenceLabel();
-		SequenceLabelElement sequenceLabelElement;
+		ISequence sequenceLabel = new SequenceSegment();
 
-		for(int i = 0; i < sequence.length(); i++) {
-
-			sequenceLabelElement = preprocessingTerm((String)sequence.getToken(i), sequence.getLabel(i));
-
-			if(!sequenceLabelElement.getTerm().isEmpty()) {
-				sequenceLabel.add(sequenceLabelElement);
+		for(int i = 0; i < pSequence.length(); i++) {
+			if(!pSequence.getToken(i).isEmpty()) {
+				sequenceLabel.add(pSequence.getToken(i), pSequence.getLabel(i));
 			} else {
-				sequenceLabel.add(new SequenceLabelElement(Symbol.EMPTY,Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal()));
+				sequenceLabel.add(Symbol.EMPTY, Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal());
 			}
 		}
 
@@ -44,24 +39,22 @@ public class MultiDataPreprocessor extends AbstractDataPreprocessor{
 	}
 
 	@Override
-	public SequenceLabelElement preprocessingTerm(String term, int label) {
+	public String preprocessingToken(String pTerm, int pLabel) {
 
-		String preproccessedTerm = term;
-		SequenceLabelElement sequenceLabelElement;
+		String vPreproccessedTerm = pTerm;
 
-		for(AbstractDataPreprocessor dataProcessor : dataPreproccessorList) {
-			sequenceLabelElement = PreprocessData.preproccessTerm(preproccessedTerm, label, dataPreproccessorList, dataProcessor.getActivityName());
-			preproccessedTerm = sequenceLabelElement.getTerm();
+		for(AbstractDataPreprocessor cDataProcessor : mDataPreproccessorList) {
+			vPreproccessedTerm = PreprocessData.preproccessTerm(vPreproccessedTerm, pLabel, mDataPreproccessorList, cDataProcessor.getActivityName());
 		}
 
-		return (new SequenceLabelElement(preproccessedTerm, label));
+		return vPreproccessedTerm;
 	}
 
 	@Override
 	public void initialize() {
 
-		for(int i = 0; i < dataPreproccessorList.size(); i++) {
-			dataPreproccessorList.get(i).initialize();
+		for(int i = 0; i < mDataPreproccessorList.size(); i++) {
+			mDataPreproccessorList.get(i).initialize();
 		}
 	}
 

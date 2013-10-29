@@ -2,10 +2,9 @@ package lbd.FSNER.Model;
 
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Component.Statistic.SimpleFilterProbability;
 import lbd.data.handler.ISequence;
+import lbd.data.handler.SequenceSegment;
 
 public abstract class AbstractDataPreprocessor extends AbstractActivity {
 
@@ -20,45 +19,46 @@ public abstract class AbstractDataPreprocessor extends AbstractActivity {
 		mCommonTermMap = new HashMap<String, SimpleFilterProbability>();
 	}
 
-	public SequenceLabel preprocessingSequence(ISequence pSequence) {
+	public ISequence preprocessingSequence(ISequence pSequence) {
 
-		SequenceLabel vSequenceLabel = new SequenceLabel();
+		ISequence vPreprocessedSequence = new SequenceSegment();
 
 		for(int i = 0; i < pSequence.length(); i++) {
-			vSequenceLabel.add(preprocessingTerm((String)pSequence.getToken(i), pSequence.getLabel(i)));
+			vPreprocessedSequence.add(preprocessingToken(pSequence.getToken(i), pSequence.getLabel(i)), pSequence.getLabel(i));
 		}
 
-		return (vSequenceLabel);
+		return (vPreprocessedSequence);
 	}
 
-	public abstract SequenceLabelElement preprocessingTerm(String pTerm, int pLabel);
+	public abstract String preprocessingToken(String pToken, int pLabel);
 
-	public void computeCommonTermsInSequence(SequenceLabel pSequenceLabel) {
+	public void computeCommonTermsInSequence(ISequence pPreprocessedSequence) {
 
 		SimpleFilterProbability vFilterProbability;
 		String vTerm;
 		int vLabel;
 
-		for(int i = 0; i < pSequenceLabel.size(); i++) {
+		for(int i = 0; i < pPreprocessedSequence.length(); i++) {
 
-			vTerm = pSequenceLabel.getTerm(i).toLowerCase();
+			vTerm = pPreprocessedSequence.getToken(i).toLowerCase();
 
 			if(!mCommonTermMap.containsKey(vTerm)) {
 				mCommonTermMap.put(vTerm, new SimpleFilterProbability());
 			}
 
-			vLabel = pSequenceLabel.getLabel(i);
+			vLabel = pPreprocessedSequence.getLabel(i);
 			vFilterProbability = mCommonTermMap.get(vTerm);
 			vFilterProbability.addLabel(vLabel);
 		}
 	}
 
-	public double getCommonTermProbability(String pTerm) {
+	public double getCommonTokenProbability(String pToken) {
 
 		double vCommonTermPercent = 0;
+		String vTokenLowerCase = pToken.toLowerCase();
 
-		if(mCommonTermMap.containsKey(pTerm.toLowerCase())) {
-			vCommonTermPercent = 1 - mCommonTermMap.get(pTerm.toLowerCase()).getProbability();
+		if(mCommonTermMap.containsKey(vTokenLowerCase)) {
+			vCommonTermPercent = 1 - mCommonTermMap.get(vTokenLowerCase).getProbability();
 		}
 
 		return(vCommonTermPercent);

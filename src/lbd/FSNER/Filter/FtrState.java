@@ -1,6 +1,5 @@
 package lbd.FSNER.Filter;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -29,13 +28,13 @@ public class FtrState extends AbstractFilter {
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
 		// TODO Auto-generated method stub
 
 	}
@@ -47,15 +46,13 @@ public class FtrState extends AbstractFilter {
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -68,7 +65,7 @@ public class FtrState extends AbstractFilter {
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel pSequenceLabelProcessed, int pIndex) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 
@@ -89,8 +86,8 @@ public class FtrState extends AbstractFilter {
 			vId = "id:"
 					+ this.mId
 					+ Symbol.HYPHEN
-					+ ((mIsToConsiderStatePerToken) ? pSequenceLabelProcessed
-							.getTerm(pIndex) + Symbol.COLON : Symbol.EMPTY)
+					+ ((mIsToConsiderStatePerToken) ? pPreprocessedSequence
+							.getToken(pIndex) + Symbol.COLON : Symbol.EMPTY)
 							+ vPreviousStates;
 		}
 

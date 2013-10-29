@@ -188,7 +188,7 @@ public class FileUtils {
 
 			for(ISequence cSequence : pSequenceList) {
 				for(int i = 0; i < cSequence.length(); i++) {
-					vWriter.write(cSequence.getToken(i) + Symbol.PIPE + Label.getLabel(cSequence.getLabel(i)).name() + Symbol.NEW_LINE);
+					vWriter.write(cSequence.getToken(i) + Symbol.PIPE + Label.getCanonicalLabel(cSequence.getLabel(i)).name() + Symbol.NEW_LINE);
 				}
 				vWriter.write(Symbol.NEW_LINE);
 			}

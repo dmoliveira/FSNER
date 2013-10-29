@@ -2,7 +2,6 @@ package lbd.FSNER.Filter;
 
 import java.util.HashMap;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.DataPreprocessor.DPCapitalizationTermsOnly;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
@@ -41,22 +40,20 @@ public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
-		if(index > 0 && DPCapitalizationTermsOnly.isCapitalized(sequenceLabelProcessed.getTerm(index))) {
-			termsCapitalized.put(sequenceLabelProcessed.getTerm(index).toLowerCase(), null);
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
+		if(index > 0 && DPCapitalizationTermsOnly.isCapitalized(pPreprocessedSequence.getToken(index))) {
+			termsCapitalized.put(pPreprocessedSequence.getToken(index).toLowerCase(), null);
 		}
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -68,17 +65,16 @@ public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int index) {
 
-		return ((termsCapitalized.containsKey(sequenceLabelProcessed.getTerm(index).toLowerCase()))?
-				"id:" + this.mId + Symbol.DOT + sequenceLabelProcessed.getTerm(index).toLowerCase() : Symbol.EMPTY);
+		return ((termsCapitalized.containsKey(pPreprocessedSequence.getToken(index).toLowerCase()))?
+				"id:" + this.mId + Symbol.DOT + pPreprocessedSequence.getToken(index).toLowerCase() : Symbol.EMPTY);
 	}
 
 }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.TermLevelStatisticsAnalysis;
 import lbd.FSNER.Configuration.Constants;
 import lbd.FSNER.Configuration.Debug;
@@ -17,12 +16,14 @@ import lbd.FSNER.Utils.SimpleStopWatch;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
 import lbd.data.handler.SequenceSet;
+import lbd.fsner.labelFile.level2.AbstractLabelFileLevel2;
 
 public abstract class AbstractLabelFile implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	protected AbstractActivityControl mActivityControl;
+	protected AbstractLabelFileLevel2 mLabelFileLevel2;
 	protected AbstractUpdateControl mUpdateControl;
 	protected AbstractLabelFileLabelCalculatorModel mLabelCalculator;
 
@@ -42,11 +43,15 @@ public abstract class AbstractLabelFile implements Serializable {
 	}
 
 	public void addActivityControl(AbstractActivityControl pActivityControl) {
-		this.mActivityControl = pActivityControl;
+		mActivityControl = pActivityControl;
+	}
+
+	public void addLabelFileLevel2(AbstractLabelFileLevel2 pLabelFileLevel2) {
+		mLabelFileLevel2 = pLabelFileLevel2;
 	}
 
 	public void addSequenceScoreCalculatorModel(AbstractLabelFileLabelCalculatorModel pLabelCalculator) {
-		this.mLabelCalculator = pLabelCalculator;
+		mLabelCalculator = pLabelCalculator;
 	}
 
 	public void labelFile(String pFilenameAddressToLabel, boolean pIsUnrealibleSituation) {
@@ -157,7 +162,7 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	public abstract ISequence labelSequence(ISequence pSequence);
 
-	protected abstract int getLabel(ISequence pSequence, Map<String, SequenceLabel> pProccessedSequenceMap, int pIndex);
+	protected abstract int getLabel(ISequence pSequence, Map<String, ISequence> pPreProccessedSequenceMap, int pIndex);
 
 	protected void printNumberedSequence(ISequence pSequence) {
 		if(pSequence == null) {

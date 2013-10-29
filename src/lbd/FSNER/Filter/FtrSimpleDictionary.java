@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.TermSequence;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
@@ -87,12 +86,12 @@ public class FtrSimpleDictionary extends AbstractFilter{
 		}
 	}
 
-	protected void loadDictionary(String dictionaryFilenameAddress) {
+	protected void loadDictionary(String pDictionaryFilenameAddress) {
 
 		try {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(dictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
+					new FileInputStream(pDictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
 			dictionaryList.add(new HashMap<String, LinkedList<TermSequence>> ());
 			HashMap<String, LinkedList<TermSequence>> dictionary = dictionaryList.get(dictionaryList.size() - 1);
@@ -105,7 +104,7 @@ public class FtrSimpleDictionary extends AbstractFilter{
 				entryElement = new TermSequence(entry, Symbol.SPACE_CHAR);
 
 				for(int i = 0; i < entryElement.size(); i++) {
-					entryElement.set(dataProcessor.preprocessingTerm(entryElement.get(i), -1).getTerm(), i);
+					entryElement.set(dataProcessor.preprocessingToken(entryElement.get(i), -1), i);
 				}
 
 				if(!entryElement.toString().isEmpty()) {
@@ -155,21 +154,19 @@ public class FtrSimpleDictionary extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -181,30 +178,30 @@ public class FtrSimpleDictionary extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
-		String id = Symbol.EMPTY;
-		LinkedList<TermSequence> entryList;
-		TermSequence sequence = new TermSequence(sequenceLabelProcessed.toArraySequence());
+		String vId = Symbol.EMPTY;
+		LinkedList<TermSequence> vEntryList;
+		TermSequence vSequence = new TermSequence(pPreprocessedSequence.toArraySequence());
 
 		for(int i = 0; i < dictionaryNameList.size(); i++) {
 
-			entryList = dictionaryList.get(i).get(sequenceLabelProcessed.getTerm(index));
+			vEntryList = dictionaryList.get(i).get(pPreprocessedSequence.getToken(pIndex));
 
-			if(entryList != null && isTermEntityPart(entryList, sequence, index)) {
-				id = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
+			if(vEntryList != null && isTermEntityPart(vEntryList, vSequence, pIndex)) {
+				vId = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
 				break;
 			}
 		}
 
-		return (id);
+		return vId;
 	}
 
 	protected boolean isTermEntityPart(LinkedList<TermSequence> entryList,

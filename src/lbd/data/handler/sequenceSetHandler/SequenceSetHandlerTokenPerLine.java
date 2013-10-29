@@ -36,7 +36,7 @@ public class SequenceSetHandlerTokenPerLine extends AbstractSequenceSetHandler {
 					vLineAttributes = vLine.split(Parameters.DataHandler.mSplitTokenLabelDelimiter);
 
 					// Token = 0, Label = 1
-					vSequence.add(vLineAttributes[0], Label.getLabel(vLineAttributes[1]).ordinal());
+					vSequence.add(vLineAttributes[0], Label.getCanonicalLabel(vLineAttributes[1]).ordinal());
 				} else {
 					vSequenceSet.add(vSequence);
 					vSequence = new SequenceSegment();
@@ -55,7 +55,7 @@ public class SequenceSetHandlerTokenPerLine extends AbstractSequenceSetHandler {
 
 		for(int i = 0; i < pSequence.length(); i++) {
 			pOutput.write(pSequence.getToken(i) + Symbol.DELIMITER_LABEL +
-					Label.getLabel(pSequence.getLabel(i)).name() + Symbol.NEW_LINE);
+					Label.getCanonicalLabel(pSequence.getLabel(i)).name() + Symbol.NEW_LINE);
 		}
 
 		pOutput.write(Symbol.NEW_LINE);
@@ -84,7 +84,7 @@ public class SequenceSetHandlerTokenPerLine extends AbstractSequenceSetHandler {
 					vLineAttributes = vLine.split(Parameters.DataHandler.mSplitTokenLabelDelimiter);
 
 					String token = vLineAttributes[0];
-					int label = Label.getLabel(vLineAttributes[1]).ordinal();
+					int label = Label.getCanonicalLabel(vLineAttributes[1]).ordinal();
 
 					vSequence.add(token, label);
 
@@ -146,7 +146,7 @@ public class SequenceSetHandlerTokenPerLine extends AbstractSequenceSetHandler {
 			for (int i = 0; i < pSequence.length(); i++) {
 				vLineOutput = pSequence.getToken(i) + Parameters.DataHandler.mDelimiterTokenLabel;
 				vLabelIndex = ((!pIsSegment)? pSequence.getLabel(i) : ((pSequence.getLabel(i) == 0)? 3 : 1));
-				vLineOutput += Label.getLabel(vLabelIndex).name() + Symbol.NEW_LINE;
+				vLineOutput += Label.getCanonicalLabel(vLabelIndex).name() + Symbol.NEW_LINE;
 				pWriter.write(vLineOutput);
 			}
 

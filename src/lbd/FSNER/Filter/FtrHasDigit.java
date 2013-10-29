@@ -1,6 +1,5 @@
 package lbd.FSNER.Filter;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -26,8 +25,7 @@ public class FtrHasDigit extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -39,14 +37,13 @@ public class FtrHasDigit extends AbstractFilter{
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -58,36 +55,36 @@ public class FtrHasDigit extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		String id = Symbol.EMPTY;
 
-		if(hasDigit(sequenceLabelProcessed.getTerm(index))) {
+		if(hasDigit(pPreprocessedSequence.getToken(pIndex))) {
 			id = "id:" + this.mId + ".hasDigit";
 		}
 
 		return (id);
 	}
 
-	protected boolean hasDigit(String term) {
+	protected boolean hasDigit(String pToken) {
 
-		boolean hasDigit = false;
+		boolean vHasDigit = false;
 
-		for(int i = 0; i < term.length(); i++) {
-			if(Character.isDigit(term.charAt(i))) {
-				hasDigit = true;
+		for(int i = 0; i < pToken.length(); i++) {
+			if(Character.isDigit(pToken.charAt(i))) {
+				vHasDigit = true;
 				break;
 			}
 		}
 
-		return(hasDigit);
+		return(vHasDigit);
 	}
 
 }

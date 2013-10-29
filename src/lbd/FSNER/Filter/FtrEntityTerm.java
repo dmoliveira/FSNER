@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Utils.ClassName;
@@ -46,19 +45,19 @@ public class FtrEntityTerm extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		mEntity = Symbol.EMPTY;
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel pSequenceLabelProccessed, int pIndex) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 
-		mEntity += ((mEntity.isEmpty())? Symbol.EMPTY : Symbol.SPACE) + pSequenceLabelProccessed.getTerm(pIndex);
+		mEntity += ((mEntity.isEmpty())? Symbol.EMPTY : Symbol.SPACE) + pPreprocessedSequence.getToken(pIndex);
 
 		//TODO: Put a more generic type. Using BILOU for now.
-		if(pSequenceLabelProccessed.getLabel(pIndex) == Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal()
-				|| Label.getLabel(pSequenceLabelProccessed.getLabel(pIndex)) == Label.UnitToken) {
+		if(pPreprocessedSequence.getLabel(pIndex) == Parameters.DataHandler.mLabelEncoding.getOutsideLabel().ordinal()
+				|| Label.getCanonicalLabel(pPreprocessedSequence.getLabel(pIndex)) == Label.UnitToken) {
 
 			int vEntitySize = mEntity.split(Symbol.SPACE).length;
 			String vEntityBeginning = mEntity.split(Symbol.SPACE)[0];
@@ -78,7 +77,7 @@ public class FtrEntityTerm extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -89,13 +88,13 @@ public class FtrEntityTerm extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel pSequenceLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	public String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 
@@ -103,8 +102,8 @@ public class FtrEntityTerm extends AbstractFilter{
 			resetFilterMemory();
 		}
 
-		if(mEntity.isEmpty() && hasEntity(pSequenceLabelProcessed, pIndex,
-				mInvertedIndex.get(pSequenceLabelProcessed.getTerm(pIndex)))) {
+		if(mEntity.isEmpty() && hasEntity(pPreprocessedSequence, pIndex,
+				mInvertedIndex.get(pPreprocessedSequence.getToken(pIndex)))) {
 
 			vId = "id:" + mId + Symbol.HYPHEN + mEntity + ".Pos:" + (pIndex - mStartEntityPosition)
 					+ ".Sz:" + (mEndEntityPosition - mStartEntityPosition + 1);
@@ -128,7 +127,7 @@ public class FtrEntityTerm extends AbstractFilter{
 		mEndEntityPosition = -1;
 	}
 
-	public boolean hasEntity(SequenceLabel pSequenceLabelProcessed, int pIndex, Set<Integer> pEntitySizeList) {
+	public boolean hasEntity(ISequence pPreprocessedSequence, int pIndex, Set<Integer> pEntitySizeList) {
 
 		if(pEntitySizeList == null || pEntitySizeList.size() == 0) {
 			return false;
@@ -137,7 +136,7 @@ public class FtrEntityTerm extends AbstractFilter{
 		boolean vHasEntity = false;
 
 		for(int cEntitySize : pEntitySizeList) {
-			String vCandidateEntity = getSegment(pSequenceLabelProcessed, pIndex, cEntitySize);
+			String vCandidateEntity = getSegment(pPreprocessedSequence, pIndex, cEntitySize);
 
 			if(!vCandidateEntity.isEmpty() && mEntityMap.get(cEntitySize).contains(vCandidateEntity)) {
 				vHasEntity = true;
@@ -151,13 +150,13 @@ public class FtrEntityTerm extends AbstractFilter{
 		return vHasEntity;
 	}
 
-	public String getSegment(SequenceLabel pSequenceLabelProcessed, int pIndex, int pSize) {
+	public String getSegment(ISequence pPreprocessedSequence, int pIndex, int pSize) {
 
 		String vSegment = Symbol.EMPTY;
 
-		if(pIndex + pSize - 1 < pSequenceLabelProcessed.size()) {
+		if(pIndex + pSize - 1 < pPreprocessedSequence.length()) {
 			for(int cIndex = pIndex; cIndex < pIndex + pSize; cIndex++) {
-				vSegment += ((vSegment.isEmpty())? Symbol.EMPTY : Symbol.SPACE) + pSequenceLabelProcessed.getTerm(cIndex);
+				vSegment += ((vSegment.isEmpty())? Symbol.EMPTY : Symbol.SPACE) + pPreprocessedSequence.getToken(cIndex);
 			}
 		}
 

@@ -72,7 +72,7 @@ public class FilterProbabilityHandler implements Serializable {
 		mTotalAssignedLabelsInTrain++;
 		mLabelFrequencyInTrainList.set(pLabel, mLabelFrequencyInTrainList.get(pLabel) + 1);
 
-		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pLabel))) {
+		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pLabel))) {
 			mEntityTermsAssignedInTrainList.add(pTerm);
 		}
 	}

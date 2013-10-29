@@ -1,6 +1,5 @@
 package lbd.FSNER.Filter;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -12,7 +11,7 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 	private static final long serialVersionUID = 1L;
 
 	protected AbstractFilter filter;
-	protected int shiftPosition;
+	protected int mShiftPosition;
 
 	public FtrShiftFilterPosition(int preprocessingTypeNameIndex,
 			AbstractFilterScoreCalculatorModel scoreCalculator, AbstractFilter filter, int shiftPosition) {
@@ -22,7 +21,7 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 				preprocessingTypeNameIndex, scoreCalculator);
 
 		this.filter = filter;
-		this.shiftPosition = shiftPosition;
+		this.mShiftPosition = shiftPosition;
 		//this.commonFilterName = "Shf.SP:" + filter.getCommonFilterName();//+ shiftPosition + CommonTag.DOT
 		this.mFilterClassName = filter.getFilterClassName();//+ shiftPosition + CommonTag.DOT
 	}
@@ -40,20 +39,19 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated constructor stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated constructor stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated constructor stub
 
 	}
@@ -65,19 +63,19 @@ public class FtrShiftFilterPosition extends AbstractFilter {
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int vIndex) {
 
-		int newIndex = index + shiftPosition;
-		String id = ((newIndex > -1 && newIndex < sequenceLabelProcessed.size())?
+		int vNewIndex = vIndex + mShiftPosition;
+		String vId = ((vNewIndex > -1 && vNewIndex < pPreprocessedSequence.length())?
 				"id:" + this.mId + Symbol.DOT + filter.getSequenceInstanceId(pSequence,
-						sequenceLabelProcessed, newIndex) : Symbol.EMPTY);
+						pPreprocessedSequence, vNewIndex) : Symbol.EMPTY);
 
-		return (id);
+		return vId;
 	}
 
 }

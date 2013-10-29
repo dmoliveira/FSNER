@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
@@ -104,7 +103,7 @@ public class FtrGazetteer extends AbstractFilter{
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
@@ -116,13 +115,13 @@ public class FtrGazetteer extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(SequenceLabel pSequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -134,13 +133,13 @@ public class FtrGazetteer extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel pSequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence, SequenceLabel pSequenceLabelProcessed, int pIndex) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int pIndex) {
 
 		String vId = Symbol.EMPTY;
 		String vIdModel = "id:{0}.dic:{1}.entPos:{2}.entSz:{3}";
@@ -151,7 +150,7 @@ public class FtrGazetteer extends AbstractFilter{
 
 		if(mEntityStartPosition == -1) {
 
-			String vTerm = (String) pSequence.getToken(pIndex);
+			String vTerm = pSequence.getToken(pIndex);
 
 			if(mInvertedIndex.containsKey(vTerm)) {
 
@@ -188,11 +187,11 @@ public class FtrGazetteer extends AbstractFilter{
 		return vId;
 	}
 
-	private String getCandidateEntity(ISequence pSequence, int pIndex, int pEntitySize) {
+	public String getCandidateEntity(ISequence pSequence, int pIndex, int pEntitySize) {
 
 		String vCandidateEntity = Symbol.EMPTY;
 
-		for(int i = pIndex; i < pIndex + pEntitySize; i++) {
+		for(int i = pIndex; i < pIndex + pEntitySize && i < pSequence.length(); i++) {
 			vCandidateEntity += pSequence.getToken(i) + Symbol.SPACE;
 		}
 

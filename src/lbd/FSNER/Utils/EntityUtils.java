@@ -2,7 +2,6 @@ package lbd.FSNER.Utils;
 
 import java.util.ArrayList;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Filter.Component.Entity;
 import lbd.data.handler.ISequence;
@@ -15,7 +14,7 @@ public class EntityUtils {
 		int vEntityIndex = -1;
 
 		for(int i = pStartPosition; i < pSequence.length(); i++){
-			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(pSequence.getLabel(i)))) {
+			if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pSequence.getLabel(i)))) {
 				vEntityIndex = i;
 				break;
 			}
@@ -25,15 +24,15 @@ public class EntityUtils {
 	}
 
 	//TODO: Used only for BILOU label. Make it more generic.
-	public static int getEntityEndIndex(SequenceLabel pSequence, int pEntityStartIndex) {
+	public static int getEntityEndIndex(ISequence pSequence, int pEntityStartIndex) {
 		int vEntityEndIndex = -1;
 
-		if(!Parameters.DataHandler.mLabelEncoding.isOutside(Label.getLabel(pSequence.getLabel(pEntityStartIndex)))) {
-			if(Label.getLabel(pSequence.getLabel(pEntityStartIndex)) == Label.UnitToken) {
+		if(!Parameters.DataHandler.mLabelEncoding.isOutside(Label.getCanonicalLabel(pSequence.getLabel(pEntityStartIndex)))) {
+			if(Label.getCanonicalLabel(pSequence.getLabel(pEntityStartIndex)) == Label.UnitToken) {
 				vEntityEndIndex = pEntityStartIndex;
 			} else {
-				for(int pEntityIndex = pEntityStartIndex + 1; pEntityIndex < pSequence.size(); pEntityIndex++) {
-					if(Label.getLabel(pSequence.getLabel(pEntityIndex)) == Label.Last) {
+				for(int pEntityIndex = pEntityStartIndex + 1; pEntityIndex < pSequence.length(); pEntityIndex++) {
+					if(Label.getCanonicalLabel(pSequence.getLabel(pEntityIndex)) == Label.Last) {
 						vEntityEndIndex = pEntityIndex;
 						break;
 					}

@@ -6,16 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lbd.FSNER.Component.SequenceLabel;
-import lbd.FSNER.Component.SequenceLabelElement;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.data.handler.ISequence;
 
 public class PreprocessData {
 
-	public static Map<String, SequenceLabel> preprocessSequence(ISequence sequence, List<AbstractDataPreprocessor> activityList) {
+	public static Map<String, ISequence> preprocessSequence(ISequence sequence, List<AbstractDataPreprocessor> activityList) {
 
-		Map<String, SequenceLabel> preproccessedSequenceMap = new HashMap<String, SequenceLabel>();
+		Map<String, ISequence> preproccessedSequenceMap = new HashMap<String, ISequence>();
 
 		for(AbstractDataPreprocessor activity : activityList) {
 			preproccessedSequenceMap.put(activity.getActivityName(), activity.preprocessingSequence(sequence));
@@ -24,7 +22,7 @@ public class PreprocessData {
 		return(preproccessedSequenceMap);
 	}
 
-	public static SequenceLabelElement preproccessTerm(String term, int label,
+	public static String preproccessTerm(String term, int label,
 			ArrayList<AbstractDataPreprocessor> activityList, String activityPreprocessingName) {
 
 		AbstractDataPreprocessor activityPreprocessing = null;
@@ -36,7 +34,7 @@ public class PreprocessData {
 			}
 		}
 
-		return(activityPreprocessing.preprocessingTerm(term, label));
+		return(activityPreprocessing.preprocessingToken(term, label));
 	}
 
 }

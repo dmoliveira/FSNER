@@ -3,7 +3,6 @@ package lbd.FSNER.LabelFile.LabelCalculatorModel;
 import java.util.List;
 import java.util.Map;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Component.Statistic.FilterProbabilityHandler;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
@@ -33,7 +32,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 	@Override
 	public int calculateMostProbablyLabelSub(int pIndex,
 			ISequence pSequence,
-			Map<String, SequenceLabel> pProccessedSequenceMap,
+			Map<String, ISequence> pProccessedSequenceMap,
 			List<AbstractDataPreprocessor> pDataProcessorList,
 			List<AbstractFilter> pFilterList) {
 
@@ -45,7 +44,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		String vFilterInstanceId;
 		String vTerm = Symbol.EMPTY;
 
-		SequenceLabel vSequenceLabelProcessed = null;
+		ISequence vPreprocessedSequence = null;
 		FilterProbabilityHandler vFilterProbability = null;
 		AbstractDataPreprocessor vDataPreprocessor = null;
 
@@ -57,19 +56,19 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 			if(vLastFilterPreprocessingTypeNameIndex != cFilter.getFilterPreprocessingTypeIndex()) {
 
 				vDataPreprocessor = pDataProcessorList.get(cFilter.getFilterPreprocessingTypeIndex());
-				vSequenceLabelProcessed = pProccessedSequenceMap.get(cFilter.getPreprocesingTypeName());
+				vPreprocessedSequence = pProccessedSequenceMap.get(cFilter.getPreprocesingTypeName());
 				vLastFilterPreprocessingTypeNameIndex = cFilter.getFilterPreprocessingTypeIndex();
 
-				vTerm = vSequenceLabelProcessed.getTerm(pIndex);
+				vTerm = vPreprocessedSequence.getToken(pIndex);
 			}
 
 			if(cFilter.getFilterState() == FilterState.Active &&
 					!mIsUnrealibleSituation &&
-					vDataPreprocessor.getCommonTermProbability(vTerm) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
+					vDataPreprocessor.getCommonTokenProbability(vTerm) < COMMON_TERM_PERCENTAGE_THRESHOLD) {// <
 
 				//-- Get filter instance id determined by the index
 				vFilterProbability = cFilter.getFilterProbability();
-				vFilterInstanceId = cFilter.getSequenceInstanceId(pSequence, vSequenceLabelProcessed, pIndex);
+				vFilterInstanceId = cFilter.getSequenceInstanceId(pSequence, vPreprocessedSequence, pIndex);
 
 				if(!vFilterInstanceId.isEmpty() &&	vFilterProbability.getProbability(vFilterInstanceId) > this.vAlpha) {
 
@@ -88,8 +87,8 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 					vWasFilterActivated = true;
 
 					vFilterProbability.addToFilterStatisticForAssignedLabels(vTerm,
-							Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vSequenceLabelProcessed.getLabel(pIndex))),
-							Parameters.DataHandler.mLabelEncoding.isEntity(Label.getLabel(vFilterLabelChoosed)));
+							Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(vPreprocessedSequence.getLabel(pIndex))),
+							Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(vFilterLabelChoosed)));
 				}
 			}
 		}
@@ -115,7 +114,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
 			probability = labelProbability[i]/normalizationFactor[i];
 			if(vShowProbabilityForLabel && term.length() > 2) {
-				System.out.println("Prob(" + Label.getLabel(i).getValue() + "): " + probability);
+				System.out.println("Prob(" + Label.getCanonicalLabel(i).getValue() + "): " + probability);
 			}
 
 			if(probability > maxProbability) {
@@ -125,7 +124,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		}
 
 		if(vShowProbabilityForLabel && term.length() > 2) {
-			System.out.println(">> Chosen Label: " + Label.getLabel(mostProbablyLabel).getValue());
+			System.out.println(">> Chosen Label: " + Label.getCanonicalLabel(mostProbablyLabel).getValue());
 		}
 		if(vShowProbabilityForLabel && term.length() > 2) {
 			System.out.println("-----------------");

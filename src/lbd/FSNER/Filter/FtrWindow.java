@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Model.AbstractMetaFilter;
@@ -42,7 +41,7 @@ public class FtrWindow extends AbstractMetaFilter{
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel pSequenceLabelProcessed, int pIndex) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
 		List<Integer> vOffsetList = createOffsetList();
 		int vLowerBound = vOffsetList.get(0);
@@ -57,7 +56,7 @@ public class FtrWindow extends AbstractMetaFilter{
 
 		for(int cOffset : vOffsetList) {
 
-			vPartialId = super.getSequenceInstanceIdSub(pSequence, pSequenceLabelProcessed, pIndex + cOffset);
+			vPartialId = super.getSequenceInstanceIdSub(pSequence, pPreprocessedSequence, pIndex + cOffset);
 
 			if(!vPartialId.isEmpty()) {
 				vId += MessageFormat.format("idx({0}):{1}+", pIndex + cOffset, vPartialId);

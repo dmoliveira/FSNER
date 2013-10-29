@@ -1,6 +1,5 @@
 package lbd.FSNER.Filter;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.DataPreprocessor.DPCapitalizationTermsOnly;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
@@ -34,21 +33,19 @@ public class FtrCapitalizedTerms extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -60,18 +57,18 @@ public class FtrCapitalizedTerms extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int index) {
 
 		String id = Symbol.EMPTY;
 
-		if(DPCapitalizationTermsOnly.isCapitalized(sequenceLabelProcessed.getTerm(index))) {
+		if(DPCapitalizationTermsOnly.isCapitalized(pPreprocessedSequence.getToken(index))) {
 			id = "id:" + id + ".isCapitalized";
 		}
 

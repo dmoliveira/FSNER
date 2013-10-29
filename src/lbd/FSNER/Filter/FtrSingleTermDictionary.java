@@ -9,8 +9,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
@@ -106,7 +106,7 @@ public class FtrSingleTermDictionary extends AbstractFilter{
 
 				for(int i = 0; i < entryElement.length; i++) {
 
-					entryPreprocessed = dataProcessor.preprocessingTerm(entryElement[i], -1).getTerm();
+					entryPreprocessed = dataProcessor.preprocessingToken(entryElement[i], -1);
 					dictionaryMap.put(entryPreprocessed, null);
 					//System.out.println(entryPreprocessed);
 				}
@@ -131,21 +131,19 @@ public class FtrSingleTermDictionary extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -157,29 +155,29 @@ public class FtrSingleTermDictionary extends AbstractFilter{
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
-		String id = Symbol.EMPTY;
-		HashMap<String, Object> dictionaryMap;
+		String vId = Symbol.EMPTY;
+		Map<String, Object> vDictionaryMap;
 
 		for(int i = 0; i < dictionaryNameList.size(); i++) {
 
-			dictionaryMap = dictionaryList.get(i);
+			vDictionaryMap = dictionaryList.get(i);
 
-			if(dictionaryMap.containsKey(sequenceLabelProcessed.getTerm(index))) {
-				id = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
+			if(vDictionaryMap.containsKey(pPreprocessedSequence.getToken(pIndex))) {
+				vId = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
 				break;
 			}
 		}
 
-		return (id);
+		return vId;
 	}
 
 }

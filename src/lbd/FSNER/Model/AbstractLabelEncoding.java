@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import lbd.FSNER.Configuration.Parameters;
+import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
 import lbd.fsner.entity.Entity;
 import lbd.fsner.entity.EntityType;
@@ -36,6 +37,15 @@ public abstract class AbstractLabelEncoding {
 	}
 
 	public abstract List<Entity> getEntities(ISequence pSequence);
+
+	public List<Label> getLabels(String pEntity) {
+		List<String> vEntityTokenList = new ArrayList<String>();
+		for(String cEntityToken : pEntity.split(Symbol.SPACE)) {
+			vEntityTokenList.add(cEntityToken);
+		}
+
+		return getLabels(vEntityTokenList);
+	}
 
 	public abstract List<Label> getLabels(List<String> pEntityTokenList);
 

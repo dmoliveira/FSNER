@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import lbd.FSNER.Component.SequenceLabel;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
@@ -18,7 +17,7 @@ public class FtrVocab extends AbstractFilter{
 	protected HashMap<String, HashMap<String, Object>> vocabEntityMap;
 
 	protected final int MIN_SEQUENCE_SIZE = 6;
-	protected int windowSideSize;
+	protected int mWindowSideSize;
 	protected double threshold;
 
 	public FtrVocab(int preprocessingTypeNameIndex,
@@ -30,7 +29,7 @@ public class FtrVocab extends AbstractFilter{
 		vocabEntityMap = new HashMap<String, HashMap<String, Object>>();
 		this.mFilterClassName = "Voc";
 		this.threshold = threshold;
-		this.windowSideSize = windowSideSize;
+		this.mWindowSideSize = windowSideSize;
 	}
 
 	@Override
@@ -46,37 +45,36 @@ public class FtrVocab extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionBeforeSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void loadTermSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
 
-		if(sequenceLabelProcessed.size() >= MIN_SEQUENCE_SIZE) {
-			addSequence(sequenceLabelProcessed, index);
+		if(pPreprocessedSequence.length() >= MIN_SEQUENCE_SIZE) {
+			addSequence(pPreprocessedSequence, pIndex);
 		}
 
 	}
 
-	protected void addSequence(SequenceLabel sequenceLabelProcessed, int index) {
+	protected void addSequence(ISequence pPreprocessedSequence, int pIndex) {
 
-		String term = sequenceLabelProcessed.getTerm(index);
-		HashMap<String, Object> vocabMap;
+		String vTerm = pPreprocessedSequence.getToken(pIndex);
+		HashMap<String, Object> vVocabMap;
 
-		int startIndex = (index > windowSideSize)? index - windowSideSize : 0;
-		int endIndex = (index + windowSideSize < sequenceLabelProcessed.size())? index + windowSideSize : sequenceLabelProcessed.size();
+		int vStartIndex = (pIndex > mWindowSideSize)? pIndex - mWindowSideSize : 0;
+		int vEndIndex = (pIndex + mWindowSideSize < pPreprocessedSequence.length())? pIndex + mWindowSideSize : pPreprocessedSequence.length();
 
-		if(!vocabEntityMap.containsKey(term)) {
-			vocabEntityMap.put(term, new HashMap<String, Object>());
+		if(!vocabEntityMap.containsKey(vTerm)) {
+			vocabEntityMap.put(vTerm, new HashMap<String, Object>());
 		}
 
-		vocabMap = vocabEntityMap.get(term);
+		vVocabMap = vocabEntityMap.get(vTerm);
 
-		for(int i = startIndex; i < endIndex; i++) {
-			vocabMap.put(sequenceLabelProcessed.getTerm(i), null);
+		for(int i = vStartIndex; i < vEndIndex; i++) {
+			vVocabMap.put(pPreprocessedSequence.getToken(i), null);
 		}
 	}
 
@@ -87,71 +85,70 @@ public class FtrVocab extends AbstractFilter{
 	}
 
 	@Override
-	public void loadActionAfterSequenceIteration(
-			SequenceLabel sequenceLabelProcessed) {
+	public void loadActionAfterSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void adjust(SequenceLabel sequenceProcessedLabel) {
+	public void adjust(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			SequenceLabel sequenceLabelProcessed, int index) {
+			ISequence pPreprocessedSequence, int pIndex) {
 
-		String id = Symbol.EMPTY;
+		String vId = Symbol.EMPTY;
 
-		if(sequenceLabelProcessed.size() >= MIN_SEQUENCE_SIZE) {
+		if(pPreprocessedSequence.length() >= MIN_SEQUENCE_SIZE) {
 
-			id = getVocabId(sequenceLabelProcessed, index);
+			vId = getVocabId(pPreprocessedSequence, pIndex);
 
-			if(!id.isEmpty()) {
-				id = "id:" + this.mId + "." + id;
+			if(!vId.isEmpty()) {
+				vId = "id:" + this.mId + "." + vId;
 			}
 		}
 
-		return (id);
+		return (vId);
 	}
 
-	protected String getVocabId(SequenceLabel sequenceLabelProcessed, int index) {
+	protected String getVocabId(ISequence pPreprocessedSequence, int pIndex) {
 
-		String id = Symbol.EMPTY;
-		double vocabTermsNumber;
-		boolean wasReachedThreshold = false;
+		String vId = Symbol.EMPTY;
+		double vVocabTermsNumber;
+		boolean vWasReachedThreshold = false;
 
-		int startIndex = (index > windowSideSize)? index - windowSideSize : 0;
-		int endIndex = (index + windowSideSize < sequenceLabelProcessed.size())? index + windowSideSize : sequenceLabelProcessed.size();
+		int vStartIndex = (pIndex > mWindowSideSize)? pIndex - mWindowSideSize : 0;
+		int vEndIndex = (pIndex + mWindowSideSize < pPreprocessedSequence.length())? pIndex + mWindowSideSize : pPreprocessedSequence.length();
 
 		Iterator<Entry<String, HashMap<String, Object>>> ite = vocabEntityMap.entrySet().iterator();
 		Entry<String, HashMap<String, Object>> entry;
 		HashMap<String, Object> vocab;
 
-		while(ite.hasNext() && !wasReachedThreshold) {
+		while(ite.hasNext() && !vWasReachedThreshold) {
 
 			entry = ite.next();
 
-			vocabTermsNumber = 0;
+			vVocabTermsNumber = 0;
 			vocab = entry.getValue();
 
-			for(int i = startIndex; i < endIndex; i++) {
+			for(int i = vStartIndex; i < vEndIndex; i++) {
 
-				if(vocab.containsKey(sequenceLabelProcessed.getTerm(index))) {
-					vocabTermsNumber++;
+				if(vocab.containsKey(pPreprocessedSequence.getToken(pIndex))) {
+					vVocabTermsNumber++;
 
-					if(vocabTermsNumber/sequenceLabelProcessed.size() >= threshold) {
-						id = entry.getKey();
-						wasReachedThreshold = true;
+					if(vVocabTermsNumber/pPreprocessedSequence.length() >= threshold) {
+						vId = entry.getKey();
+						vWasReachedThreshold = true;
 						break;
 					}
 				}
 			}
 		}
 
-		return(id);
+		return(vId);
 	}
 
 }

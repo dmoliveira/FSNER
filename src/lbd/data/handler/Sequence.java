@@ -35,7 +35,7 @@ public class Sequence implements ISequence {
 	}
 
 	@Override
-	public Object getToken(int pIndex) {
+	public String getToken(int pIndex) {
 		return mTokenList.get(pIndex);
 	}
 
@@ -52,5 +52,9 @@ public class Sequence implements ISequence {
 	@Override
 	public int length() {
 		return mLabelList.size();
+	}
+
+	public String[] toArraySequence() {
+		return(mTokenList.toArray(new String[mTokenList.size()]));
 	}
 }
