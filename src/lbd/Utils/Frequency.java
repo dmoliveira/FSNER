@@ -1,38 +1,38 @@
 package lbd.Utils;
 
-public class Frequency {
-	
-	private String id;
-	private int frequency;
-	
-	public Frequency(String id, int frequency) {
-		this.id = id;
-		this.frequency = frequency;
+public class Frequency<T> {
+
+	private T mId;
+	private int mFrequency;
+
+	public Frequency(T id, int pFrequency) {
+		this.mId = id;
+		this.mFrequency = pFrequency;
 	}
-	
-	public Frequency(String id) {
-		this.id = id;
-		frequency = 0;
+
+	public Frequency(T pId) {
+		this.mId = pId;
+		mFrequency = 0;
 	}
-	
+
 	public void addFrequency() {
-		frequency++;
+		mFrequency++;
 	}
 
-	public String getId() {
-		return id;
+	public T getId() {
+		return mId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setId(T pId) {
+		this.mId = pId;
 	}
 
 	public int getFrequency() {
-		return frequency;
+		return mFrequency;
 	}
 
-	public void setFrequency(int frequency) {
-		this.frequency = frequency;
+	public void setFrequency(int pFequency) {
+		this.mFrequency = pFequency;
 	}
 
 }

@@ -4,28 +4,18 @@ import lbd.FSNER.Configuration.Parameters;
 import lbd.fsner.entity.EntityType;
 
 public enum Label {
-	Beginning("B"),
-	Inside("I"),
-	Last("L"),
-	Outside("O"),
-	UnitToken("U");
+	Beginning,
+	Inside,
+	Last,
+	Outside,
+	UnitToken;
 
-	private final String mValue;
-
-	Label(String pValue) {
-		mValue = pValue;
+	public static int getOrdinalLabel(EntityType pEntityType, Label pLabel) {
+		return (pEntityType.ordinal() * Label.values().length) + pLabel.ordinal();
 	}
 
-	public String getValue() {
-		return mValue;
-	}
-
-	public static int getOrdinalLabel(EntityType pEntityType, Label pCanonicalLabel) {
-		return (pEntityType.ordinal() * EntityType.values().length) + pCanonicalLabel.ordinal();
-	}
-
-	public static Label getCanonicalLabel(int pIndex) {
-		return Label.values()[pIndex % Parameters.DataHandler.mLabelEncoding.getLabels().size()];
+	public static Label getCanonicalLabel(int pLabelIndex) {
+		return Label.values()[pLabelIndex % Parameters.DataHandler.mLabelEncoding.getLabels().size()];
 	}
 
 	public static Label getCanonicalLabel(String pName) {

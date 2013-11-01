@@ -29,6 +29,7 @@ public class Sequence implements ISequence {
 		}
 	}
 
+	@Override
 	public void add(String pToken, int pLabel) {
 		mTokenList.add(pToken);
 		mLabelList.add(pLabel);
@@ -54,6 +55,17 @@ public class Sequence implements ISequence {
 		return mLabelList.size();
 	}
 
+	@Override
+	public ISequence clone() {
+		ISequence vClonedSequence = new Sequence();
+		for(int i = 0; i < length(); i++) {
+			vClonedSequence.add(getToken(i),getLabel(i));
+		}
+
+		return vClonedSequence;
+	}
+
+	@Override
 	public String[] toArraySequence() {
 		return(mTokenList.toArray(new String[mTokenList.size()]));
 	}

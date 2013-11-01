@@ -23,9 +23,9 @@ public abstract class AbstractLabelFile implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected AbstractActivityControl mActivityControl;
-	protected AbstractLabelFileLevel2 mLabelFileLevel2;
 	protected AbstractUpdateControl mUpdateControl;
 	protected AbstractLabelFileLabelCalculatorModel mLabelCalculator;
+	protected AbstractLabelFileLevel2 mLabelFileLevel2;
 
 	protected SimpleStopWatch mStopWatch;
 
@@ -44,10 +44,6 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	public void addActivityControl(AbstractActivityControl pActivityControl) {
 		mActivityControl = pActivityControl;
-	}
-
-	public void addLabelFileLevel2(AbstractLabelFileLevel2 pLabelFileLevel2) {
-		mLabelFileLevel2 = pLabelFileLevel2;
 	}
 
 	public void addSequenceScoreCalculatorModel(AbstractLabelFileLabelCalculatorModel pLabelCalculator) {
@@ -160,7 +156,12 @@ public abstract class AbstractLabelFile implements Serializable {
 
 	protected abstract void labelFileSub(String pFilenameAddressToLabel);
 
-	public abstract ISequence labelSequence(ISequence pSequence);
+	public ISequence labelSequence(ISequence pSequence) {
+		pSequence = labelSequenceSub(pSequence);
+		return (Parameters.LabelFileLevel2.mIsToUseLabelLevel2)? mLabelFileLevel2.labelSequenceLevel2(pSequence) : pSequence;
+	}
+
+	protected abstract ISequence labelSequenceSub(ISequence pSequence);
 
 	protected abstract int getLabel(ISequence pSequence, Map<String, ISequence> pPreProccessedSequenceMap, int pIndex);
 
@@ -181,7 +182,11 @@ public abstract class AbstractLabelFile implements Serializable {
 	protected abstract void printFilterStatistics();
 
 	protected void addUpdateControl(AbstractUpdateControl pUpdateControl) {
-		this.mUpdateControl = pUpdateControl;
+		mUpdateControl = pUpdateControl;
+	}
+
+	protected void addLabelFileLevel2(AbstractLabelFileLevel2 pLabelFileLevel2) {
+		mLabelFileLevel2 = pLabelFileLevel2;
 	}
 
 	protected void cleanFilterStatisticsInLabelProcess() {

@@ -49,7 +49,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 				//-- Label Sequence
 				mSequenceNumber++;
 				vSequence = vInputSequenceSet.next();
-				labelSequence(vSequence);
+				vSequence = labelSequence(vSequence);
 
 				Parameters.DataHandler.mSequenceSetHandler.writeSequenceToFile(vOutputFile, vSequence);
 
@@ -75,7 +75,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 	}
 
 	@Override
-	public ISequence labelSequence(ISequence pSequence) {
+	protected ISequence labelSequenceSub(ISequence pSequence) {
 
 		/*HashMap<String, SequenceLabel> proccessedSequenceMap = PreprocessData.preprocessSequence(
 				sequence, activityControl.getDataPreprocessorList());
@@ -95,7 +95,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 		//labelSequenceAvgProbConsiderAllTweet(sequence);
 		//labelSequenceAvgProbConsiderAllPartialTweet(sequence);
 
-		return pSequence;//mLabelFileLevel2.labelSequenceLevel2(pSequence);
+		return pSequence;
 	}
 
 	/** Only for experimental propose **/
@@ -290,7 +290,7 @@ public class SimpleLabelFile extends AbstractLabelFile {
 
 			//-- Label Sequence
 			sequence = inputSequenceSet.next();
-			labelSequence(sequence);
+			labelSequenceSub(sequence);
 		}
 	}
 

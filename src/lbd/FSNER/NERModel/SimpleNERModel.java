@@ -32,7 +32,7 @@ public class SimpleNERModel extends AbstractNERModel {
 
 	private static final long serialVersionUID = 1L;
 
-	protected boolean displayGeneralizationStatistics = false;
+	protected boolean vDisplayGeneralizationStatistics = false;
 
 	public SimpleNERModel(DataCollection pDataCollection) {
 		super(pDataCollection);
@@ -199,7 +199,7 @@ public class SimpleNERModel extends AbstractNERModel {
 		mActivityControl.addActivity(new FtrEntityTerm(i));
 
 		AbstractFilter vTokenFilter = new FtrToken(i);
-		vTokenFilter.setFilterState(FilterState.Auxiliary);
+		//vTokenFilter.setFilterState(FilterState.Auxiliary);
 		mActivityControl.addActivity(vTokenFilter);
 	}
 
@@ -209,7 +209,7 @@ public class SimpleNERModel extends AbstractNERModel {
 
 		for (String cFilenameAddress : lbd.FSNER.Utils.FileUtils.getFileList(vDictionaryDirectory)) {
 			AbstractFilter vFilter = new FtrGazetteer(vDictionaryDirectory + cFilenameAddress, i, new FSCMNoScore());
-			vFilter.setFilterState(FilterState.Auxiliary);
+			//vFilter.setFilterState(FilterState.Auxiliary);
 			mActivityControl.addActivity(vFilter);
 		}
 	}
@@ -289,9 +289,9 @@ public class SimpleNERModel extends AbstractNERModel {
 				mActivityControl
 				.addActivity(new FtrState(i, cNumberPreviousState, cIsToConsiderStatePerTerm, new FSCMNoScore()));
 
-				mActivityControl.getFilterList()
-				.get(mActivityControl.getFilterList().size() - 1)
-				.setFilterState(FilterState.Auxiliary);
+				//mActivityControl.getFilterList()
+				//.get(mActivityControl.getFilterList().size() - 1)
+				//.setFilterState(FilterState.Auxiliary);
 			}
 		}
 	}

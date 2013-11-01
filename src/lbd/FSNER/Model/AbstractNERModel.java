@@ -17,6 +17,8 @@ import lbd.FSNER.Configuration.Debug;
 import lbd.FSNER.Configuration.FilterParameters;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.FileUtils;
+import lbd.FSNER.Utils.SimpleStopWatch;
+import lbd.fsner.labelFile.level2.AbstractLabelFileLevel2;
 
 public abstract class AbstractNERModel implements Serializable {
 
@@ -26,13 +28,14 @@ public abstract class AbstractNERModel implements Serializable {
 	protected AbstractActivityControl mActivityControl;
 	protected AbstractUpdateControl mUpdateControl;
 	protected AbstractLabelFile mLabelFile;
+	protected AbstractLabelFileLevel2 mLabelFileLevel2;
 	protected AbstractEvaluator mEvaluator;
 
 	//-- Filters
 	protected FilterParameters mFilterParameters;
 
 	//-- Files
-	protected String mContextFilenameAddress;
+	protected String mTrainingFilenameAddress;
 	protected DataCollection mDataCollection;
 
 	//-- used to calculate generalization
@@ -53,19 +56,36 @@ public abstract class AbstractNERModel implements Serializable {
 
 	protected abstract void allocModelSub(String [] pInitializeFilenameList);
 
-	public void load(String pContextFilenameAddress) {
+	public void load(String pTrainingFilenameAddress) {
 
-		this.mContextFilenameAddress = pContextFilenameAddress;
+		mTrainingFilenameAddress = pTrainingFilenameAddress;
 
-		loadSub(pContextFilenameAddress);
+		loadSub(pTrainingFilenameAddress);
 		addLoadedEntity();
 	}
 
-	protected void loadSub(String pContextFilenameAddress) {
-		mActivityControl.startActivityControl(pContextFilenameAddress);
+	protected void loadSub(String pTrainingFilenameAddress) {
+		mActivityControl.startActivityControl(pTrainingFilenameAddress);
+		trainLabelLevel2();
+	}
+
+	private void trainLabelLevel2() {
+		if(Parameters.LabelFileLevel2.mIsToUseLabelLevel2) {
+			SimpleStopWatch vStopWatch = new SimpleStopWatch();
+			vStopWatch.start();
+			mLabelFileLevel2.trainLabelSequenceLevel2(mActivityControl.getSequenceList(),
+					mActivityControl.getClassNameSingleFilterMap(), mLabelFile);
+			if (Debug.ActivityControl.showElapsedTime) {
+				vStopWatch.show("Labeling Level 2 Time:");
+			}
+		}
 	}
 
 	public void label(String pFilenameAddressToLabel, boolean pIsUnrealibleSituation) {
+		if(mLabelFileLevel2 == null) {
+			throw new NullPointerException("Error: Initiate Label File Level 2.");
+		}
+
 		labelFileSub(pFilenameAddressToLabel, pIsUnrealibleSituation);
 		addLabeledEntity();
 	}
@@ -109,18 +129,23 @@ public abstract class AbstractNERModel implements Serializable {
 		mUpdateControl.restartForNextUpdate();
 	}
 
-	protected abstract void updateSub(String updateSource);
+	protected abstract void updateSub(String pUpdateSource);
 
-	public void addModelActivityControl(AbstractActivityControl activityControl) {
-		this.mActivityControl = activityControl;
+	public void addModelActivityControl(AbstractActivityControl pActivityControl) {
+		mActivityControl = pActivityControl;
 	}
 
-	public void addModelUpdateControl(AbstractUpdateControl updateControl) {
-		this.mUpdateControl = updateControl;
+	public void addModelUpdateControl(AbstractUpdateControl pUpdateControl) {
+		mUpdateControl = pUpdateControl;
 	}
 
-	public void addModelLabelFile(AbstractLabelFile labelFile) {
-		this.mLabelFile = labelFile;
+	public void addModelLabelFile(AbstractLabelFile pLabelFile) {
+		mLabelFile = pLabelFile;
+	}
+
+	public void addLabelFileLevel2(AbstractLabelFileLevel2 pLabelFileLevel2) {
+		mLabelFileLevel2 = pLabelFileLevel2;
+		mLabelFile.addLabelFileLevel2(pLabelFileLevel2);
 	}
 
 	public void addModelEvaluator(AbstractEvaluator evaluator) {
@@ -195,7 +220,7 @@ public abstract class AbstractNERModel implements Serializable {
 	}
 
 	public String getContextFilenameAddress() {
-		return(mContextFilenameAddress);
+		return(mTrainingFilenameAddress);
 	}
 
 	public AbstractLabelFile getLabelFile() {

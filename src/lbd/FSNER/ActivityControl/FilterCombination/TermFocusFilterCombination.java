@@ -3,9 +3,9 @@ package lbd.FSNER.ActivityControl.FilterCombination;
 import java.util.List;
 import java.util.Map;
 
-import lbd.FSNER.Filter.FtrCapitalizedTerms;
-import lbd.FSNER.Filter.FtrContext;
 import lbd.FSNER.Filter.FtrToken;
+import lbd.FSNER.Filter.old.FtrCapitalizedTerms;
+import lbd.FSNER.Filter.old.FtrContext;
 import lbd.FSNER.Model.AbstractCombineFiltersInActiveControl;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractMetaFilter.MetaFilterType;

@@ -35,4 +35,15 @@ public class SequenceSegment extends Sequence implements ISequenceSegment {
 
 	}
 
+	@Override
+	public ISequence clone() {
+		ISequence vClonedSequence = new SequenceSegment();
+		for(int i = 0; i < length(); i++) {
+			vClonedSequence.add(getToken(i),getLabel(i));
+			((SequenceSegment)vClonedSequence).mEndSegmentList.add(mEndSegmentList.get(i));
+		}
+
+		return vClonedSequence;
+	}
+
 }

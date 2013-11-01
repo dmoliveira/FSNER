@@ -90,7 +90,7 @@ public class SequenceSetHandlerLine extends AbstractSequenceSetHandler{
 					EntityType vEntityType = mEntityMarkSet.get(vTokenList[cToken]);
 
 					for(Label cLabel : Parameters.DataHandler.mLabelEncoding.getLabels(vEntity)) {
-						vSequence.add(vTokenList[++cToken], (vEntityType.ordinal() * EntityType.values().length) + cLabel.ordinal());
+						vSequence.add(vTokenList[++cToken], Label.getOrdinalLabel(vEntityType, cLabel));
 					}
 					cToken++;
 				}

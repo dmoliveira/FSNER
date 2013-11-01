@@ -1,4 +1,4 @@
-package lbd.FSNER.Filter;
+package lbd.FSNER.Filter.old;
 
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;

@@ -1,5 +1,7 @@
 package lbd.fsner.entity;
 
+import lbd.fsner.label.encoding.Label;
+
 public enum EntityType {
 
 	Person("PER"),
@@ -24,6 +26,6 @@ public enum EntityType {
 	}
 
 	public static EntityType getEntityType(int pLabel) {
-		return EntityType.values()[pLabel / EntityType.values().length];
+		return EntityType.values()[pLabel / Label.values().length];
 	}
 }

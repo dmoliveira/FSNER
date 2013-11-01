@@ -13,8 +13,7 @@ import lbd.fsner.label.encoding.Label;
 
 public abstract class AbstractLabelEncoding {
 
-	protected Map<String, Label> mLabelStrMap;
-	protected Map<Integer, Label> mLabelIntMap;
+	protected Map<Integer, Label> mLabelMap;
 
 	public AbstractLabelEncoding() {
 		createLabelMap();
@@ -28,12 +27,12 @@ public abstract class AbstractLabelEncoding {
 
 	public abstract Label getOutsideLabel();
 
-	public Label getLabel(String pLabelValue) {
-		return mLabelStrMap.get(pLabelValue);
+	public Label getLabel(String pLabelName) {
+		return Label.valueOf(pLabelName);
 	}
 
-	public Label getLabel(int pOrdinalLabel) {
-		return mLabelIntMap.get(pOrdinalLabel);
+	public Label getLabel(int pLabelIndex, boolean pIsCanonicalLabelIndex) {
+		return (pIsCanonicalLabelIndex)? mLabelMap.get(pLabelIndex) : mLabelMap.get(pLabelIndex % getLabels().size());
 	}
 
 	public abstract List<Entity> getEntities(ISequence pSequence);
@@ -50,11 +49,21 @@ public abstract class AbstractLabelEncoding {
 	public abstract List<Label> getLabels(List<String> pEntityTokenList);
 
 	public List<Label> getLabels() {
-		return new ArrayList<Label>(mLabelStrMap.values());
+		return new ArrayList<Label>(mLabelMap.values());
 	}
+
+	public abstract ISequence setEntityLabel(ISequence pSequence, Entity pEntity, int pEntityStartIndex);
+
+	public abstract void joinEntities(ISequence pSequence, EntityType pEntityType, int pEndIndexFirstEntity);
+
+	public abstract void joinEntities(ISequence pSequence, EntityType pEntityType, int pEndIndexFirstEntity, int pStartIndexSecondEntity);
 
 	public int getAlphabetSize() {
 		return EntityType.values().length *  Parameters.DataHandler.mLabelEncoding.getLabels().size();
 	}
+
+	public abstract boolean isStartEntity(ISequence pSequence, int pIndex);
+
+	public abstract boolean isEndEntity(ISequence pSequence, int pIndex);
 
 }

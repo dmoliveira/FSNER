@@ -1,4 +1,4 @@
-package lbd.FSNER.Filter;
+package lbd.FSNER.Filter.old;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,9 +9,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Map;
 
-import lbd.FSNER.Component.TermSequence;
 import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractDataPreprocessor;
 import lbd.FSNER.Model.AbstractFilter;
@@ -20,26 +19,26 @@ import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
 
-public class FtrSimpleDictionary extends AbstractFilter{
+public class FtrSingleTermDictionary extends AbstractFilter{
 
 	private static final long serialVersionUID = 1L;
 
 	protected final String DICTIONARY_UNIVERSAL_DIRECTORY = "./samples/data/bcs2010/AutoTagger/Dictionary/";
 
-	protected static ArrayList<HashMap<String, LinkedList<TermSequence>>> dictionaryList;
+	protected static ArrayList<HashMap<String, Object>> dictionaryList;
 	protected static ArrayList<String> dictionaryNameList;
 	protected static HashMap<String, Boolean> dictionaryLoadMap;
 
 	protected AbstractDataPreprocessor dataProcessor;
 
-	public FtrSimpleDictionary(int preprocessingTypeNameIndex,
+	public FtrSingleTermDictionary(int preprocessingTypeNameIndex,
 			AbstractFilterScoreCalculatorModel scoreCalculator, AbstractDataPreprocessor dataProcessor) {
 
-		super(ClassName.getSingleName(FtrSimpleDictionary.class.getName()),
+		super(ClassName.getSingleName(FtrSingleTermDictionary.class.getName()),
 				preprocessingTypeNameIndex, scoreCalculator);
 
 		if(dictionaryList == null) {
-			dictionaryList = new ArrayList<HashMap<String,LinkedList<TermSequence>>>();
+			dictionaryList = new ArrayList<HashMap<String,Object>>();
 			dictionaryNameList = new ArrayList<String>();
 			dictionaryLoadMap = new HashMap<String, Boolean>();
 		}
@@ -86,29 +85,30 @@ public class FtrSimpleDictionary extends AbstractFilter{
 		}
 	}
 
-	protected void loadDictionary(String pDictionaryFilenameAddress) {
+	protected void loadDictionary(String dictionaryFilenameAddress) {
 
 		try {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(pDictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
+					new FileInputStream(dictionaryFilenameAddress), Parameters.DataHandler.mDataEncoding));
 
-			dictionaryList.add(new HashMap<String, LinkedList<TermSequence>> ());
-			HashMap<String, LinkedList<TermSequence>> dictionary = dictionaryList.get(dictionaryList.size() - 1);
+			dictionaryList.add(new HashMap<String, Object> ());
 
 			String entry;
-			TermSequence entryElement;
+			String [] entryElement;
+			String entryPreprocessed;
+
+			HashMap<String, Object> dictionaryMap = dictionaryList.get(dictionaryList.size() - 1);
 
 			while((entry = in.readLine()) != null) {
 
-				entryElement = new TermSequence(entry, Symbol.SPACE_CHAR);
+				entryElement = entry.split(Symbol.SPACE);
 
-				for(int i = 0; i < entryElement.size(); i++) {
-					entryElement.set(dataProcessor.preprocessingToken(entryElement.get(i), -1), i);
-				}
+				for(int i = 0; i < entryElement.length; i++) {
 
-				if(!entryElement.toString().isEmpty()) {
-					addEntry(dictionary, entryElement, 0);
+					entryPreprocessed = dataProcessor.preprocessingToken(entryElement[i], -1);
+					dictionaryMap.put(entryPreprocessed, null);
+					//System.out.println(entryPreprocessed);
 				}
 			}
 
@@ -122,29 +122,6 @@ public class FtrSimpleDictionary extends AbstractFilter{
 			e.printStackTrace();
 		}
 
-	}
-
-	protected void addEntry(HashMap<String, LinkedList<TermSequence>> dictionary, TermSequence entry, int index) {
-
-		LinkedList<TermSequence> entryList;
-		String term = entry.get(index);
-
-		if(!dictionary.containsKey(term)) {
-			dictionary.put(term, new LinkedList<TermSequence> ());
-			dictionary.get(term).add(entry);
-		} else {
-
-			entryList = dictionary.get(term);
-			entryList.add(entry);
-
-			/*for(int i = 0; i < entryList.size(); i++) {
-				if(entryList.get(i).size() <= entry.size()) {
-					entryList.add(i, entry);
-					System.out.println(entry);
-					break;
-				}
-			}*/
-		}
 	}
 
 	@Override
@@ -188,69 +165,19 @@ public class FtrSimpleDictionary extends AbstractFilter{
 			ISequence pPreprocessedSequence, int pIndex) {
 
 		String vId = Symbol.EMPTY;
-		LinkedList<TermSequence> vEntryList;
-		TermSequence vSequence = new TermSequence(pPreprocessedSequence.toArraySequence());
+		Map<String, Object> vDictionaryMap;
 
 		for(int i = 0; i < dictionaryNameList.size(); i++) {
 
-			vEntryList = dictionaryList.get(i).get(pPreprocessedSequence.getToken(pIndex));
+			vDictionaryMap = dictionaryList.get(i);
 
-			if(vEntryList != null && isTermEntityPart(vEntryList, vSequence, pIndex)) {
+			if(vDictionaryMap.containsKey(pPreprocessedSequence.getToken(pIndex))) {
 				vId = "id:" + this.mId + ".dic:" + dictionaryNameList.get(i);
 				break;
 			}
 		}
 
 		return vId;
-	}
-
-	protected boolean isTermEntityPart(LinkedList<TermSequence> entryList,
-			TermSequence sequence, int index) {
-
-		boolean isTermEntityPart = false;
-
-		for(TermSequence entry : entryList) {
-			if(isMatching(sequence, entry, index)) {
-				isTermEntityPart = true;
-				break;
-			}
-		}
-
-		return(isTermEntityPart);
-	}
-
-	protected boolean isMatching(TermSequence sequence, TermSequence entry, int index) {
-
-		boolean isMatching = false;
-
-		String sequenceStr = sequence.toString();
-		String entryStr = entry.toString();
-
-		int indexOfEntryInSequence = -1;
-		int convertedIndex = convertTermIndexToStringIndex(sequence, index);
-
-		while((indexOfEntryInSequence = sequenceStr.indexOf(entryStr)) != -1) {
-			if(indexOfEntryInSequence <= convertedIndex && convertedIndex < (indexOfEntryInSequence + entryStr.length())) {
-				isMatching = true;
-				break;
-			} else {
-				sequenceStr.substring(indexOfEntryInSequence + entryStr.length());
-				convertedIndex -= indexOfEntryInSequence + entryStr.length();
-			}
-		}
-
-		return(isMatching);
-	}
-
-	protected int convertTermIndexToStringIndex(TermSequence sequence, int index) {
-
-		String sequenceLoaded = Symbol.EMPTY;
-
-		for(int i = 0; i < sequence.size() && i < index; i++) {
-			sequenceLoaded += sequence.get(i) + Symbol.SPACE;
-		}
-
-		return(sequenceLoaded.length() - 1);
 	}
 
 }

@@ -85,8 +85,8 @@ public class TFIDF implements Serializable {
 
 	protected final String ENCODE_USED = "ISO-8859-1";
 
-	protected HashMap<String, Frequency> termFrequencyMap;
-	protected HashMap<String, Frequency> documentFrequencyMap;
+	protected HashMap<String, Frequency<String>> termFrequencyMap;
+	protected HashMap<String, Frequency<String>> documentFrequencyMap;
 	protected HashMap<String, TFIDFElement> iDFMap;
 
 	protected ArrayList<TFIDFElement> tFIDFList;
@@ -95,8 +95,8 @@ public class TFIDF implements Serializable {
 
 	public TFIDF() {
 
-		termFrequencyMap = new HashMap<String, Frequency>();
-		documentFrequencyMap = new HashMap<String, Frequency>();
+		termFrequencyMap = new HashMap<String, Frequency<String>>();
+		documentFrequencyMap = new HashMap<String, Frequency<String>>();
 		iDFMap = new HashMap<String, TFIDFElement>();
 
 		tFIDFList = new ArrayList<TFIDFElement>();
@@ -121,8 +121,8 @@ public class TFIDF implements Serializable {
 
 			entity = term.toLowerCase();
 
-			termFrequencyMap.put(entity, new Frequency(entity, 1));
-			documentFrequencyMap.put(entity, new Frequency(entity, 1));
+			termFrequencyMap.put(entity, new Frequency<String>(entity, 1));
+			documentFrequencyMap.put(entity, new Frequency<String>(entity, 1));
 		}
 	}
 
@@ -176,10 +176,10 @@ public class TFIDF implements Serializable {
 	private void calculateIDF() {
 
 		double idf;
-		Frequency frequency;
+		Frequency<String> frequency;
 
-		Collection<Frequency> frequencyCollection = documentFrequencyMap.values();
-		Iterator<Frequency> itr = frequencyCollection.iterator();
+		Collection<Frequency<String>> frequencyCollection = documentFrequencyMap.values();
+		Iterator<Frequency<String>> itr = frequencyCollection.iterator();
 
 		while((itr.hasNext())) {
 
@@ -268,20 +268,20 @@ public class TFIDF implements Serializable {
 		return(tFIDTArray);
 	}
 
-	public HashMap<String, Frequency> getTermFrequencyMap() {
+	public HashMap<String, Frequency<String>> getTermFrequencyMap() {
 		return termFrequencyMap;
 	}
 
-	public void setTermFrequencyMap(HashMap<String, Frequency> termFrequencyMap) {
+	public void setTermFrequencyMap(HashMap<String, Frequency<String>> termFrequencyMap) {
 		this.termFrequencyMap = termFrequencyMap;
 	}
 
-	public HashMap<String, Frequency> getDocumentFrequencyMap() {
+	public HashMap<String, Frequency<String>> getDocumentFrequencyMap() {
 		return documentFrequencyMap;
 	}
 
 	public void setDocumentFrequencyMap(
-			HashMap<String, Frequency> documentFrequencyMap) {
+			HashMap<String, Frequency<String>> documentFrequencyMap) {
 		this.documentFrequencyMap = documentFrequencyMap;
 	}
 

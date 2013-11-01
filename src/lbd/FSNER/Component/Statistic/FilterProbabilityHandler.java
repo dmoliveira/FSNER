@@ -13,6 +13,7 @@ import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterProbability;
 import lbd.FSNER.Utils.Collections.CollectionsUtils;
+import lbd.Utils.FrequencyMap;
 import lbd.fsner.entity.EntityType;
 import lbd.fsner.label.encoding.Label;
 
@@ -21,6 +22,7 @@ public class FilterProbabilityHandler implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected Map<String, AbstractFilterProbability> mFilterProbabilityMap;
+	protected FrequencyMap<EntityType> mEntityTypeFrequency;
 
 	//-- For Training
 	protected int mTotalAssignedLabelsInTrain;
@@ -38,21 +40,22 @@ public class FilterProbabilityHandler implements Serializable {
 	@SuppressWarnings("unchecked")
 	public FilterProbabilityHandler(AbstractFilterProbability pFPEObject) {
 
-		mFilterProbabilityElementClass = (Class<AbstractFilterProbability>) pFPEObject.getClass();
 		mFilterProbabilityMap = new HashMap<String, AbstractFilterProbability>();
+		mEntityTypeFrequency = new FrequencyMap<EntityType>();
 
 		mTotalAssignedLabelsInTrain = 0;
 		mEntityTermsAssignedInTrainList = new ArrayList<String>();
+		mLabelFrequencyInTrainList = new ArrayList<Integer>();
+		for(int i = 0; i < Parameters.DataHandler.mLabelEncoding.getAlphabetSize(); i++) {
+			mLabelFrequencyInTrainList.add(0);
+		}
 
 		mTotalAssignedEntityLabelsInTest = 0;
 		mEntityTermsCorrectAssignedInTestList = new ArrayList<String>();
 		mEntityTermsMissedAssignedInTestList = new ArrayList<String>();
 		mEntityTermsWrongAssignedInTestList = new ArrayList<String>();
 
-		mLabelFrequencyInTrainList = new ArrayList<Integer>();
-		for(int i = 0; i < EntityType.values().length * Parameters.DataHandler.mLabelEncoding.getLabels().size(); i++) {
-			mLabelFrequencyInTrainList.add(0);
-		}
+		mFilterProbabilityElementClass = (Class<AbstractFilterProbability>) pFPEObject.getClass();
 	}
 
 	public void addStatistic(String pId, String pTerm, int pLabel) {
@@ -74,6 +77,7 @@ public class FilterProbabilityHandler implements Serializable {
 
 		if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(pLabel))) {
 			mEntityTermsAssignedInTrainList.add(pTerm);
+			mEntityTypeFrequency.add(EntityType.getEntityType(pLabel));
 		}
 	}
 
@@ -262,6 +266,10 @@ public class FilterProbabilityHandler implements Serializable {
 
 	public List<String> getEntityTermsWrongAssignedInTestList() {
 		return mEntityTermsWrongAssignedInTestList;
+	}
+
+	public EntityType getFilterEntityTypeTendency() {
+		return mEntityTypeFrequency.getMax();
 	}
 
 	public double getFilterPrecisionInTest() {

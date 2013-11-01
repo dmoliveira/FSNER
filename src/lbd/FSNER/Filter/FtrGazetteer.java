@@ -31,7 +31,7 @@ public class FtrGazetteer extends AbstractFilter{
 	protected Map<String, Set<Integer>> mInvertedIndex;
 	protected String mDictionaryFilenameAddress;
 
-	// Memory for the last entity found
+	//Memory for the last entity found
 	protected int mEntityStartPosition;
 	protected int mEntityEndPosition;
 
@@ -71,7 +71,7 @@ public class FtrGazetteer extends AbstractFilter{
 
 				vEntry = vEntry.trim();
 
-				if(!vEntry.isEmpty() && Parameters.Filter.Gazetter.mMinimumAcceptedDictionaryTermEntry <= vEntry.length()) {
+				if(!vEntry.isEmpty() && Parameters.Filter.Gazetteer.mMinimumAcceptedDictionaryTermEntry <= vEntry.length()) {
 
 					String [] vEntrySplitted = vEntry.split(Symbol.SPACE);
 					int vEntrySize = vEntrySplitted.length;
@@ -150,30 +150,15 @@ public class FtrGazetteer extends AbstractFilter{
 
 		if(mEntityStartPosition == -1) {
 
-			String vTerm = pSequence.getToken(pIndex);
+			String vEntity = getEntryInGazetteer(pPreprocessedSequence, pIndex);
 
-			if(mInvertedIndex.containsKey(vTerm)) {
+			if(!vEntity.isEmpty()) {
 
-				Set<Integer> vEntitySizeList = mInvertedIndex.get(vTerm);
+				mEntityStartPosition = pIndex;
+				mEntityEndPosition = pIndex + vEntity.split(Symbol.SPACE).length - 1;
 
-				for(Integer cEntitySize : vEntitySizeList) {
-
-					if(pIndex + cEntitySize -1 < pSequence.length()) {
-
-						String vCandidateEntity = getCandidateEntity(pSequence, pIndex, cEntitySize);
-
-						if(mDictionaryMap.get(cEntitySize).contains(vCandidateEntity)) {
-
-							mEntityStartPosition = pIndex;
-							mEntityEndPosition = pIndex + cEntitySize - 1;
-
-							vId = MessageFormat.format(vIdModel,mId , mDictionaryFilenameAddress,
-									0, (mEntityEndPosition - mEntityStartPosition));
-
-							break;
-						}
-					}
-				}
+				vId = MessageFormat.format(vIdModel,mId , mDictionaryFilenameAddress,
+						0, (mEntityEndPosition - mEntityStartPosition));
 			}
 		} else {
 			vId = MessageFormat.format(vIdModel,mId , mDictionaryFilenameAddress,
@@ -187,7 +172,7 @@ public class FtrGazetteer extends AbstractFilter{
 		return vId;
 	}
 
-	public String getCandidateEntity(ISequence pSequence, int pIndex, int pEntitySize) {
+	protected String getCandidateEntity(ISequence pSequence, int pIndex, int pEntitySize) {
 
 		String vCandidateEntity = Symbol.EMPTY;
 
@@ -196,6 +181,32 @@ public class FtrGazetteer extends AbstractFilter{
 		}
 
 		return vCandidateEntity.trim();
+	}
+
+	public String getEntryInGazetteer(ISequence pPreprocessedSequence, int pIndex) {
+
+		String vEntity = Symbol.EMPTY;
+		String vToken = pPreprocessedSequence.getToken(pIndex);
+
+		if(mInvertedIndex.containsKey(vToken)) {
+			for(Integer cEntitySize : mInvertedIndex.get(vToken)) {
+				if(pIndex + cEntitySize -1 < pPreprocessedSequence.length()) {
+
+					String vCandidateEntity = getCandidateEntity(pPreprocessedSequence, pIndex, cEntitySize);
+
+					if(mDictionaryMap.get(cEntitySize).contains(vCandidateEntity)) {
+						vEntity = vCandidateEntity;
+						break;
+					}
+				}
+			}
+		}
+
+		return vEntity;
+	}
+
+	public boolean hasEntryInGazetteer(ISequence pPreprocessedSequence, int pIndex) {
+		return !getEntryInGazetteer(pPreprocessedSequence, pIndex).isEmpty();
 	}
 
 	private void resetEntityPosition() {

@@ -1,13 +1,19 @@
 package lbd.fsner.entity;
 
+import java.util.List;
+
+import lbd.FSNER.Configuration.Parameters;
 import lbd.FSNER.Utils.Symbol;
+import lbd.Utils.FrequencyMap;
+import lbd.fsner.label.encoding.Label;
 
 public class Entity {
 
 	//TODO: Implement other entity attributes - sequence, position in seq., weight, etc;
 	protected String mValue;
-	protected EntityType mEntityType;
 	protected int mIndex;
+
+	protected FrequencyMap<EntityType> mEntityTypeFrequency;
 
 	public Entity(String pValue, EntityType pEntityType) {
 		this(pValue, pEntityType, -1);
@@ -15,8 +21,12 @@ public class Entity {
 
 	public Entity(String pValue, EntityType pEntityType, int pIndex) {
 		mValue = pValue;
-		mEntityType = pEntityType;
 		mIndex = pIndex;
+
+		mEntityTypeFrequency = new FrequencyMap<EntityType>();
+		if(pEntityType != null) {
+			mEntityTypeFrequency.add(pEntityType);
+		}
 	}
 
 	public void append(String pToken) {
@@ -32,11 +42,12 @@ public class Entity {
 	}
 
 	public EntityType getEntityType() {
-		return mEntityType;
+		return mEntityTypeFrequency.getMax();
 	}
 
 	public void setEntityType(EntityType pEntityType) {
-		mEntityType = pEntityType;
+		mEntityTypeFrequency.clear();
+		mEntityTypeFrequency.add(pEntityType);
 	}
 
 	public int getIndex() {
@@ -47,9 +58,17 @@ public class Entity {
 		mIndex = pIndex;
 	}
 
+	public List<Label> getLabels() {
+		return Parameters.DataHandler.mLabelEncoding.getLabels(getValue());
+	}
+
+	public int size() {
+		return getValue().split(Symbol.SPACE).length;
+	}
+
 	@Override
 	public String toString() {
-		return mValue + Symbol.COLON + mEntityType;
+		return mValue + Symbol.COLON + mEntityTypeFrequency.getMax();
 	}
 
 }

@@ -27,7 +27,7 @@ import lbd.FSNER.Evaluation.GeneralizationEvaluator;
 import lbd.FSNER.Evaluation.LearningEvaluator;
 import lbd.FSNER.Evaluation.SimpleBILOUEvaluator;
 import lbd.FSNER.Evaluation.SimpleEvaluator;
-import lbd.FSNER.Filter.FtrSingleTermDictionary4;
+import lbd.FSNER.Filter.old.FtrSingleTermDictionary4;
 import lbd.FSNER.LabelFile.SimpleLabelFile;
 import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMOrContinuosScore;
 import lbd.FSNER.LabelFile.LabelCalculatorModel.LCMOrDiscreteScore;
@@ -113,6 +113,9 @@ public class FSNER implements Serializable {
 					CollectionName.Zunnit_Extra_All_MISC};*/
 			//CollectionName [] vSubcollection = {CollectionName.Zunnit_Shuf_PER, CollectionName.Zunnit_Shuf_LOC, CollectionName.Zunnit_Shuf_ORG, CollectionName.Zunnit_Shuf_MISC};
 			CollectionName [] vSubcollection = {CollectionName.Zunnit_Shuf};
+			/*CollectionName [] vSubcollection = {CollectionName.Zunnit_Extra_Casa, CollectionName.Zunnit_Extra_Casos,
+					CollectionName.Zunnit_Extra_Emprego, CollectionName.Zunnit_Extra_Esportes,
+					CollectionName.Zunnit_Extra_Famosos, CollectionName.Zunnit_Extra_Noticias};*/
 
 			for(CollectionName cCollection : vSubcollection) {
 				FSNER vFSNER = new FSNER();
@@ -184,48 +187,47 @@ public class FSNER implements Serializable {
 		}
 	}
 
-	protected void runFSNERCore(String trainFile, String testFile, String referenceDataFile, DataCollection pDataCollection) {
+	protected void runFSNERCore(String pTrainFile, String pTestFile, String pReferenceDataFile, DataCollection pDataCollection) {
 		//-- Create filenames
 		String vTermListRestrictionName = CollectionDefinition.Directory.Dictionary + pDataCollection.mTermListRestrictionName;
 
 		mNERModel = new SimpleNERModel(pDataCollection);
 
 		//-- Start count time
-		SimpleStopWatch stopWatch = new SimpleStopWatch();
-		stopWatch.start();
+		SimpleStopWatch vStopWatch = new SimpleStopWatch();
+		vStopWatch.start();
 
 		//-- Create Components
-		AbstractActivityControl simpleActivityControl = new SimpleActivityControl();
-		AbstractActivityControl parallelActivityControl = new ParallelActivityControl();
+		AbstractActivityControl vSimpleActivityControl = new SimpleActivityControl();
+		AbstractActivityControl pParallelActivityControl = new ParallelActivityControl();
 
-		AbstractLabelFile simpleLabelFile = new SimpleLabelFile();
-		AbstractUpdateControl simpleUpdateControl =  new SimpleUpdateControl(0);
+		AbstractLabelFile vSimpleLabelFile = new SimpleLabelFile();
+		AbstractUpdateControl vSimpleUpdateControl =  new SimpleUpdateControl(0);
+		AbstractLabelFileLevel2 vSimpleLabelFileLevel2 = new SimpleLabelFileLevel2();
 
 		//-- Create Label File Score Models
-		AbstractTermRestrictionChecker termRestrictionChecker = new SimpleTermRestrictionChecker(vTermListRestrictionName);
-		AbstractLabelFileLabelCalculatorModel orDiscreteScoreModel = new LCMOrDiscreteScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel orContinuosScoreModel = new LCMOrContinuosScore(termRestrictionChecker);
-		AbstractLabelFileLabelCalculatorModel sumScoreModel = new LCMSumScore(termRestrictionChecker); //Default [!]
-
-		AbstractLabelFileLevel2 mSimpleLabelFileLevel2 = new SimpleLabelFileLevel2(simpleActivityControl);
+		AbstractTermRestrictionChecker vTermRestrictionChecker = new SimpleTermRestrictionChecker(vTermListRestrictionName);
+		AbstractLabelFileLabelCalculatorModel vOrDiscreteScoreModel = new LCMOrDiscreteScore(vTermRestrictionChecker); //Best for Recall
+		AbstractLabelFileLabelCalculatorModel vOrContinuosScoreModel = new LCMOrContinuosScore(vTermRestrictionChecker);
+		AbstractLabelFileLabelCalculatorModel vSumScoreModel = new LCMSumScore(vTermRestrictionChecker); //Default [!]: Best for Precision
 
 		//-- Joint Components to NERModel
-		mNERModel.addModelActivityControl(simpleActivityControl);
-		mNERModel.addModelLabelFile(simpleLabelFile);
-		mNERModel.addModelUpdateControl(simpleUpdateControl);
+		mNERModel.addModelActivityControl(vSimpleActivityControl);
+		mNERModel.addModelLabelFile(vSimpleLabelFile);
+		mNERModel.addLabelFileLevel2(vSimpleLabelFileLevel2);
+		mNERModel.addModelUpdateControl(vSimpleUpdateControl);
 		mNERModel.addModelEvaluator(mEvaluator);
 		mNERModel.addFilterParameters(mFilterParameters);
 
 		//-- Joint Subcomponents
-		simpleLabelFile.addSequenceScoreCalculatorModel(orDiscreteScoreModel);
-		simpleLabelFile.addLabelFileLevel2(mSimpleLabelFileLevel2);
+		vSimpleLabelFile.addSequenceScoreCalculatorModel(vSumScoreModel);
 
 		//-- Execute FS-NER
 		mNERModel.allocModel(new String [] {vTermListRestrictionName});
-		mNERModel.load(trainFile);
-		mNERModel.labelFile(trainFile);
+		mNERModel.load(pTrainFile);
+		mNERModel.labelFile(pTestFile);
 		//mNERModel.evaluate(mNERModel.getTaggedFilenameAddress(), testFile, "(Label)");
-		new SimpleEvaluator().evaluate(mNERModel.getTaggedFilenameAddress(), trainFile);
+		new SimpleEvaluator().evaluate(mNERModel.getTaggedFilenameAddress(), pTestFile);
 
 		//-- Other evaluation analisys
 		//mFilterCombinationEvaluator.evaluate(mNERModel.getTaggedFilenameAddress(), testFile, "");
@@ -233,11 +235,11 @@ public class FSNER implements Serializable {
 		//learningEvaluator.evaluate(trainFile, nerTagger.getTaggedFilenameAddress(), testFile, "");
 
 		//-- Update the NER Model
-		updateModel(mNERModel, "", referenceDataFile, testFile, UpdateType.None);
+		updateModel(mNERModel, "", pReferenceDataFile, pTestFile, UpdateType.None);
 
 		if(mShowElapsedTime)
 		{
-			stopWatch.show("Total Elipsed Time:");
+			vStopWatch.show("Total Elipsed Time:");
 			//nerTagger.writeEvaluation("");
 		}
 	}

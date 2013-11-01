@@ -128,7 +128,7 @@ public abstract class AbstractActivityControl implements Serializable {
 			if(!vSequenceInstanceId.isEmpty()) {
 				synchronized (this) {
 					pFilter.getFilterProbability().addStatistic(vSequenceInstanceId,
-							((String)pPreprocessedSequence.getToken(i)),
+							(pPreprocessedSequence.getToken(i)),
 							pPreprocessedSequence.getLabel(i));
 				}
 			}
@@ -147,7 +147,15 @@ public abstract class AbstractActivityControl implements Serializable {
 		return(mEntitySet);
 	}
 
+	public List<ISequence> getSequenceList() {
+		return mSequenceList;
+	}
+
 	public Set<AbstractFilter> getFiltersByClassName(String pFilterClassName) {
 		return mClassNameSingleFilterMap.get(pFilterClassName);
+	}
+
+	public Map<String, Set<AbstractFilter>> getClassNameSingleFilterMap() {
+		return mClassNameSingleFilterMap;
 	}
 }

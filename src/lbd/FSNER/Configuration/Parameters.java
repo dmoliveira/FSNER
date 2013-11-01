@@ -9,7 +9,7 @@ import lbd.data.handler.sequenceSetHandler.AbstractSequenceSetHandler;
 import lbd.data.handler.sequenceSetHandler.SequenceSetHandlerLine;
 import lbd.data.tokenizer.AbstractTokenizer;
 import lbd.data.tokenizer.TokenizerAnyTokenBySpace;
-import lbd.fsner.label.encoding.BILOU;
+import lbd.fsner.label.encoding.LabelEncodingBILOU;
 
 public class Parameters {
 
@@ -20,7 +20,7 @@ public class Parameters {
 		public static String mDataEncoding = Constants.CharsetEncoding.UTF8;
 
 		@DefaultValue(value="BILOU()")
-		public static AbstractLabelEncoding mLabelEncoding = new BILOU();
+		public static AbstractLabelEncoding mLabelEncoding = new LabelEncodingBILOU();
 
 		@DefaultValue(value="TokenizerAnyTokenBySpace(null)")
 		public static AbstractTokenizer mTokenizer = new TokenizerAnyTokenBySpace(null);
@@ -43,13 +43,13 @@ public class Parameters {
 
 		public static class Context {
 			@DefaultValue(value="4")
-			public static int mMaximumContextSize = 4;
+			public static int mMaximumContextSize = 3;
 
 			@DefaultValue(value="4")
 			public static int mMaximumEntitySizeToSearch = 4;
 		}
 
-		public static class Gazetter {
+		public static class Gazetteer {
 			@DefaultValue(value="3")
 			public static int mMinimumAcceptedDictionaryTermEntry = 3;
 		}
@@ -81,6 +81,29 @@ public class Parameters {
 
 		@DefaultValue(value="false")
 		public static int mSubSequenceLabelSize = 3;
+	}
+
+	public static class LabelFileLevel2 {
+		@DefaultValue(value="true")
+		public static boolean mIsToUseLabelLevel2 = true;
+
+		@DefaultValue(value="0.5")
+		public static double mThreshouldToUseGapContext = 0.0;
+
+		@DefaultValue(value="true")
+		public static boolean mIsToUseRuleFixBrokedLabel = true;
+
+		@DefaultValue(value="false")
+		public static boolean mIsToUseRuleRecoverTokenAroundEntity = false;
+
+		@DefaultValue(value="true")
+		public static boolean mIsToUseRuleGlueEntityTogether = true;
+
+		@DefaultValue(value="true")
+		public static boolean mIsToUseRuleGlueEntitiesByGap = true;
+
+		@DefaultValue(value="true")
+		public static boolean mIsToUseRuleLabelingGatezetteerEntry = true;
 	}
 
 	public static class Evaluator {

@@ -12,6 +12,7 @@ import lbd.FSNER.Model.AbstractLabelFileLabelCalculatorModel;
 import lbd.FSNER.Model.AbstractTermRestrictionChecker;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
+import lbd.fsner.entity.EntityType;
 import lbd.fsner.label.encoding.Label;
 
 public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
@@ -114,7 +115,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 
 			probability = labelProbability[i]/normalizationFactor[i];
 			if(vShowProbabilityForLabel && term.length() > 2) {
-				System.out.println("Prob(" + Label.getCanonicalLabel(i).getValue() + "): " + probability);
+				System.out.println("Prob(" + EntityType.getEntityType(i).getValue() + "-" + Label.getCanonicalLabel(i).name() + "): " + probability);
 			}
 
 			if(probability > maxProbability) {
@@ -124,7 +125,7 @@ public class LCMSumScore extends AbstractLabelFileLabelCalculatorModel{
 		}
 
 		if(vShowProbabilityForLabel && term.length() > 2) {
-			System.out.println(">> Chosen Label: " + Label.getCanonicalLabel(mostProbablyLabel).getValue());
+			System.out.println(">> Chosen Label: " + Label.getCanonicalLabel(mostProbablyLabel).name());
 		}
 		if(vShowProbabilityForLabel && term.length() > 2) {
 			System.out.println("-----------------");

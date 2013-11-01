@@ -1,4 +1,6 @@
-package lbd.FSNER.Filter;
+package lbd.FSNER.Filter.old;
+
+import java.util.HashMap;
 
 import lbd.FSNER.DataPreprocessor.DPCapitalizationTermsOnly;
 import lbd.FSNER.Model.AbstractFilter;
@@ -7,18 +9,23 @@ import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
 
-public class FtrCapitalizedTerms extends AbstractFilter{
+public class FtrCapitalizedPossibleTerms extends AbstractFilter{
 
 	private static final long serialVersionUID = 1L;
 
-	public FtrCapitalizedTerms(int preprocessingTypeNameIndex,
+	protected HashMap<String, Object> termsCapitalized;
+
+	public FtrCapitalizedPossibleTerms(
+			int preprocessingTypeNameIndex,
 			AbstractFilterScoreCalculatorModel scoreCalculator) {
 
-		super(ClassName.getSingleName(FtrCapitalizedTerms.class.getName()),
+		super(ClassName.getSingleName(FtrCapitalizedPossibleTerms.class.getName()),
 				preprocessingTypeNameIndex, scoreCalculator);
 
-		//this.commonFilterName = "Ort" + preprocessingTypeNameIndex;
+		termsCapitalized = new HashMap<String, Object>();
+		this.mFilterClassName = "Ort" + preprocessingTypeNameIndex;
 	}
+
 
 	@Override
 	public void initialize() {
@@ -40,8 +47,9 @@ public class FtrCapitalizedTerms extends AbstractFilter{
 
 	@Override
 	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
-		// TODO Auto-generated method stub
-
+		if(index > 0 && DPCapitalizationTermsOnly.isCapitalized(pPreprocessedSequence.getToken(index))) {
+			termsCapitalized.put(pPreprocessedSequence.getToken(index).toLowerCase(), null);
+		}
 	}
 
 	@Override
@@ -63,16 +71,10 @@ public class FtrCapitalizedTerms extends AbstractFilter{
 	}
 
 	@Override
-	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			ISequence pPreprocessedSequence, int index) {
+	protected String getSequenceInstanceIdSub(ISequence pSequence, ISequence pPreprocessedSequence, int index) {
 
-		String id = Symbol.EMPTY;
-
-		if(DPCapitalizationTermsOnly.isCapitalized(pPreprocessedSequence.getToken(index))) {
-			id = "id:" + id + ".isCapitalized";
-		}
-
-		return (id);
+		return ((termsCapitalized.containsKey(pPreprocessedSequence.getToken(index).toLowerCase()))?
+				"id:" + this.mId + Symbol.DOT + pPreprocessedSequence.getToken(index).toLowerCase() : Symbol.EMPTY);
 	}
 
 }

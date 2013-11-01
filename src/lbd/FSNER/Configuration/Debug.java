@@ -31,6 +31,9 @@ public interface Debug {
 
 	public interface LabelFile {
 		@DefaultValue(value="false")
+		public boolean showElapsedTimeLabelLevel2 = true;
+
+		@DefaultValue(value="false")
 		public boolean printNumberedLabelSequence = false;
 
 		@DefaultValue(value="false")

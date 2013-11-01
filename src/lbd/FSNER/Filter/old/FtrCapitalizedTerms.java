@@ -1,33 +1,27 @@
-package lbd.FSNER.Filter;
+package lbd.FSNER.Filter.old;
 
+import lbd.FSNER.DataPreprocessor.DPCapitalizationTermsOnly;
 import lbd.FSNER.Model.AbstractFilter;
 import lbd.FSNER.Model.AbstractFilterScoreCalculatorModel;
 import lbd.FSNER.Utils.ClassName;
 import lbd.FSNER.Utils.Symbol;
 import lbd.data.handler.ISequence;
 
-public class FtrHasPontuaction extends AbstractFilter{
+public class FtrCapitalizedTerms extends AbstractFilter{
 
 	private static final long serialVersionUID = 1L;
 
-	protected static String pontuation = "{([@#.,;:?!-+\'\"])}";
-
-	public FtrHasPontuaction(int preprocessingTypeNameIndex,
+	public FtrCapitalizedTerms(int preprocessingTypeNameIndex,
 			AbstractFilterScoreCalculatorModel scoreCalculator) {
-		super(ClassName.getSingleName(FtrHasPontuaction.class.getName()),
+
+		super(ClassName.getSingleName(FtrCapitalizedTerms.class.getName()),
 				preprocessingTypeNameIndex, scoreCalculator);
 
-		this.mFilterClassName = "Ort" + preprocessingTypeNameIndex;
+		//this.commonFilterName = "Ort" + preprocessingTypeNameIndex;
 	}
 
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
 		// TODO Auto-generated method stub
 
 	}
@@ -39,7 +33,13 @@ public class FtrHasPontuaction extends AbstractFilter{
 	}
 
 	@Override
-	public void loadTermSequence(ISequence pPreprocessedSequence, int pIndex) {
+	public void loadActionBeforeSequenceIteration(ISequence pPreprocessedSequence) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void loadTermSequence(ISequence pPreprocessedSequence, int index) {
 		// TODO Auto-generated method stub
 
 	}
@@ -64,31 +64,15 @@ public class FtrHasPontuaction extends AbstractFilter{
 
 	@Override
 	protected String getSequenceInstanceIdSub(ISequence pSequence,
-			ISequence pPreprocessedSequence, int pIndex) {
+			ISequence pPreprocessedSequence, int index) {
 
 		String id = Symbol.EMPTY;
 
-		if(hasPontuation(pPreprocessedSequence.getToken(pIndex))) {
-			id = "id:" + this.mId + ".hasPontuaction";
+		if(DPCapitalizationTermsOnly.isCapitalized(pPreprocessedSequence.getToken(index))) {
+			id = "id:" + id + ".isCapitalized";
 		}
 
 		return (id);
-	}
-
-	protected boolean hasPontuation(String term) {
-
-		boolean hasPontuation = false;
-
-
-		for(int i = 0; i < term.length(); i++) {
-			//if(term.indexOf(pontuation.charAt(i)) != -1) {
-			if(!Character.isDigit(term.charAt(i)) && !Character.isLetter(term.charAt(i))) {
-				hasPontuation = true;
-				break;
-			}
-		}
-
-		return(hasPontuation);
 	}
 
 }

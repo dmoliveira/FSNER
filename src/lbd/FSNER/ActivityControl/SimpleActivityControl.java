@@ -25,11 +25,11 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 	public SimpleActivityControl() {
 		super(new SimpleFilterCombination());
-		// super(new TermFocusFilterCombination(), pLabelEncoding);
-		// super(new CapitalizationFocusFilterCombination(), pLabelEncoding);
-		//super(new TermComplementaryFocusFilterCombination(), pLabelEncoding); //USE State Filter - Caution [!]
-		//super(new ContextFocusFilterCombination(), pLabelEncoding);
-		//super(new CustomFilterCombination(), pLabelEncoding);
+		// super(new TermFocusFilterCombination());
+		// super(new CapitalizationFocusFilterCombination());
+		//super(new TermComplementaryFocusFilterCombination()); //USE State Filter - Caution [!]
+		//super(new ContextFocusFilterCombination());
+		//super(new CustomFilterCombination());
 	}
 
 	@Override
@@ -205,6 +205,7 @@ public class SimpleActivityControl extends AbstractActivityControl {
 		}
 	}
 
+	//TODO: Improve this posprocessement. Its consume a lot of time when are a large number of filters.
 	@Override
 	protected void adjust(List<ISequence> pSequenceList) {
 
@@ -249,8 +250,8 @@ public class SimpleActivityControl extends AbstractActivityControl {
 
 		if(Debug.ActivityControl.printFilterStatistics || Debug.ActivityControl.printFilterInstanceStatistics) {
 			System.out.print("\n--- Total Filters Number: " + mFilterList.size());
+			System.out.println();
 		}
-		System.out.println();
 	}
 
 	@Override
