@@ -142,17 +142,13 @@ public class LabelEncodingBILOU extends AbstractLabelEncoding{
 	public void joinEntities(ISequence pSequence, EntityType pEntityType,
 			int pEndIndexFirstEntity, int pStartIndexSecondEntity) {
 
-		for(int i = pEndIndexFirstEntity; i < pStartIndexSecondEntity; i++) {
+		joinEntities(pSequence, pEntityType, pEndIndexFirstEntity);
+
+		for(int i = pEndIndexFirstEntity + 1; i < pStartIndexSecondEntity; i++) {
 			pSequence.setLabel(i, Label.getOrdinalLabel(pEntityType, Label.Inside));
 		}
-		
-		Label vStartLabelSecondEntity = Label.getCanonicalLabel(pSequence.getLabel(pStartIndexSecondEntity));
 
-		if(vStartLabelSecondEntity == Label.UnitToken) {
-			pSequence.setLabel(pStartIndexSecondEntity, Label.getOrdinalLabel(pEntityType, Label.Last));
-		} else if(vStartLabelSecondEntity == Label.Beginning) {
-			pSequence.setLabel(pStartIndexSecondEntity, Label.getOrdinalLabel(pEntityType, Label.Inside));
-		}
+		joinEntities(pSequence, pEntityType, pStartIndexSecondEntity - 1);
 	}
 
 	@Override

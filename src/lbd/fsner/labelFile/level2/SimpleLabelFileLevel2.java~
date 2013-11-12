@@ -41,7 +41,8 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 
 			for(int i = 0; i < cGoldSequence.length(); i++) {
 				if(Parameters.DataHandler.mLabelEncoding.isEntity(Label.getCanonicalLabel(cGoldSequence.getLabel(i)))) {
-					addToGapMap(cGoldSequence, i);
+					addToGapMap(vTaggedSequence, cGoldSequence, i, 1);
+					addToGapMap(vTaggedSequence, cGoldSequence, i, 2);
 					addToTokenEntityTypeFrequencyMap(vTaggedSequence, cGoldSequence, i);
 					addToEntityTypePrevalenceMap(cGoldSequence, vTaggedSequence, i);
 				}
@@ -49,32 +50,7 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 		}
 	}
 
-	private void addToGapMap(ISequence pGoldSequence, int pIndex) {
-
-		if(Parameters.DataHandler.mLabelEncoding.isStartEntity(pGoldSequence, pIndex)) {
-
-			int vIndex = pIndex;
-			String vGap = Symbol.EMPTY;
-
-			while(++vIndex < pGoldSequence.length() && !Parameters.DataHandler.mLabelEncoding.isEndEntity(pGoldSequence, vIndex)) {
-				vGap += pGoldSequence.getToken(vIndex);
-			}
-
-			if(!vGap.isEmpty()) {
-				EntityType vEntityType = EntityType.getEntityType(pGoldSequence.getLabel(pIndex));
-
-				if(!mGapBetweenEntitiesMap.containsKey(vEntityType)) {
-					mGapBetweenEntitiesMap.put(vEntityType, new HashMap<String, Statistics>());
-				}
-
-				if(!mGapBetweenEntitiesMap.get(vEntityType).containsKey(vGap)) {
-					mGapBetweenEntitiesMap.get(vEntityType).put(vGap, new Statistics());
-				}
-			}
-		}
-	}
-
-	private void addToGapMapOld(ISequence pTaggedSequence, ISequence pGoldSequence, int pIndex, int pGapSize) {
+	private void addToGapMap(ISequence pTaggedSequence, ISequence pGoldSequence, int pIndex, int pGapSize) {
 
 		EntityType vEntityType = EntityType.getEntityType(pTaggedSequence.getLabel(pIndex));
 
@@ -122,23 +98,15 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 	@Override
 	public ISequence labelSequenceLevel2(ISequence pSequence) {
 
-		applyRuleFixBrokedLabel(pSequence);
+		List<Entity> vEntityList = Parameters.DataHandler.mLabelEncoding.getEntities(pSequence);
 
-		applyRuleLabelingGatezetteerEntry(pSequence);
+		applyRuleFixBrokedLabel(pSequence, vEntityList);
 
-		applyRuleFixBrokedLabel(pSequence);
+		applyRuleRecoverTokenAroundEntity(pSequence, vEntityList, 1);
 
-		//applyRuleRecoverTokenAroundEntity(pSequence, vEntityList, 1);
+		applyRuleFixBrokedLabel(pSequence, vEntityList);
 
 		applyRuleGlueEntityTogether(pSequence);
-
-		applyRuleRecoverTokenAroundEntity(pSequence, 1);
-
-		//applyRuleGlueEntitiesByGap(pSequence, 2);
-
-		//applyRuleGlueEntitiesByGap(pSequence, 1);
-
-		//applyRuleFixBrokedLabel(pSequence, vEntityList);
 
 		/*applyRuleGlueEntitiesByGap(pSequence, 2);
 
@@ -167,12 +135,9 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 		return pSequence;
 	}
 
-	protected void applyRuleFixBrokedLabel(ISequence pSequence) {
+	protected void applyRuleFixBrokedLabel(ISequence pSequence, List<Entity> pEntityList) {
 		if(Parameters.LabelFileLevel2.mIsToUseRuleFixBrokedLabel) {
-
-			List<Entity> vEntityList = Parameters.DataHandler.mLabelEncoding.getEntities(pSequence);
-
-			for(Entity cEntity : vEntityList) {
+			for(Entity cEntity : pEntityList) {
 				int vIndex = 0;
 				for(Label cLabel : cEntity.getLabels()) {
 					pSequence.setLabel(cEntity.getIndex() + vIndex++, Label.getOrdinalLabel(cEntity.getEntityType(), cLabel));
@@ -181,12 +146,9 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 		}
 	}
 
-	protected void applyRuleRecoverTokenAroundEntity(ISequence pSequence, int pWindowSize) {
+	protected void applyRuleRecoverTokenAroundEntity(ISequence pSequence, List<Entity> pEntityList, int pWindowSize) {
 		if(Parameters.LabelFileLevel2.mIsToUseRuleRecoverTokenAroundEntity) {
-
-			List<Entity> vEntityList = Parameters.DataHandler.mLabelEncoding.getEntities(pSequence);
-
-			for(Entity cEntity : vEntityList) {
+			for(Entity cEntity : pEntityList) {
 				setEntityLabelInterval(pSequence, cEntity, cEntity.getIndex() - pWindowSize, cEntity.getIndex() - 1);
 				setEntityLabelInterval(pSequence, cEntity, cEntity.getIndex() + cEntity.size(), cEntity.getIndex() + (cEntity.size() - 1) + pWindowSize);
 			}
@@ -207,8 +169,8 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 		if(Parameters.LabelFileLevel2.mIsToUseRuleGlueEntityTogether) {
 			for(int i = 1; i < pSequence.length(); i++) {
 
-				if(Parameters.DataHandler.mLabelEncoding.isEndEntity(pSequence, i - 1)
-						&& Parameters.DataHandler.mLabelEncoding.isStartEntity(pSequence, i)) {
+				if(Parameters.DataHandler.mLabelEnconding.isEndEntity(pSequence, i - 1) 
+					 && Parameters.DataHandler.mLabelEnconding.isStartEntity(pSequence, i)) {
 
 					EntityType vPreviousEntityType = EntityType.getEntityType(pSequence.getLabel(i - 1));
 					EntityType vCurrentEntityType = EntityType.getEntityType(pSequence.getLabel(i));
@@ -275,13 +237,13 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 		return vGap;
 	}
 
-	protected void applyRuleLabelingGatezetteerEntry(ISequence pSequence) {
+	protected void applyRuleLabelingGatezetteerEntry(ISequence pSequence, List<Entity> pEntityList) {
 		if(Parameters.LabelFileLevel2.mIsToUseRuleLabelingGatezetteerEntry) {
-
-			List<Entity> vEntityList = Parameters.DataHandler.mLabelEncoding.getEntities(pSequence);
-
-			if(vEntityList != null && vEntityList.size() > 0) {
+			if(pEntityList != null && pEntityList.size() > 0) {
 				for(int i = 1; i < pSequence.length(); i++) {
+					if(pSequence.getToken(i-1).length() > 1 && pSequence.getToken(i).length() > 3) {
+
+					}
 
 					for(AbstractFilter cFilter : mGazetteerFilters) {
 
@@ -289,7 +251,7 @@ public class SimpleLabelFileLevel2 extends AbstractLabelFileLevel2 {
 						EntityType vFilterEntityTypeTendency = cFilter.getFilterProbability().getFilterEntityTypeTendency();
 
 						if(vFilterEntityTypeTendency != null && !vEntityValue.isEmpty()
-								&& hasAnyEntityAround(vEntityList, i, 3, pSequence.length(), vFilterEntityTypeTendency)) {
+								&& hasAnyEntityAround(pEntityList, i, 1, pSequence.length(), vFilterEntityTypeTendency)) {
 
 							Entity vEntity = new Entity(vEntityValue, vFilterEntityTypeTendency);
 							Parameters.DataHandler.mLabelEncoding.setEntityLabel(pSequence, vEntity, i);
